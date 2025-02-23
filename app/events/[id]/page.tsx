@@ -1,35 +1,33 @@
 import { notFound } from "next/navigation";
 import eventsDataJson from "@/data/eventsData.json";
-const { eventsData } = eventsDataJson;
-
 import type { Event } from "../typings";
 
-async function getEvent(id: string): Promise<Event | null> {
-  // Simulating a database/API call
+const { eventsData } = eventsDataJson;
 
+async function getEvent(id: string): Promise<Event | null> {
   return eventsData.find((event) => event.id === id) || null;
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const { id } = await params
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const event = await getEvent(id);
   
   if (!event) return { title: "Event Not Found" };
   return {
     title: `${event.title} - Event Details`,
-    description: event.description,
+    description: event.description.preview,
   };
 }
 
 export default async function EventPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
+  const { id } = await params;
   const event = await getEvent(id);
 
-  if (!event) return notFound(); // Redirect to 404 page
+  if (!event) return notFound();
 
   return (
     <main className="p-6 max-w-2xl mx-auto">
@@ -37,7 +35,12 @@ export default async function EventPage({
       <p className="text-gray-600">
         {event.date.fullDate} - {event.location}
       </p>
-      <p className="mt-4">{event.description.details}</p>
+      <p className="mt-4">{event.description.preview}</p>
+      <ul className="mt-4 list-disc list-inside">
+        {event.description.details.map((detail, index) => (
+          <li key={index}>{detail}</li>
+        ))}
+      </ul>
     </main>
   );
 }
