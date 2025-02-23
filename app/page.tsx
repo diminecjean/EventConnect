@@ -32,10 +32,10 @@ export default async function Home() {
         {eventsData.map((event, index) => (
           <EventCard
             key={index}
+            id={event.id}
             eventLogo={event.eventLogo}
             host={event.host}
             title={event.title}
-            href={event.href}
             tags={event.tags}
             date={event.date}
             location={event.location}

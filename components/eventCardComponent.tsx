@@ -16,6 +16,7 @@ type Tag = {
 };
 
 type EventCardProps = {
+  id: string;
   eventLogo: {
     src: string;
     alt: string;
@@ -25,7 +26,6 @@ type EventCardProps = {
     name: string;
   };
   title: string;
-  href: string;
   tags: Tag[];
   date: {
     fullDate: string;
@@ -39,10 +39,10 @@ type EventCardProps = {
 };
 
 export default function EventCard({
+  id,
   eventLogo,
   host,
   title,
-  href,
   tags,
   date,
   location,
@@ -83,7 +83,7 @@ export default function EventCard({
         <div className="flex flex-col space-y-1">
           <CardHeader>
             <CardTitle>
-              <a href={href} className="hover:underline">
+              <a href={`/events/${id}`} className="hover:underline">
                 {title}
               </a>
             </CardTitle>
