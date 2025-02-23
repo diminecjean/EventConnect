@@ -11,7 +11,9 @@ async function getEvent(id: string): Promise<Event | null> {
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const event = await getEvent(params.id);
+  const { id } = await params
+  const event = await getEvent(id);
+  
   if (!event) return { title: "Event Not Found" };
   return {
     title: `${event.title} - Event Details`,
@@ -24,7 +26,8 @@ export default async function EventPage({
 }: {
   params: { id: string };
 }) {
-  const event = await getEvent(params.id);
+  const { id } = await params
+  const event = await getEvent(id);
 
   if (!event) return notFound(); // Redirect to 404 page
 
