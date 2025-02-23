@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { eventsData } from "@/data/eventsData.json";
+import eventsDataJson from "@/data/eventsData.json";
+
+const { eventsData } = eventsDataJson;
 
 export default function EventsPage() {
   return (

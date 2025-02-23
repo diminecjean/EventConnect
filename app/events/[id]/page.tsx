@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { eventsData } from "@/data/eventsData.json";
+import eventsDataJson from "@/data/eventsData.json";
+const { eventsData } = eventsDataJson;
 
 import type { Event } from "../typings";
 
