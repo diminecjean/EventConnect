@@ -3,6 +3,7 @@ import eventsDataJson from "@/data/eventsData.json";
 
 const { eventsData } = eventsDataJson;
 
+// TODO: Remove this page
 export default function EventsPage() {
   return (
     <div className="p-6 mt-20">
