@@ -1,0 +1,24 @@
+[
+  {
+    "id": "user_001",
+    "name": "Wei En Looi",
+    "email": "weien@example.com",
+    "bio": "Software engineer passionate about event organizing and the tech community.",
+    "profile_picture": "https://example.com/profiles/weien.jpg",
+    "interests": ["DevOps", "Cloud", "Mobile Development"],
+    "events_attended": ["event_101", "event_202"],
+    "badges_earned": ["community_builder", "speaker"],
+    "registered_at": "2023-01-20T09:00:00Z"
+  },
+  {
+    "id": "user_002",
+    "name": "Aisha Tan",
+    "email": "aisha@example.com",
+    "bio": "Frontend developer and community speaker.",
+    "profile_picture": "https://example.com/profiles/aisha.jpg",
+    "interests": ["React.js", "UX/UI", "Web Performance"],
+    "events_attended": ["event_201", "event_102"],
+    "badges_earned": ["frequent_attendee"],
+    "registered_at": "2022-07-15T15:30:00Z"
+  }
+]

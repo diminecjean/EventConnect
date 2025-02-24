@@ -1,7 +1,5 @@
 import Link from "next/link";
-import eventsDataJson from "@/data/eventsData.json";
-
-const { eventsData } = eventsDataJson;
+import eventsData from "@/data/eventsData.json";
 
 // TODO: Remove this page
 export default function EventsPage() {

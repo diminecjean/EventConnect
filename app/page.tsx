@@ -5,9 +5,7 @@ import Link from "next/link";
 import EventCard from "@/components/eventCardComponent";
 import SearchBar from "./searchBar";
 
-import eventsDataJson from "@/data/eventsData.json";
-
-const { eventsData } = eventsDataJson;
+import eventsData from "@/data/eventsData.json";
 
 export default async function Home() {
   const isConnected = await testDatabaseConnection();

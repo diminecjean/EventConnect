@@ -1,0 +1,32 @@
+[
+  {
+    "id": "org_001",
+    "name": "KL DevOps Meetup",
+    "description": "A community of DevOps engineers and enthusiasts in Kuala Lumpur.",
+    "website": "https://kldevopsmeetup.com",
+    "social_links": {
+      "twitter": "https://twitter.com/kldevops",
+      "linkedin": "https://linkedin.com/company/kldevopsmeetup"
+    },
+    "contact_email": "contact@kldevopsmeetup.com",
+    "events_hosted": ["event_101", "event_102"],
+    "members_count": 1200,
+    "tags": ["DevOps", "Cloud", "CI/CD"],
+    "created_at": "2023-05-15T14:30:00Z"
+  },
+  {
+    "id": "org_002",
+    "name": "React KL",
+    "description": "A group dedicated to all things React.js in Malaysia.",
+    "website": "https://reactkl.com",
+    "social_links": {
+      "twitter": "https://twitter.com/reactkl",
+      "github": "https://github.com/reactkl"
+    },
+    "contact_email": "hello@reactkl.com",
+    "events_hosted": ["event_201", "event_202"],
+    "members_count": 800,
+    "tags": ["React.js", "Frontend", "JavaScript"],
+    "created_at": "2022-08-10T10:45:00Z"
+  }
+]

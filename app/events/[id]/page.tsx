@@ -1,8 +1,6 @@
 import { notFound } from "next/navigation";
-import eventsDataJson from "@/data/eventsData.json";
+import eventsData from "@/data/eventsData.json";
 import type { Event } from "../typings";
-
-const { eventsData } = eventsDataJson;
 
 async function getEvent(id: string): Promise<Event | null> {
   return eventsData.find((event) => event.id === id) || null;
