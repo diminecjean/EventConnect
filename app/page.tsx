@@ -167,9 +167,9 @@ export default function Home() {
             <br /> specificallly for the tech community.
           </p>
         </div>
-        <div className="flex">
+        {/* <div className="flex">
           <SeedDatabase/>
-        </div>
+        </div> */}
       </div>
       <SearchBar />
 
