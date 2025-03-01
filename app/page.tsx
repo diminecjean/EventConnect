@@ -155,8 +155,8 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pt-20 ">
-      <div className="flex flex-row">
-        <div className="w-full py-12 flex-col justify-start max-w-6xl">
+      <div className="flex flex-row w-full py-12 justify-start max-w-6xl">
+        <div className="flex-col">
           <h1 className="py-4 text-6xl font-bold text-left text-white">
             CONNECTING
             <br />
