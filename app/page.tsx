@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import EventCard from '../components/eventCardComponent';
+import EventCard from './events/eventCardComponent';
 import SearchBar from "./searchBar";
 
 import React, { useEffect, useState } from 'react';
@@ -157,7 +157,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between pt-20 ">
       <div className="flex flex-row w-full py-12 justify-start max-w-6xl">
         <div className="flex-col">
-          <h1 className="py-4 text-6xl font-bold text-left text-white">
+          <h1 className="py-4 text-3xl sm:text-4xl md:text-6xl font-bold text-left text-white">
             CONNECTING
             <br />
             DIMENSIONS.

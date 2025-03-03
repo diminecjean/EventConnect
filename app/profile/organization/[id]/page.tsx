@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import organizationsData from "@/data/organizationData.json";
-import type { OrganizationProfile } from "../../typings";
+import type { OrganizationProfile } from "../../../../typings/profile/typings";
 
 async function getOrganizationProfile(
   id: string,

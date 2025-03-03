@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import usersData from "@/data/userData.json";
-import type { UserProfile } from "../../typings";
+import type { UserProfile } from "../../../../typings/profile/typings";
 
 async function getOrganizationProfile(id: string): Promise<UserProfile | null> {
   return usersData.find((user) => user.id === id) || null;

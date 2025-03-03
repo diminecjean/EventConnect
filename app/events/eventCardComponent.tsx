@@ -52,17 +52,17 @@ export default function EventCard({
 
   return (
     <Card>
-      <div className="flex flex-col md:flex-row items-start justify-between p-4">
-        <div className="flex flex-col space-y-1.5 min-w-5xl gap-2">
+      <div className="flex flex-col justify-center items-center md:flex-row md:items-start md:justify-between p-4">
+        <div className="flex flex-col space-y-1.5 min-w-5xl gap-2 items-center">
           <Image
-            className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] saturate-0 brightness-0 dark:saturate-100 dark:brightness-100"
+            className="align-center relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] saturate-0 brightness-0 dark:saturate-100 dark:brightness-100"
             src={eventLogo.src}
             alt={eventLogo.alt}
             width={200}
             height={37}
             priority
           />
-          <div className="flex flex-row border rounded-lg border-gray-300 p-2 gap-1 items-center">
+          <div className="flex flex-row border rounded-lg border-gray-300 p-2 gap-1 items-center justify-center">
             <div>
               <Image
                 className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] saturate-0 brightness-0 dark:saturate-100 dark:brightness-100"
@@ -72,7 +72,7 @@ export default function EventCard({
                 height={24}
               />
             </div>
-            <div className="flex flex-col pl-1">
+            <div className="flex flex-col pl-1 items-center">
               <div className="text-xs font-light">Hosted by</div>
               <div className="text-xs font-medium line-clamp-1">
                 {host.name}
@@ -80,7 +80,7 @@ export default function EventCard({
             </div>
           </div>
         </div>
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col space-y-1 py-6 md:py-0">
           <CardHeader>
             <CardTitle>
               <a href={`/events/${id}`} className="hover:underline">
@@ -96,12 +96,12 @@ export default function EventCard({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-row gap-6 my-4">
+            <div className="flex flex-col md:flex-row gap-6 my-4">
               <div className="flex flex-row gap-2 max-w-64 items-center">
                 <div>
                   <CalendarDays size={24} />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col items-center">
                   <div className="font-medium text-xs">{date.fullDate}</div>
                   <div className="font-light text-xs">{date.time}</div>
                 </div>
@@ -110,7 +110,7 @@ export default function EventCard({
                 <div>
                   <MapPin size={24} />
                 </div>
-                <div className="flex flex-col font-normal text-xs">
+                <div className="flex flex-col font-normal text-xs items-center">
                   {location}
                 </div>
               </div>
