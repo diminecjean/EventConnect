@@ -82,76 +82,79 @@ export default function EventSearch() {
           />
         </div>
 
-        {/* Category Filter */}
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.id}>
-                {category.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex flex-col sm:flex-row gap-4 text-xs md:text-md">
+          {/* Category Filter */}
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="min-w-[160px] w-full">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        {/* Date Filter */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className="w-[180px] justify-start text-left font-normal"
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              {selectedDate ? selectedDate.toLocaleDateString() : "Pick a date"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <CalendarComponent
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+          {/* Date Filter */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="min-w-[160px] w-full justify-start text-left font-normal"
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                {selectedDate ? selectedDate.toLocaleDateString() : "Pick a date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
 
-        {/* Location Filter */}
-        <Popover open={isLocationOpen} onOpenChange={setIsLocationOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className="w-[180px] justify-start text-left font-normal"
-            >
-              <MapPin className="mr-2 h-4 w-4" />
-              {locations.find((l) => l.id === selectedLocation)?.name ||
-                "Location"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
-            <Command>
-              <CommandInput placeholder="Search location..." />
-              <CommandList>
-                <CommandEmpty>No location found.</CommandEmpty>
-                <CommandGroup heading="Locations">
-                  {locations.map((location) => (
-                    <CommandItem
-                      key={location.id}
-                      value={location.name}
-                      onSelect={() => {
-                        setSelectedLocation(location.id);
-                        setIsLocationOpen(false);
-                      }}
-                    >
-                      {location.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
+          {/* Location Filter */}
+          <Popover open={isLocationOpen} onOpenChange={setIsLocationOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="min-w-[160px] w-full justify-start text-left font-normal"
+              >
+                <MapPin className="mr-2 h-4 w-4" />
+                {locations.find((l) => l.id === selectedLocation)?.name ||
+                  "Location"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search location..." />
+                <CommandList>
+                  <CommandEmpty>No location found.</CommandEmpty>
+                  <CommandGroup heading="Locations">
+                    {locations.map((location) => (
+                      <CommandItem
+                        key={location.id}
+                        value={location.name}
+                        onSelect={() => {
+                          setSelectedLocation(location.id);
+                          setIsLocationOpen(false);
+                        }}
+                      >
+                        {location.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+
 
         {/* Search Button */}
         <Button onClick={handleSearch} variant={"secondary"}>
