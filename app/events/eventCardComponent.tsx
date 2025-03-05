@@ -62,7 +62,7 @@ export default function EventCard({
             height={37}
             priority
           />
-          <div className="flex flex-row border rounded-lg border-gray-300 p-2 gap-1 items-center justify-center">
+          <div className="flex flex-row border rounded-lg border-gray-300 p-2 gap-1 items-center justify-center md:justify-start">
             <div>
               <Image
                 className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] saturate-0 brightness-0 dark:saturate-100 dark:brightness-100"
@@ -72,7 +72,7 @@ export default function EventCard({
                 height={24}
               />
             </div>
-            <div className="flex flex-col pl-1 items-center">
+            <div className="flex flex-col pl-1 items-start">
               <div className="text-xs font-light">Hosted by</div>
               <div className="text-xs font-medium line-clamp-1">
                 {host.name}
@@ -80,14 +80,14 @@ export default function EventCard({
             </div>
           </div>
         </div>
-        <div className="flex flex-col space-y-1 py-6 md:py-0">
+        <div className="flex flex-col space-y-1 py-6 md:py-0 items-start">
           <CardHeader>
             <CardTitle>
               <a href={`/events/${id}`} className="hover:underline">
                 {title}
               </a>
             </CardTitle>
-            <div className="flex flex-row space-x-2">
+            <div className="flex flex-row space-x-2 justify-start">
               {tags.map((tag, index) => (
                 <div key={index} className={`px-2 ${tag.color} rounded-md`}>
                   <span className="text-xs text-gray-800">{tag.label}</span>
@@ -96,12 +96,12 @@ export default function EventCard({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col md:flex-row gap-6 my-4">
+            <div className="flex flex-col md:flex-row gap-6 my-4 items-start">
               <div className="flex flex-row gap-2 max-w-64 items-center">
                 <div>
                   <CalendarDays size={24} />
                 </div>
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-start">
                   <div className="font-medium text-xs">{date.fullDate}</div>
                   <div className="font-light text-xs">{date.time}</div>
                 </div>
@@ -110,7 +110,7 @@ export default function EventCard({
                 <div>
                   <MapPin size={24} />
                 </div>
-                <div className="flex flex-col font-normal text-xs items-center">
+                <div className="flex flex-col font-normal text-xs items-start">
                   {location}
                 </div>
               </div>

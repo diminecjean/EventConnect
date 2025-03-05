@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
 
-import EventCard from './events/eventCardComponent';
+import EventCard from "./events/eventCardComponent";
 import SearchBar from "./searchBar";
 
-import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 import eventsData from "@/data/eventsData.json";
 
@@ -19,45 +19,48 @@ interface Tag {
 
 interface Event {
   id: string;
-  eventLogo: { src: string; alt: string; width: number; height: number; };
-  host: { logo: string; name: string; };
+  eventLogo: { src: string; alt: string; width: number; height: number };
+  host: { logo: string; name: string };
   title: string;
   tags: Tag[];
-  date: { fullDate: string; time: string; };
+  date: { fullDate: string; time: string };
   location: string;
-  description: { preview: string; details: string[]; };
+  description: { preview: string; details: string[] };
 }
 
 function SeedDatabase() {
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [message, setMessage] = useState("");
 
   const seedDatabase = async () => {
     try {
-      setStatus('loading');
-      setMessage('Seeding database...');
-  
-      const response = await fetch('/api/admin/seed', {
-        method: 'POST',
+      setStatus("loading");
+      setMessage("Seeding database...");
+
+      const response = await fetch("/api/admin/seed", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(eventsData), // Send array directly
       });
-  
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to seed database');
+        throw new Error(data.error || "Failed to seed database");
       }
 
-      setStatus('success');
+      setStatus("success");
       setMessage(`Success! Added ${data.count} events to database.`);
     } catch (error) {
-      console.error('Error seeding database:', error);
-      setStatus('error');
-      setMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Error seeding database:", error);
+      setStatus("error");
+      setMessage(
+        `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   };
 
@@ -70,21 +73,21 @@ function SeedDatabase() {
         </p>
         <Button
           onClick={seedDatabase}
-          disabled={status === 'loading'}
+          disabled={status === "loading"}
           className="px-6 py-2"
         >
-          {status === 'loading' ? 'Seeding...' : 'Seed Database'}
+          {status === "loading" ? "Seeding..." : "Seed Database"}
         </Button>
       </div>
 
       {message && (
         <div
           className={`p-4 rounded-md ${
-            status === 'success'
-              ? 'bg-green-50 text-green-800'
-              : status === 'error'
-              ? 'bg-red-50 text-red-800'
-              : 'bg-blue-50 text-blue-800'
+            status === "success"
+              ? "bg-green-50 text-green-800"
+              : status === "error"
+                ? "bg-red-50 text-red-800"
+                : "bg-blue-50 text-blue-800"
           }`}
         >
           {message}
@@ -99,59 +102,60 @@ export default function Home() {
   async function getEvents() {
     try {
       // Use server-side fetch with no-cache to get latest data
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/events`, { 
-        cache: 'no-store',
-        next: { revalidate: 60 } // Revalidate every minute
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/events`,
+        {
+          cache: "no-store",
+          next: { revalidate: 60 }, // Revalidate every minute
+        },
+      );
       const data = await res.json();
       // You might need to transform the API response to match the Event interface
       const formattedEvents = data.events.map((event: any) => ({
         id: event.id,
-        eventLogo: { 
-          src: event.eventLogo?.src || '/placeholder.svg', 
+        eventLogo: {
+          src: event.eventLogo?.src || "/placeholder.svg",
           alt: event.eventLogo?.alt || event.title,
-          width: 300,  // Add default width
-          height: 200  // Add default height
+          width: 300, // Add default width
+          height: 200, // Add default height
         },
-        host: { 
-          logo: event.host?.logo || '', 
-          name: event.host?.name || 'Unknown Host'
+        host: {
+          logo: event.host?.logo || "",
+          name: event.host?.name || "Unknown Host",
         },
-        title: event.title || '',
-        tags: Array.isArray(event.tags) 
-          ? event.tags.map((tag: any) => ({ 
-              id: tag.id || tag.label || String(Math.random()), 
-              label: tag.label || 'Tag', 
-              color: tag.color || 'bg-gray-100'
+        title: event.title || "",
+        tags: Array.isArray(event.tags)
+          ? event.tags.map((tag: any) => ({
+              id: tag.id || tag.label || String(Math.random()),
+              label: tag.label || "Tag",
+              color: tag.color || "bg-gray-100",
             }))
           : [],
-        date: { 
-          fullDate: event.date?.fullDate || 'TBA', 
-          time: event.date?.time || ''
+        date: {
+          fullDate: event.date?.fullDate || "TBA",
+          time: event.date?.time || "",
         },
-        location: event.location || 'TBA',
-        description: { 
-          preview: event.description?.preview || event.description || '',
-          details: Array.isArray(event.description?.details) 
-            ? event.description.details 
-            : [event.description?.preview || event.description || '']
-        }
+        location: event.location || "TBA",
+        description: {
+          preview: event.description?.preview || event.description || "",
+          details: Array.isArray(event.description?.details)
+            ? event.description.details
+            : [event.description?.preview || event.description || ""],
+        },
       }));
       return formattedEvents as Event[];
     } catch (error) {
-      console.error('Error loading events:', error);
+      console.error("Error loading events:", error);
       return [];
     }
   }
 
-
   useEffect(() => {
     getEvents().then((events) => {
       setEvents(events);
-      console.log('Events:', events);
+      console.log("Events:", events);
     });
-  }
-  , []);
+  }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pt-20 ">

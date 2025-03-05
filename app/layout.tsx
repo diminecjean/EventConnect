@@ -25,9 +25,7 @@ export default function RootLayout({
         <div className="fixed top-0 w-full z-50">
           <Navbar />
         </div>
-        <div className="mx-6 md:mx-16 lg:mx-auto max-w-5xl">
-          {children}
-        </div>
+        <div className="mx-6 md:mx-16 lg:mx-auto max-w-5xl">{children}</div>
         <Footer />
       </body>
     </html>

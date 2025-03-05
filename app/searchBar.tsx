@@ -105,7 +105,9 @@ export default function EventSearch() {
                 className="min-w-[160px] w-full justify-start text-left font-normal"
               >
                 <Calendar className="mr-2 h-4 w-4" />
-                {selectedDate ? selectedDate.toLocaleDateString() : "Pick a date"}
+                {selectedDate
+                  ? selectedDate.toLocaleDateString()
+                  : "Pick a date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -154,7 +156,6 @@ export default function EventSearch() {
             </PopoverContent>
           </Popover>
         </div>
-
 
         {/* Search Button */}
         <Button onClick={handleSearch} variant={"secondary"}>

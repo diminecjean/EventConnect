@@ -1,11 +1,11 @@
-import { MongoClient, MongoClientOptions } from 'mongodb';
+import { MongoClient, MongoClientOptions } from "mongodb";
 
-const uri = process.env.MONGODB_URI || '';
+const uri = process.env.MONGODB_URI || "";
 const options: MongoClientOptions = {
-    connectTimeoutMS: 10000, // 10 seconds
-    socketTimeoutMS: 30000, // 30 seconds
-    serverSelectionTimeoutMS: 10000, // 10 seconds
-  };
+  connectTimeoutMS: 10000, // 10 seconds
+  socketTimeoutMS: 30000, // 30 seconds
+  serverSelectionTimeoutMS: 10000, // 10 seconds
+};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
@@ -16,10 +16,10 @@ declare global {
 }
 
 if (!uri) {
-  throw new Error('Please add your MongoDB URI to .env.local');
+  throw new Error("Please add your MongoDB URI to .env.local");
 }
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   // In development mode, use a global variable so that the value
   // is preserved across module reloads caused by HMR (Hot Module Replacement).
   if (!global._mongoClientPromise) {
@@ -34,20 +34,20 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export async function connectToDB() {
-    try {
-      console.log("Attempting to connect to MongoDB...");
-      const client = new MongoClient(uri, {
-        connectTimeoutMS: 30000,
-        socketTimeoutMS: 45000,
-        serverSelectionTimeoutMS: 30000,
-      });
-      
-      await client.connect();
-      console.log("Successfully connected to MongoDB");
-      
-      return client;
-    } catch (error) {
-      console.error("MongoDB connection error:", error);
-      throw error;
-    }
+  try {
+    console.log("Attempting to connect to MongoDB...");
+    const client = new MongoClient(uri, {
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 30000,
+    });
+
+    await client.connect();
+    console.log("Successfully connected to MongoDB");
+
+    return client;
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    throw error;
   }
+}
