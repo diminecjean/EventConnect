@@ -162,7 +162,14 @@ export const TimelineTitle = React.forwardRef<
 >((props, ref) => {
   const { orientation } = useTimeline();
 
-  return <div ref={ref} data-orientation={orientation} {...props} className="font-semibold text-lg"/>;
+  return (
+    <div
+      ref={ref}
+      data-orientation={orientation}
+      {...props}
+      className="font-semibold text-lg"
+    />
+  );
 });
 TimelineTitle.displayName = "TimelineTitle";
 

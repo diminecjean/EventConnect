@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import eventsData from "@/data/eventsData.json";
+import eventsDataComplete from "@/data/eventsDataComplete.json";
 
 interface Tag {
   id: string;
@@ -28,6 +29,7 @@ interface Event {
   description: { preview: string; details: string[] };
 }
 
+// Seeds event data only
 function SeedDatabase() {
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -44,7 +46,7 @@ function SeedDatabase() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(eventsData), // Send array directly
+        body: JSON.stringify(eventsDataComplete), // Send array directly
       });
 
       const data = await response.json();
@@ -171,9 +173,9 @@ export default function Home() {
             <br /> specificallly for the tech community.
           </p>
         </div>
-        {/* <div className="flex">
+        <div className="flex">
           <SeedDatabase/>
-        </div> */}
+        </div>
       </div>
       <SearchBar />
 
