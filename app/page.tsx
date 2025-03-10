@@ -174,7 +174,7 @@ export default function Home() {
           </p>
         </div>
         <div className="flex">
-          <SeedDatabase/>
+          <SeedDatabase />
         </div>
       </div>
       <SearchBar />

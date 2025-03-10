@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 
+import NextAuthProvider from "./sessionProvider";
 import Navbar from "@/app/navbar";
 import Footer from "@/app/footer";
 
@@ -22,11 +23,13 @@ export default function RootLayout({
     <html lang="en" className="dark">
       {/* <html lang="en"> */}
       <body className={inter.className}>
+        <NextAuthProvider>
         <div className="fixed top-0 w-full z-50">
           <Navbar />
         </div>
         <div className="mx-6 md:mx-16 lg:mx-auto max-w-5xl">{children}</div>
         <Footer />
+        </NextAuthProvider>
       </body>
     </html>
   );
