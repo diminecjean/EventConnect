@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import usersData from "@/data/userData.json";
 import type { UserProfile } from "../../../../typings/profile/typings";
 
-async function getOrganizationProfile(id: string): Promise<UserProfile | null> {
+async function getUserProfile(id: string): Promise<UserProfile | null> {
   return usersData.find((user) => user.id === id) || null;
 }
 
@@ -12,7 +12,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getOrganizationProfile(id);
+  const user = await getUserProfile(id);
 
   if (!user) return { title: "User Not Found" };
   return {
@@ -27,7 +27,7 @@ export default async function EventPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getOrganizationProfile(id);
+  const user = await getUserProfile(id);
 
   if (!user) return notFound();
 

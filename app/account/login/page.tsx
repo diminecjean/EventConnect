@@ -19,6 +19,31 @@ import { Separator } from "@/components/ui/separator";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
 
+import users from "@/data/userData.json";
+
+// Function to fetch user ID from JSON data
+// async function getUserId(email: string): Promise<string | null> {
+function getUserId(email: string): string | null {
+  try {
+    // const response = await fetch('/api/users');
+    // if (!response.ok) {
+    //   throw new Error('Failed to fetch user data');
+    // }
+    
+    // const users = await response.json();
+    
+    // Find the user with the matching email
+    const user = users.find((user: { email: string; id: string }) => 
+      user.email.toLowerCase() === email.toLowerCase()
+    );
+    
+    return user ? user.id : null;
+  } catch (error) {
+    console.error('Error fetching user ID:', error);
+    return null;
+  }
+}
+
 export default function LoginCard() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -33,8 +58,9 @@ export default function LoginCard() {
     console.log("Session:", session);
     if (session?.user?.email) {
       console.log("User is already logged in");
+      const userId = getUserId(session.user.email);
       // Redirect to user profile page
-      router.push(`/profile/user/`);
+      router.push(`/profile/user/${userId}`);
     }
   }, [session, router]);
 
