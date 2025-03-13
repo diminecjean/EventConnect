@@ -17,9 +17,9 @@ import { Label } from "@/components/ui/label";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeClosed } from "lucide-react";
-import { toast } from "sonner"
+import { toast } from "sonner";
 
-export default function CardWithForm() {
+export default function LoginCard() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,17 +56,17 @@ export default function CardWithForm() {
     }
   }, [session, router]);
 
-  const handleCredentialsLogin = async (e: { preventDefault: () => void; }) => {
+  const handleCredentialsLogin = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
-      
+
       if (result?.error) {
         toast.warning("Login failed", {
           description: result.error,
@@ -74,7 +74,7 @@ export default function CardWithForm() {
         console.error("Login failed:", result.error);
       }
     } catch (error) {
-      toast.error("Login error",{
+      toast.error("Login error", {
         description: "An unexpected error occurred",
       });
       console.error("Login error:", error);
@@ -106,12 +106,12 @@ export default function CardWithForm() {
           <div className="grid w-full items-center gap-6">
             <div className="flex flex-col gap-4">
               <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email" 
+              <Input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Your email" 
+                placeholder="Your email"
                 required
               />
             </div>
@@ -138,18 +138,18 @@ export default function CardWithForm() {
             </div>
           </div>
           <CardFooter className="flex flex-col justify-between pt-8 gap-4 px-0">
-            <Button 
-              type="submit" 
-              className="w-full" 
-              variant={"secondary"} 
+            <Button
+              type="submit"
+              className="w-full"
+              variant={"secondary"}
               disabled={isLoading}
             >
               {isLoading ? "Logging in..." : "Login"}
             </Button>
             <Separator />
-            <Button 
+            <Button
               type="button"
-              onClick={() => signIn("github")} 
+              onClick={() => signIn("github")}
               className="w-full"
             >
               <GitHubLogoIcon className="mr-2" /> Login with GitHub

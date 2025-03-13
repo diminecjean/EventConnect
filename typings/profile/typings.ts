@@ -9,6 +9,7 @@ export type OrganizationProfile = {
     github?: string;
     facebook?: string;
   };
+  location: string;
   contact_email: string;
   events_hosted: string[]; // Array of event IDs
   members_count: number;

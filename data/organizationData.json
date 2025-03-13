@@ -8,6 +8,7 @@
       "twitter": "https://twitter.com/kldevops",
       "linkedin": "https://linkedin.com/company/kldevopsmeetup"
     },
+    "location": "Kuala Lumpur, Malaysia",
     "contact_email": "contact@kldevopsmeetup.com",
     "events_hosted": ["event_101", "event_102"],
     "members_count": 1200,
@@ -23,6 +24,7 @@
       "twitter": "https://twitter.com/reactkl",
       "github": "https://github.com/reactkl"
     },
+    "location": "Kuala Lumpur, Malaysia",
     "contact_email": "hello@reactkl.com",
     "events_hosted": ["event_201", "event_202"],
     "members_count": 800,

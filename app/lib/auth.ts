@@ -23,21 +23,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     GitHub,
     Credentials({
-        credentials: {
-            email: {},
-            password: {},
-        },
-        authorize: async (credentials) => {
-            // TODO: Implement actual authentication and data fetching from db
-            const email = "looi.weien02@gmail.com";
-            const password = "something";
-            
-            if (credentials.email === email && credentials.password === password) {
-                return {email, password};
-            } else {
-                throw new Error("Invalid credentials");
-            }
-        },
-    })
-],
+      credentials: {
+        email: {},
+        password: {},
+      },
+      authorize: async (credentials) => {
+        // TODO: Implement actual authentication and data fetching from db
+        const email = "looi.weien02@gmail.com";
+        const password = "something";
+
+        if (credentials.email === email && credentials.password === password) {
+          return { email, password };
+        } else {
+          throw new Error("Invalid credentials");
+        }
+      },
+    }),
+  ],
 });
