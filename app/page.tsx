@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 
 import EventCard from "./events/eventCardComponent";
 import SearchBar from "./searchBar";
@@ -9,7 +8,6 @@ import SearchBar from "./searchBar";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-import eventsData from "@/data/eventsData.json";
 import eventsDataComplete from "@/data/eventsDataComplete.json";
 
 interface Tag {
@@ -111,6 +109,7 @@ export default function Home() {
           next: { revalidate: 60 }, // Revalidate every minute
         },
       );
+
       const data = await res.json();
       // You might need to transform the API response to match the Event interface
       const formattedEvents = data.events.map((event: any) => ({
@@ -172,6 +171,9 @@ export default function Home() {
             The first meetup platform made
             <br /> specificallly for the tech community.
           </p>
+          <Button variant="secondary" className="p-4 font-semibold">
+            Sign Up Now
+          </Button>
         </div>
         <div className="flex">
           <SeedDatabase />

@@ -29,17 +29,18 @@ function getUserId(email: string): string | null {
     // if (!response.ok) {
     //   throw new Error('Failed to fetch user data');
     // }
-    
+
     // const users = await response.json();
-    
+
     // Find the user with the matching email
-    const user = users.find((user: { email: string; id: string }) => 
-      user.email.toLowerCase() === email.toLowerCase()
+    const user = users.find(
+      (user: { email: string; id: string }) =>
+        user.email.toLowerCase() === email.toLowerCase(),
     );
-    
+
     return user ? user.id : null;
   } catch (error) {
-    console.error('Error fetching user ID:', error);
+    console.error("Error fetching user ID:", error);
     return null;
   }
 }
