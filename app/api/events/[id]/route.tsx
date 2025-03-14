@@ -2,13 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { connectToDB } from "../../../lib/mongodb";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(request: NextRequest) {
   try {
-    const { db } = await connectToDB();
-    const id = params.id;
+    const { db: dbConnection } = await connectToDB();
+    const db = dbConnection();
+    
+    // Get the ID from the URL path
+    const path = request.nextUrl.pathname;
+    const id = path.split('/').pop();
+    
+    if (!id) {
+      return NextResponse.json({ message: "ID not provided" }, { status: 400 });
+    }
 
     // Check if the id is a valid ObjectId
     let query = {};
