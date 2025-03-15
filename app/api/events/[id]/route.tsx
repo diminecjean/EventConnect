@@ -6,11 +6,11 @@ export async function GET(request: NextRequest) {
   try {
     const { db: dbConnection } = await connectToDB();
     const db = dbConnection();
-    
+
     // Get the ID from the URL path
     const path = request.nextUrl.pathname;
-    const id = path.split('/').pop();
-    
+    const id = path.split("/").pop();
+
     if (!id) {
       return NextResponse.json({ message: "ID not provided" }, { status: 400 });
     }

@@ -22,12 +22,15 @@ export default function Navbar() {
   const handleSignOut = async () => {
     console.log("Logging out...");
     const userEmail = session?.user?.email;
-    
+
     // Store logout info in sessionStorage before signing out
     if (userEmail) {
-      sessionStorage.setItem('logoutInfo', JSON.stringify({ email: userEmail }));
+      sessionStorage.setItem(
+        "logoutInfo",
+        JSON.stringify({ email: userEmail }),
+      );
     }
-    
+
     await signOut({ redirect: false });
 
     toast("You have been logged out");
@@ -57,7 +60,10 @@ export default function Navbar() {
           </>
         ) : (
           <NavigationMenuItem>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()} onClick={handleSignOut}>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              onClick={handleSignOut}
+            >
               Logout
             </NavigationMenuLink>
           </NavigationMenuItem>
