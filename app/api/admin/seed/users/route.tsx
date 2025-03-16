@@ -1,4 +1,4 @@
-import { connectToDB } from "../../../lib/mongodb";
+import { connectToDB } from "../../../../lib/mongodb";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
     if (!events || !Array.isArray(events)) {
       return NextResponse.json(
-        { error: "Invalid event data provided" },
+        { error: "Invalid user data provided" },
         { status: 400 },
       );
     }
@@ -20,14 +20,14 @@ export async function POST(request: Request) {
     console.log("Connected successfully");
 
     const db = client.db();
-    const collection = db.collection("events");
+    const collection = db.collection("users");
 
     // Clear existing events
     await collection.deleteMany({});
 
-    console.log("Inserting events...");
+    console.log("Inserting users...");
     const result = await collection.insertMany(events);
-    console.log("Events inserted successfully");
+    console.log("Users inserted successfully");
 
     return NextResponse.json(
       {
