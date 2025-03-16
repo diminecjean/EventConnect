@@ -40,6 +40,8 @@ export enum USER_ROLE {
   SPONSOR = "sponsor",
   SPEAKER = "speaker",
   PARTNER = "partner",
+  COMMUNITY_BUILDER = "community_builder",
+  VOLUNTEER = "volunteer",
 }
 
 export type SignUpType = ACCOUNT_TYPE.USER | ACCOUNT_TYPE.ORGANIZATION | "";
