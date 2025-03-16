@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import eventsDataComplete from "@/data/eventsDataComplete.json";
+import { useRouter } from "next/navigation";
 
 interface Tag {
   id: string;
@@ -99,6 +100,7 @@ function SeedDatabase() {
 
 export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
+  const router = useRouter();
   async function getEvents() {
     try {
       // Use server-side fetch with no-cache to get latest data
@@ -171,7 +173,11 @@ export default function Home() {
             The first meetup platform made
             <br /> specificallly for the tech community.
           </p>
-          <Button variant="secondary" className="p-4 font-semibold">
+          <Button
+            onClick={() => router.push("/signup")}
+            variant="secondary"
+            className="p-4 font-semibold"
+          >
             Sign Up Now
           </Button>
         </div>
