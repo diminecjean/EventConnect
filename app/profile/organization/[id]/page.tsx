@@ -1,15 +1,14 @@
 import { notFound } from "next/navigation";
 import organizationsData from "@/data/organizationData.json";
-import type { OrganizationProfile } from "../../../../typings/profile/typings";
+import type { OrganizationProfile } from "../../../typings/profile/typings";
 
 import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { USER_ROLE } from "@/app/typings/profile/typings";
 
-const ORGANIZER = "organizer";
-const USER = "user";
-const USER_ROLE = USER; // Manually define current role here for testing.
+const userRole = USER_ROLE.PARTICIPANT; // Manually define current role here for testing.
 
 async function getOrganizationProfile(
   id: string,
@@ -61,7 +60,7 @@ const OrgPageTabs = ({ userRole }: { userRole?: string }) => {
       <TabsContent value="pictures">
         <div>
           <h1 className="font-semibold text-xl my-4">Pictures</h1>
-          {userRole === ORGANIZER && (
+          {userRole === USER_ROLE.ORGANIZER && (
             <Button variant="outline" className="mb-4">
               Upload Pictures
             </Button>
@@ -110,7 +109,7 @@ const OrganizationProfile = ({
                 variant="outline_violet"
                 className="rounded-lg text-violet-500 font-semibold"
               >
-                {userRole === ORGANIZER
+                {userRole === USER_ROLE.ORGANIZER
                   ? "Edit Organization"
                   : isSubscribed
                     ? "Subscribed"
@@ -138,7 +137,7 @@ export default async function OrganizationPage({
 
   return (
     <main className="w-full mt-20 flex flex-col gap-4">
-      <OrganizationProfile orgData={org} userRole={USER_ROLE} />
+      <OrganizationProfile orgData={org} userRole={userRole} />
     </main>
   );
 }

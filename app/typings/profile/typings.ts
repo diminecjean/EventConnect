@@ -28,3 +28,19 @@ export type UserProfile = {
   badges_earned?: string[]; // Earned badges
   registered_at: string; // ISO timestamp
 };
+
+export enum ACCOUNT_TYPE {
+  ORGANIZATION = "organization",
+  USER = "user",
+}
+
+export enum USER_ROLE {
+  ORGANIZER = "organizer",
+  PARTICIPANT = "participant",
+  SPONSOR = "sponsor",
+  SPEAKER = "speaker",
+  PARTNER = "partner",
+}
+
+export type SignUpType = ACCOUNT_TYPE.USER | ACCOUNT_TYPE.ORGANIZATION | "";
+

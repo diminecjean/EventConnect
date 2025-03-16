@@ -4,7 +4,7 @@ import usersData from "@/data/userData.json";
 import type {
   OrganizationProfile,
   UserProfile,
-} from "../../typings/profile/typings";
+} from "../typings/profile/typings";
 
 // TODO: Remove this page
 export default function ProfilePage() {

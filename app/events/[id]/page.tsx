@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import eventsData from "@/data/eventsData.json";
-import type { Event } from "../../../typings/events/typings";
+import type { Event } from "../../typings/events/typings";
 import { CalendarDays, LucideGlobe, MapPin } from "lucide-react";
 import {
   Timeline,
