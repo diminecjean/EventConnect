@@ -1,40 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
+import { connectToDB } from "@/app/lib/mongodb";
 import { ObjectId } from "mongodb";
-import { connectToDB } from "../../../lib/mongodb";
 
-export async function GET(request: NextRequest) {
+// GET single event by ID
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
-    const { db: dbConnection } = await connectToDB();
-    const db = dbConnection();
-
-    // Get the ID from the URL path
-    const path = request.nextUrl.pathname;
-    const id = path.split("/").pop();
-
-    if (!id) {
-      return NextResponse.json({ message: "ID not provided" }, { status: 400 });
+    // Verify we have an ID
+    if (!params || !params.id) {
+      return NextResponse.json(
+        { error: "Event ID is required" },
+        { status: 400 }
+      );
     }
+    console.log({params});
+    
+    const id = params.id;
+    
+    const client = await connectToDB();
+    const db = client.db();
 
-    // Check if the id is a valid ObjectId
-    let query = {};
+    // Try to find by MongoDB ObjectId first, then by custom ID field
+    let event = null;
+    
     if (ObjectId.isValid(id)) {
-      query = { _id: new ObjectId(id) };
-    } else {
-      query = { id: id }; // Fallback to a string id if not an ObjectId
+      event = await db.collection("events").findOne({ 
+        _id: new ObjectId(id) 
+      });
     }
-
-    const event = await db.collection("events").findOne(query);
-
+    
+    // If not found by ObjectId, try by custom id field
     if (!event) {
-      return NextResponse.json({ message: "Event not found" }, { status: 404 });
+      console.log("Checking for event by ObjectId:", id);
+      event = await db.collection("events").findOne({ id: id });
     }
-
-    return NextResponse.json(event);
+    
+    // Return 404 if event not found
+    if (!event) {
+      console.log("Event not found:", id);
+      return NextResponse.json(
+        { error: "Event not found" },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json({
+      status: "success",
+      event
+    }, { status: 200 });
   } catch (error) {
     console.error("Error fetching event:", error);
     return NextResponse.json(
-      { message: "Internal Server Error" },
-      { status: 500 },
+      { error: "Failed to fetch event" },
+      { status: 500 }
     );
   }
 }
