@@ -2,6 +2,7 @@ export type OrganizationProfile = {
   id: string;
   name: string;
   description: string;
+  organization_picture: string;
   website?: string;
   social_links?: {
     twitter?: string;

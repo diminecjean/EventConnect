@@ -103,7 +103,7 @@ export async function signUp() {
       email,
       password: hashedPassword,
       name,
-      createdAt: new Date().toISOString(),
+      registered_at: new Date().toISOString(),
     }),
   });
 
