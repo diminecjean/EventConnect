@@ -1,9 +1,23 @@
 import { notFound } from "next/navigation";
 import usersData from "@/data/userData.json";
 import type { UserProfile } from "../../../typings/profile/typings";
+import { BASE_URL } from "@/app/api/constants";
+
 
 async function getUserProfile(id: string): Promise<UserProfile | null> {
-  return usersData.find((user) => user.id === id) || null;
+  try {
+    const response = await fetch(`${BASE_URL}/api/users/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
+    }
+
+    const res = await response.json();
+    
+    return res.user;
+  } catch (error) {
+    console.error("Error fetching user ID:", error);
+    return null;
+  }
 }
 
 export async function generateMetadata({
