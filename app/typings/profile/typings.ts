@@ -18,7 +18,8 @@ export type OrganizationProfile = {
 };
 
 export type UserProfile = {
-  id: string;
+  _id: string;
+  id?: string;
   name: string;
   email: string;
   bio?: string;
