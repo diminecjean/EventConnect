@@ -19,26 +19,18 @@ import { Separator } from "@/components/ui/separator";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
 
-import users from "@/data/userData.json";
-
 // Function to fetch user ID from JSON data
 // async function getUserId(email: string): Promise<string | null> {
-function getUserId(email: string): string | null {
+async function getUserId(email: string) {
   try {
-    // const response = await fetch('/api/users');
-    // if (!response.ok) {
-    //   throw new Error('Failed to fetch user data');
-    // }
+    const response = await fetch(`/api/users/email/${email}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
+    }
 
-    // const users = await response.json();
-
-    // Find the user with the matching email
-    const user = users.find(
-      (user: { email: string; id: string }) =>
-        user.email.toLowerCase() === email.toLowerCase(),
-    );
-
-    return user ? user.id : null;
+    const res = await response.json();
+    
+    return res.user;
   } catch (error) {
     console.error("Error fetching user ID:", error);
     return null;
@@ -56,13 +48,17 @@ export default function LoginCard() {
 
   // Redirect if user is already logged in
   useEffect(() => {
-    console.log("Session:", session);
-    if (session?.user?.email) {
-      console.log("User is already logged in");
-      const userId = getUserId(session.user.email);
-      // Redirect to user profile page
-      router.push(`/profile/user/${userId}`);
-    }
+    const redirectUser = async () => {
+      console.log("Session:", session);
+      if (session?.user?.email) {
+        console.log("User is already logged in");
+        const user = await getUserId(session.user.email);
+        // Redirect to user profile page
+        router.push(`/profile/user/${user._id}`);
+      }
+    };
+    
+    redirectUser();
   }, [session, router]);
 
   useEffect(() => {
