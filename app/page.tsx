@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 
 import eventsDataComplete from "@/data/eventsDataComplete.json";
 import userData from "@/data/userData.json";
+import orgData from "@/data/organizationData.json";
 import { useRouter } from "next/navigation";
 import { signIn, signUp } from "./lib/auth";
 
@@ -41,7 +42,7 @@ function SeedDatabase() {
       setStatus("loading");
       setMessage("Seeding database...");
 
-      const body = database === "events" ? eventsDataComplete : userData;
+      const body = database === "events" ? eventsDataComplete : orgData;
 
       const response = await fetch(`/api/admin/seed/${database}`, {
         method: "POST",
@@ -107,11 +108,11 @@ function SeedDatabase() {
           {status === "loading" ? "Seeding..." : "Seed Events to Database"}
         </Button>
         <Button
-          onClick={() => seedDatabase("users")}
+          onClick={() => seedDatabase("organizations")}
           disabled={status === "loading"}
           className="px-6 py-2 ml-2"
         >
-          {status === "loading" ? "Seeding..." : "Seed Users to Database"}
+          {status === "loading" ? "Seeding..." : "Seed Orgs to Database"}
         </Button>
         <Button
           onClick={() => fetchUserById("user_001")}
