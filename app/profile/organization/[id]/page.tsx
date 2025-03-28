@@ -7,13 +7,24 @@ import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { USER_ROLE } from "@/app/typings/profile/typings";
+import { BASE_URL } from "@/app/api/constants";
 
 const userRole = USER_ROLE.PARTICIPANT; // Manually define current role here for testing.
 
-async function getOrganizationProfile(
-  id: string,
-): Promise<OrganizationProfile | null> {
-  return organizationsData.find((org) => org.id === id) || null;
+async function getOrganizationProfile(id: string): Promise<OrganizationProfile | null> {
+  try {
+    const response = await fetch(`${BASE_URL}/api/organizations/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch organization data');
+    }
+
+    const res = await response.json();
+
+    return res.organization;
+  } catch (error) {
+    console.error("Error fetching organization ID:", error);
+    return null;
+  }
 }
 
 export async function generateMetadata({
