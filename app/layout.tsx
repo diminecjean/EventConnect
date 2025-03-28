@@ -6,6 +6,7 @@ import NextAuthProvider from "./sessionProvider";
 import Navbar from "@/app/navbar";
 import Footer from "@/app/footer";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "./context/authContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,11 +26,13 @@ export default function RootLayout({
       {/* <html lang="en"> */}
       <body className={inter.className}>
         <NextAuthProvider>
-          <div className="fixed top-0 w-full z-50">
-            <Navbar />
-          </div>
-          <div className="mx-6 md:mx-16 lg:mx-auto max-w-5xl">{children}</div>
-          <Footer />
+          <AuthProvider>
+            <div className="fixed top-0 w-full z-50">
+              <Navbar />
+            </div>
+            <div className="mx-6 md:mx-16 lg:mx-auto max-w-5xl">{children}</div>
+            <Footer />
+          </AuthProvider>
         </NextAuthProvider>
         <Toaster />
       </body>
