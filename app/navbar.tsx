@@ -4,7 +4,6 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-import { cn } from "@/lib/utils";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -15,13 +14,7 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./context/authContext";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export default function Navbar() {
   const router = useRouter();
@@ -92,27 +85,15 @@ export default function Navbar() {
             {
               isOrganizer && organizations && (
                 <NavigationMenuItem>
-                  <Select value={selectedOrganization} onValueChange={setSelectedOrganization}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Organizations">
-                        {Array.isArray(organizations) 
-                          ? (
-                              <span title={organizations.find(org => org._id === selectedOrganization)?.name || ""}>
-                                {truncateText(organizations.find(org => org._id === selectedOrganization)?.name, 20) || "Organizations"}
-                              </span>
-                            )
-                          : (
-                              <span title={(organizations as any).name || ""}>
-                                {truncateText((organizations as any).name, 20) || "Organizations"}
-                              </span>
-                            )
-                        }
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                          Organizations
+                        </NavigationMenuLink>
+                    </PopoverTrigger>
+                    <PopoverContent>
                       {Array.isArray(organizations) ? (
                         organizations.map((org) => (
-                          <SelectItem key={org._id} value={org._id}>
                             <Link 
                               key={org._id} 
                               href={`/profile/organization/${org._id}`} 
@@ -121,11 +102,9 @@ export default function Navbar() {
                             >
                               {truncateText(org.name, 25)}
                             </Link>
-                          </SelectItem>
                         ))
                       ) : (
                         organizations && typeof organizations === 'object' && (
-                          <SelectItem value={(organizations as any)._id}> 
                             <Link 
                               href={`/profile/organization/${(organizations as any)._id}`}
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -133,11 +112,10 @@ export default function Navbar() {
                             >
                               {truncateText((organizations as any).name, 25)}
                             </Link>
-                          </SelectItem>
                         )
                       )}
-                    </SelectContent>
-                  </Select>
+                    </PopoverContent>
+                  </Popover>
                 </NavigationMenuItem>
               )
             }
