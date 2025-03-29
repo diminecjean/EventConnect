@@ -16,10 +16,9 @@ export async function POST(request: Request) {
     }
 
     console.log("Connecting to MongoDB...");
-    const client = await connectToDB();
+    const db = await connectToDB();
     console.log("Connected successfully");
 
-    const db = client.db();
     const collection = db.collection("users");
 
     // Clear existing events

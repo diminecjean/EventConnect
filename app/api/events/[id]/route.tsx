@@ -17,8 +17,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ id: s
     
     const id = params.id;
     
-    const client = await connectToDB();
-    const db = client.db();
+    const db = await connectToDB();
 
     // Try to find by MongoDB ObjectId first, then by custom ID field
     let event = null;

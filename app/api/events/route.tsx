@@ -4,8 +4,7 @@ import { NextRequest } from "next/server";
 
 export const GET = async (_req: NextRequest) => {
   try {
-    const client = await connectToDB();
-    const db = client.db();
+    const db = await connectToDB();
 
     const events = await db.collection("events").find({}).toArray();
 

@@ -16,8 +16,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ email
         
         const email = params.email;
         
-        const client = await connectToDB();
-        const db = client.db();
+        const db = await connectToDB();
 
         // Find user by email
         const user = await db.collection("users").findOne({ email: email });

@@ -4,8 +4,7 @@ import { NextRequest } from "next/server";
 
 export const GET = async (_req: NextRequest) => {
   try {
-    const client = await connectToDB();
-    const db = client.db();
+    const db = await connectToDB();
 
     const organizations = await db.collection("organizations").find({}).toArray();
 
@@ -21,8 +20,7 @@ export const GET = async (_req: NextRequest) => {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const client = await connectToDB();
-    const db = client.db();
+    const db = await connectToDB();
     
     const body = await req.json();
     
