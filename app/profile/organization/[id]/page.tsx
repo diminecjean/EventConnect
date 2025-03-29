@@ -1,59 +1,57 @@
-import { notFound } from "next/navigation";
-import organizationsData from "@/data/organizationData.json";
+"use client";
+import { useEffect, useState } from "react";
+import { notFound, useParams, useRouter } from "next/navigation";
 import type { OrganizationProfile } from "../../../typings/profile/typings";
 
 import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { USER_ROLE } from "@/app/typings/profile/typings";
 import { BASE_URL } from "@/app/api/constants";
+import { useAuth } from "@/app/context/authContext";
 
-const userRole = USER_ROLE.PARTICIPANT; // Manually define current role here for testing.
-
-async function getOrganizationProfile(id: string): Promise<OrganizationProfile | null> {
-  try {
-    const response = await fetch(`${BASE_URL}/api/organizations/${id}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch organization data');
-    }
-
-    const res = await response.json();
-
-    return res.organization;
-  } catch (error) {
-    console.error("Error fetching organization ID:", error);
-    return null;
-  }
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const org = await getOrganizationProfile(id);
-
-  if (!org) return { title: "Organization Not Found" };
-  return {
-    title: `${org.name} - Organization Details`,
-    description: org.description,
+const OrgPageTabs = ({ canEditOrg, orgId, orgName }: { canEditOrg?: boolean, orgId: string, orgName: string }) => {
+  const router = useRouter();
+  
+  const handleCreateEvent = () => {
+    router.push(`/events/new?orgId=${orgId}&&orgName=${orgName}`);
   };
-}
 
-const OrgPageTabs = ({ userRole }: { userRole?: string }) => {
   return (
-    <Tabs defaultValue="timeline" className="my-6 w-full min-w-xl">
-      <TabsList className="grid w-full grid-cols-4">
+    <Tabs defaultValue={canEditOrg?"stats":"events"} className="my-6 w-full min-w-xl">
+      <TabsList className={`grid w-full ${canEditOrg?"grid-cols-5":"grid-cols-4"}`}>
+        {canEditOrg && (
+          <TabsTrigger value="stats">Stats</TabsTrigger>
+        )}  
         <TabsTrigger value="events">Events</TabsTrigger>
         <TabsTrigger value="team">Team</TabsTrigger>
         <TabsTrigger value="partners">Partners</TabsTrigger>
         <TabsTrigger value="pictures">Pictures</TabsTrigger>
       </TabsList>
+      {canEditOrg && (
+        <TabsContent value="stats">
+          <div>
+            <h1 className="font-semibold text-xl my-4">Stats</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          </div>
+        </TabsContent>
+      )}
       <TabsContent value="events">
         <div>
-          <h1 className="font-semibold text-xl my-4">Events</h1>
+          <div id="header" className="flex flex-row justify-between">
+              <h1 className="font-semibold text-xl my-4">Events</h1>
+              {
+                canEditOrg && (
+                  <Button
+                    variant="outline_violet"
+                    className="rounded-full text-violet-500 font-semibold"
+                    onClick={handleCreateEvent}
+                  >
+                    +
+                  </Button>
+                )
+              }
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
       </TabsContent>
@@ -71,8 +69,11 @@ const OrgPageTabs = ({ userRole }: { userRole?: string }) => {
       <TabsContent value="pictures">
         <div>
           <h1 className="font-semibold text-xl my-4">Pictures</h1>
-          {userRole === USER_ROLE.ORGANIZER && (
-            <Button variant="outline" className="mb-4">
+          {canEditOrg && (
+            <Button
+              variant="outline_violet"
+              className="rounded-lg text-violet-500 font-semibold"
+            >
               Upload Pictures
             </Button>
           )}
@@ -84,11 +85,11 @@ const OrgPageTabs = ({ userRole }: { userRole?: string }) => {
 
 const OrganizationProfile = ({
   orgData,
-  userRole,
+  canEditOrg,
   isSubscribed,
 }: {
   orgData: OrganizationProfile;
-  userRole?: string;
+  canEditOrg?: boolean;
   isSubscribed?: boolean;
 }) => {
   return (
@@ -120,7 +121,7 @@ const OrganizationProfile = ({
                 variant="outline_violet"
                 className="rounded-lg text-violet-500 font-semibold"
               >
-                {userRole === USER_ROLE.ORGANIZER
+                {canEditOrg
                   ? "Edit Organization"
                   : isSubscribed
                     ? "Subscribed"
@@ -128,7 +129,7 @@ const OrganizationProfile = ({
               </Button>
             </div>
           </div>
-          <OrgPageTabs userRole={userRole} />
+          <OrgPageTabs canEditOrg={canEditOrg} orgId={orgData._id} orgName={orgData.name} />
         </div>
         <div className="flex flex-col"></div>
       </div>
@@ -136,19 +137,54 @@ const OrganizationProfile = ({
   );
 };
 
-export default async function OrganizationPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const org = await getOrganizationProfile(id);
+export default function OrganizationPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const [org, setOrg] = useState<OrganizationProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { user, organizations } = useAuth();
+  const [canEditOrg, setCanEditOrg] = useState(false);
+  
+  useEffect(() => {
+    async function fetchOrganization() {
+      try {
+        const response = await fetch(`${BASE_URL}/api/organizations/${id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch organization data');
+        }
+        const res = await response.json();
+        setOrg(res.organization);
+
+        // Check if user can edit this specific organization
+        if (user && organizations) {
+          // Check if this organization ID is in the user's organizations list
+          const userCanEdit = organizations.some(org => org._id === id || org.id === id);
+          setCanEditOrg(userCanEdit);
+        }
+      } catch (error) {
+        console.error("Error fetching organization:", error);
+        setOrg(null);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchOrganization();
+  }, [id, user, organizations]);
+
+  if (isLoading) {
+    return (
+      <main className="w-full mt-20 flex flex-col gap-4 items-center justify-center">
+        <p>Loading organization details...</p>
+      </main>
+    );
+  }
 
   if (!org) return notFound();
 
   return (
     <main className="w-full mt-20 flex flex-col gap-4">
-      <OrganizationProfile orgData={org} userRole={userRole} />
+      <OrganizationProfile orgData={org} canEditOrg={canEditOrg} />
     </main>
   );
 }

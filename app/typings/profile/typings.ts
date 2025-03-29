@@ -1,5 +1,6 @@
 export type OrganizationProfile = {
-  id: string;
+  _id: string;
+  id?: string;
   name: string;
   description: string;
   organization_picture: string;

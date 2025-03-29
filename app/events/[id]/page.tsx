@@ -68,6 +68,7 @@ const SampleEventPage = ({ event }: { event: Event }) => {
   );
 };
 
+// sample data
 const speakers = [
   {
     name: "Jane Doe",
@@ -128,7 +129,7 @@ const getSocialIcon = (platform: string) => {
   }
 };
 
-const TabsDemo = () => {
+const EventTabs = () => {
   return (
     <Tabs defaultValue="timeline" className="my-6 w-full min-w-xl">
       <TabsList className="grid w-full grid-cols-4">
@@ -315,7 +316,7 @@ export default async function EventPage({
               <li key={index}>{detail}</li>
             ))} */}
           </ul>
-          <TabsDemo />
+          <EventTabs />
         </div>
       </div>
     </div>

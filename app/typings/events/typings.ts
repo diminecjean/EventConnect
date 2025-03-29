@@ -3,6 +3,7 @@ export interface EventData {
 }
 
 export interface Event {
+  _id: string;
   id: string;
   eventLogo: EventLogo;
   host: Host;

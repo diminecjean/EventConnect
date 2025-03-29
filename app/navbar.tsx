@@ -18,8 +18,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 export default function Navbar() {
   const router = useRouter();
-  const { user, organizations, isOrganizer, isLoading, clearUser } = useAuth();
-  console.log({user, isOrganizer, organizations});
+  const { user, organizations, isLoading, clearUser } = useAuth();
+  console.log({user, organizations});
   const [selectedOrganization, setSelectedOrganization] = useState("");
   
   // Update selectedOrganization whenever organizations changes
@@ -83,7 +83,7 @@ export default function Navbar() {
         ) : (
           <>
             {
-              isOrganizer && organizations && (
+              organizations && (
                 <NavigationMenuItem>
                   <Popover>
                     <PopoverTrigger asChild>
