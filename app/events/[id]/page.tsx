@@ -18,9 +18,22 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Linkedin, Twitter, Github } from "lucide-react"; // Import icons
 import EventImage from "@/app/events/EventImage"; // Import the new client component
+import { BASE_URL } from "@/app/api/constants";
 
 async function getEvent(id: string): Promise<Event | null> {
-  return eventsData.find((event) => event.id === id) || null;
+  try {
+    const response = await fetch(`${BASE_URL}/api/events/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch event data');
+    }
+
+    const res = await response.json();
+    
+    return res.event;
+  } catch (error) {
+    console.error("Error fetching event ID:", error);
+    return null;
+  }
 }
 
 export async function generateMetadata({
@@ -298,9 +311,9 @@ export default async function EventPage({
           <h1 className="text-4xl font-semibold">{event.title}</h1>
           <p className="mt-4">{event.description.preview}</p>
           <ul className="mt-4 list-disc list-inside">
-            {event.description.details.map((detail, index) => (
+            {/* {event.description.details.map((detail, index) => (
               <li key={index}>{detail}</li>
-            ))}
+            ))} */}
           </ul>
           <TabsDemo />
         </div>
