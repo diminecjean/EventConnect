@@ -33,6 +33,7 @@ const eventFormSchema = z.object({
   endDate: z.date().optional(),
   maxAttendees: z.number().positive().optional(),
   imageUrl: z.string().optional(),
+  bannerUrl: z.string().optional(),
   organizationId: z.string(), // Required to associate event with organization
 });
 
@@ -137,8 +138,28 @@ export default function EventForm({ organizationId, organizationName, eventId, e
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="w-full h-64 bg-violet-700"> Banner upload</div>
+          <FormField
+            control={form.control}
+            name="bannerUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Image</FormLabel>
+                <FormControl>
+                <FormImageUploader
+                  name="image"
+                  onChange={(file) => field.onChange(file)}
+                  required={true}
+                  maxSizeMB={2}
+                  height={256}
+                  scaleDesc="1080px x 256px"
+                />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="flex flex-row w-full gap-6">
+            {/* Left col */}
             <div className="flex flex-col min-w-lg gap-6">
             <FormField
             control={form.control}
@@ -152,6 +173,8 @@ export default function EventForm({ organizationId, organizationName, eventId, e
                   onChange={(file) => field.onChange(file)}
                   required={true}
                   maxSizeMB={2}
+                  width={350}
+                  height={350}
                 />
                 </FormControl>
                 <FormMessage />
@@ -238,40 +261,6 @@ export default function EventForm({ organizationId, organizationName, eventId, e
                 )}
             />
           </div>
-            </div>
-            <div className="flex flex-col w-full gap-6">
-            <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Event Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter event title" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    placeholder="Describe your event" 
-                    className="min-h-32"
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
           <FormField
             control={form.control}
             name="location"
@@ -308,6 +297,42 @@ export default function EventForm({ organizationId, organizationName, eventId, e
               </FormItem>
             )}
           />
+            </div>
+            {/* Right col */}
+            <div className="flex flex-col w-full gap-6">
+            <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter event title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="Describe your event" 
+                    className="min-h-32"
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          
  
             </div>
           </div>
