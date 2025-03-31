@@ -24,11 +24,11 @@ async function getEvent(id: string): Promise<Event | null> {
   try {
     const response = await fetch(`${BASE_URL}/api/events/${id}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch event data');
+      throw new Error("Failed to fetch event data");
     }
 
     const res = await response.json();
-    
+
     return res.event;
   } catch (error) {
     console.error("Error fetching event ID:", error);

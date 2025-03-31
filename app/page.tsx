@@ -21,6 +21,7 @@ interface Tag {
 }
 
 interface Event {
+  _id: string;
   id: string;
   eventLogo: { src: string; alt: string; width: number; height: number };
   host: { logo: string; name: string };
@@ -42,7 +43,7 @@ function SeedDatabase() {
       setStatus("loading");
       setMessage("Seeding database...");
 
-      const body = database === "events" ? eventsDataComplete : orgData;
+      const body = database === "events" ? eventsDataComplete : userData;
 
       const response = await fetch(`/api/admin/seed/${database}`, {
         method: "POST",
@@ -83,7 +84,9 @@ function SeedDatabase() {
       }
 
       setStatus("success");
-      setMessage(`Success! Fetched user: ${JSON.stringify({user: data.user})}`);
+      setMessage(
+        `Success! Fetched user: ${JSON.stringify({ user: data.user })}`,
+      );
     } catch (error) {
       console.error("Error fetching user:", error);
       setStatus("error");
@@ -91,7 +94,7 @@ function SeedDatabase() {
         `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
-  }
+  };
 
   return (
     <div className="p-8 mt-20">
@@ -108,21 +111,23 @@ function SeedDatabase() {
           {status === "loading" ? "Seeding..." : "Seed Events to Database"}
         </Button>
         <Button
-          onClick={() => seedDatabase("organizations")}
+          onClick={() => seedDatabase("users")}
           disabled={status === "loading"}
           className="px-6 py-2 ml-2"
         >
-          {status === "loading" ? "Seeding..." : "Seed Orgs to Database"}
+          {status === "loading" ? "Seeding..." : "Seed User to Database"}
         </Button>
         <Button
           onClick={() => fetchUserById("user_001")}
           disabled={status === "loading"}
-          className="px-6 py-2 ml-2"  
+          className="px-6 py-2 ml-2"
         >
           {status === "loading" ? "Fetching..." : "Test user route"}
         </Button>
         <Button
-          onClick={() => {signUp();}}
+          onClick={() => {
+            signUp();
+          }}
           disabled={status === "loading"}
           className="px-6 py-2 ml-2"
         >
@@ -164,6 +169,7 @@ export default function Home() {
       const data = await res.json();
       // You might need to transform the API response to match the Event interface
       const formattedEvents = data.events.map((event: any) => ({
+        _id: event._id,
         id: event.id,
         eventLogo: {
           src: event.eventLogo?.src || "/placeholder.svg",
@@ -243,7 +249,7 @@ export default function Home() {
         {events.map((event, index) => (
           <EventCard
             key={index}
-            id={event.id}
+            id={event._id}
             eventLogo={event.eventLogo}
             host={event.host}
             title={event.title}

@@ -32,35 +32,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       authorize: async (credentials) => {
         // Check if user exists in db
-        // For logins, user should exist      
+        // For logins, user should exist
         const encodedEmail = encodeURIComponent(credentials.email as string);
         const res = await fetch(`${BASE_URL}/api/users/email/${encodedEmail}`);
 
         if (res.status === 404) {
-          console.log({res});
-          throw new Error('User not found');
+          console.log({ res });
+          throw new Error("User not found");
         }
-        
+
         const jsonRes = await res.json();
         const existingUser = jsonRes.user;
-        console.log({existingUser});
+        console.log({ existingUser });
 
         // Check if credentials match
-        const credentials_match = await passwordMatch(credentials.password, existingUser.password);
-        
+        const credentials_match = await passwordMatch(
+          credentials.password,
+          existingUser.password,
+        );
+
         if (!credentials_match) {
-          throw new Error('Invalid credentials'); 
+          throw new Error("Invalid credentials");
         } else {
           // Convert MongoDB document to User object
           return {
             id: existingUser._id.toString(),
             email: existingUser.email,
             name: existingUser.name || null,
-            image: existingUser.image || null
+            image: existingUser.image || null,
           } as User;
         }
-        }
-      }),
+      },
+    }),
   ],
 });
 
@@ -75,48 +78,51 @@ export async function signUp() {
   const res = await fetch(`${BASE_URL}/api/users/email/${email}`);
 
   if (res.status != 404) {
-    console.log({res});
-    throw new Error('User already exists with this email');
+    console.log({ res });
+    throw new Error("User already exists with this email");
   }
 
   // Hash the password
   const hashedPassword = await hashPassword(myPlaintextPassword);
-  console.log({myPlaintextPassword,hashedPassword});
+  console.log({ myPlaintextPassword, hashedPassword });
 
   // Create user
   const user = {
     email,
     password: hashedPassword,
-    name: name || '',
+    name: name || "",
     createdAt: new Date(),
   };
-  
-  console.log({user});
+
+  console.log({ user });
 
   // Insert the user document
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ""}/api/users`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL || ""}/api/users`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password: hashedPassword,
+        name,
+        registered_at: new Date().toISOString(),
+      }),
     },
-    body: JSON.stringify({
-      email,
-      password: hashedPassword,
-      name,
-      registered_at: new Date().toISOString(),
-    }),
-  });
+  );
 
-  console.log({response});
-  
+  console.log({ response });
+
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to create user');
+    throw new Error(errorData.error || "Failed to create user");
   }
-  
+
   // Return user without password
   const { password: _, ...userWithoutPassword } = user;
   return {
-    ...userWithoutPassword,  
+    ...userWithoutPassword,
   };
 }

@@ -16,7 +16,15 @@ import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { ArrowLeft, Building, Calendar, Eye, EyeClosed, UserCircle, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Building,
+  Calendar,
+  Eye,
+  EyeClosed,
+  UserCircle,
+  Users,
+} from "lucide-react";
 import { ACCOUNT_TYPE, SignUpType } from "@/app/typings/profile/typings";
 
 const UserSignUp = () => {
@@ -76,7 +84,9 @@ const UserSignUp = () => {
               Sign Up
             </Button>
             <Separator />
-            <p className="text-xs">or continue with your accounts through OAuth</p>
+            <p className="text-xs">
+              or continue with your accounts through OAuth
+            </p>
             <Button
               type="button"
               onClick={() => signIn("github")}
@@ -144,60 +154,65 @@ export default function SignUpPage() {
       <Card className="w-full max-w-xl py-8 px-4">
         {signUpType === "" && (
           <>
-            
-              <CardHeader>
-                <AccountSelectionIllustration />
-                <CardTitle className="text-center">
-                  Welcome to EventConnect
-                </CardTitle>
-                <CardDescription className="text-center">
-                  Choose how you want to sign up
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col py-6">
-                <div className="flex flex-col space-y-4">
-                  <Button
-                    onClick={() => setSignUpType(ACCOUNT_TYPE.USER)}
-                    variant="outline"
-                    className="w-full p-6"
-                  >
-                    Sign up as an Individual User
-                  </Button>
-                  <Button
-                    onClick={() => setSignUpType(ACCOUNT_TYPE.ORGANIZATION)}
-                    variant="outline"
-                    className="w-full p-6"
-                  >
-                    Sign up as an Organization
-                  </Button>
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col justify-between">
-                <div className="pt-4">
-                  <p className="text-sm text-center text-gray-500">
-                    Already have an account?{" "}
-                    <a href="/signin" className="text-blue-600 hover:underline">
-                      Sign in
-                    </a>
-                  </p>
-                </div>
-              </CardFooter>
-            </>
+            <CardHeader>
+              <AccountSelectionIllustration />
+              <CardTitle className="text-center">
+                Welcome to EventConnect
+              </CardTitle>
+              <CardDescription className="text-center">
+                Choose how you want to sign up
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col py-6">
+              <div className="flex flex-col space-y-4">
+                <Button
+                  onClick={() => setSignUpType(ACCOUNT_TYPE.USER)}
+                  variant="outline"
+                  className="w-full p-6"
+                >
+                  Sign up as an Individual User
+                </Button>
+                <Button
+                  onClick={() => setSignUpType(ACCOUNT_TYPE.ORGANIZATION)}
+                  variant="outline"
+                  className="w-full p-6"
+                >
+                  Sign up as an Organization
+                </Button>
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col justify-between">
+              <div className="pt-4">
+                <p className="text-sm text-center text-gray-500">
+                  Already have an account?{" "}
+                  <a href="/signin" className="text-blue-600 hover:underline">
+                    Sign in
+                  </a>
+                </p>
+              </div>
+            </CardFooter>
+          </>
         )}
         {signUpType === ACCOUNT_TYPE.USER && (
           <>
-            <div className="flex flex-row items-center text-xs gap-1 pl-4 text-stone-500 cursor-pointer pb-4" onClick={() => setSignUpType("")}>
-              <ArrowLeft size={14}/> Back
+            <div
+              className="flex flex-row items-center text-xs gap-1 pl-4 text-stone-500 cursor-pointer pb-4"
+              onClick={() => setSignUpType("")}
+            >
+              <ArrowLeft size={14} /> Back
             </div>
-            <UserSignUp/>
+            <UserSignUp />
           </>
         )}
         {signUpType === ACCOUNT_TYPE.ORGANIZATION && (
           <>
-            <div className="flex flex-row items-center text-xs gap-1 pl-4 text-stone-500 cursor-pointer pb-4" onClick={() => setSignUpType("")}>
-              <ArrowLeft size={14}/> Back
+            <div
+              className="flex flex-row items-center text-xs gap-1 pl-4 text-stone-500 cursor-pointer pb-4"
+              onClick={() => setSignUpType("")}
+            >
+              <ArrowLeft size={14} /> Back
             </div>
-            <OrgSignUp/>
+            <OrgSignUp />
           </>
         )}
       </Card>

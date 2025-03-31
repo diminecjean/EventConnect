@@ -10,19 +10,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BASE_URL } from "@/app/api/constants";
 import { useAuth } from "@/app/context/authContext";
 
-const OrgPageTabs = ({ canEditOrg, orgId, orgName }: { canEditOrg?: boolean, orgId: string, orgName: string }) => {
+const OrgPageTabs = ({
+  canEditOrg,
+  orgId,
+  orgName,
+}: {
+  canEditOrg?: boolean;
+  orgId: string;
+  orgName: string;
+}) => {
   const router = useRouter();
-  
+
   const handleCreateEvent = () => {
     router.push(`/events/new?orgId=${orgId}&&orgName=${orgName}`);
   };
 
   return (
-    <Tabs defaultValue={canEditOrg?"stats":"events"} className="my-6 w-full min-w-xl">
-      <TabsList className={`grid w-full ${canEditOrg?"grid-cols-5":"grid-cols-4"}`}>
-        {canEditOrg && (
-          <TabsTrigger value="stats">Stats</TabsTrigger>
-        )}  
+    <Tabs
+      defaultValue={canEditOrg ? "stats" : "events"}
+      className="my-6 w-full min-w-xl"
+    >
+      <TabsList
+        className={`grid w-full ${canEditOrg ? "grid-cols-5" : "grid-cols-4"}`}
+      >
+        {canEditOrg && <TabsTrigger value="stats">Stats</TabsTrigger>}
         <TabsTrigger value="events">Events</TabsTrigger>
         <TabsTrigger value="team">Team</TabsTrigger>
         <TabsTrigger value="partners">Partners</TabsTrigger>
@@ -39,18 +50,16 @@ const OrgPageTabs = ({ canEditOrg, orgId, orgName }: { canEditOrg?: boolean, org
       <TabsContent value="events">
         <div>
           <div id="header" className="flex flex-row justify-between">
-              <h1 className="font-semibold text-xl my-4">Events</h1>
-              {
-                canEditOrg && (
-                  <Button
-                    variant="outline_violet"
-                    className="rounded-full text-violet-500 font-semibold"
-                    onClick={handleCreateEvent}
-                  >
-                    +
-                  </Button>
-                )
-              }
+            <h1 className="font-semibold text-xl my-4">Events</h1>
+            {canEditOrg && (
+              <Button
+                variant="outline_violet"
+                className="rounded-full text-violet-500 font-semibold"
+                onClick={handleCreateEvent}
+              >
+                +
+              </Button>
+            )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
@@ -129,7 +138,11 @@ const OrganizationProfile = ({
               </Button>
             </div>
           </div>
-          <OrgPageTabs canEditOrg={canEditOrg} orgId={orgData._id} orgName={orgData.name} />
+          <OrgPageTabs
+            canEditOrg={canEditOrg}
+            orgId={orgData._id}
+            orgName={orgData.name}
+          />
         </div>
         <div className="flex flex-col"></div>
       </div>
@@ -144,13 +157,13 @@ export default function OrganizationPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { user, organizations } = useAuth();
   const [canEditOrg, setCanEditOrg] = useState(false);
-  
+
   useEffect(() => {
     async function fetchOrganization() {
       try {
         const response = await fetch(`${BASE_URL}/api/organizations/${id}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch organization data');
+          throw new Error("Failed to fetch organization data");
         }
         const res = await response.json();
         setOrg(res.organization);
@@ -158,7 +171,9 @@ export default function OrganizationPage() {
         // Check if user can edit this specific organization
         if (user && organizations) {
           // Check if this organization ID is in the user's organizations list
-          const userCanEdit = organizations.some(org => org._id === id || org.id === id);
+          const userCanEdit = organizations.some(
+            (org) => org._id === id || org.id === id,
+          );
           setCanEditOrg(userCanEdit);
         }
       } catch (error) {

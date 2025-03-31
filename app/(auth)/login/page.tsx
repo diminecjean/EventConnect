@@ -25,11 +25,11 @@ async function getUserId(email: string) {
   try {
     const response = await fetch(`/api/users/email/${email}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch user data');
+      throw new Error("Failed to fetch user data");
     }
 
     const res = await response.json();
-    
+
     return res.user;
   } catch (error) {
     console.error("Error fetching user ID:", error);
@@ -57,7 +57,7 @@ export default function LoginCard() {
         router.push(`/profile/user/${user._id}`);
       }
     };
-    
+
     redirectUser();
   }, [session, router]);
 

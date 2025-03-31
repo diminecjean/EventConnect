@@ -48,4 +48,3 @@ export enum USER_ROLE {
 }
 
 export type SignUpType = ACCOUNT_TYPE.USER | ACCOUNT_TYPE.ORGANIZATION | "";
-
