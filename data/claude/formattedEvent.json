@@ -1,0 +1,118 @@
+[
+    {
+    "title": "Test event",
+    "description": "This is a test event\n",
+    "location": "USM",
+    "startDate": {"$date": "2025-04-06T01:00:00.000Z"},
+    "endDate": {"$date": "2025-04-06T09:00:00.000Z"},
+    "maxAttendees": 80,
+    "partnerOrganizations": [{"$oid": "67e01112817da4e9ba59a386"}],
+    "imageUrl": "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
+    "bannerUrl": "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
+    "eventMode": "physical",
+    "virtualMeetingLink": "",
+    "organizationId": {"$oid": "67e01112817da4e9ba59a385"},
+    "registrationForms": [
+      {
+        "id": "a5fb7aed-58c4-41aa-b2b0-dd926eadb073",
+        "name": "Participant",
+        "description": "Registration form for participants",
+        "formFields": [
+          {
+            "id": "a774485e-635b-42e3-b66e-a118e9634d89",
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "id": "b939122e-60e5-4848-85f7-f326c6c91559",
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "Enter your email address"
+          },
+          {
+            "id": "b1966b4e-27f8-49d9-83e3-8954804a4cda",
+            "label": "Position",
+            "type": "text",
+            "required": true,
+            "placeholder": "Enter your job position"
+          }
+        ],
+        "isDefault": true
+      },
+      {
+        "id": "d14fa239-0eb7-4e22-b2d9-a54c750c1723",
+        "name": "Speaker",
+        "description": "Speaker registration form",
+        "formFields": [
+          {
+            "id": "959797af-f772-4f56-a9e9-abc4cec4b1de",
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "id": "f0856035-a3eb-4e42-a03b-635b35212db2",
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "Enter your email address"
+          }
+        ],
+        "isDefault": false
+      }
+    ],
+    "timelineItems": [
+      {
+        "id": "03d1c117-76ea-4d7f-a3a0-26f3bc572497",
+        "date": "2025-04-06T11:40:15.741Z",
+        "time": "9:00 AM",
+        "title": "Registration",
+        "description": "In the pantry"
+      },
+      {
+        "id": "9faa62b8-d67f-454b-8bfc-225ef0ad8bf7",
+        "date": "2025-04-06T11:40:15.741Z",
+        "time": "10:00 AM",
+        "title": "Talk 1",
+        "description": "by pro developer"
+      }
+    ],
+    "speakers": [
+      {
+        "id": "4e69cd02-066a-4d1d-a5f8-d49cd28322ca",
+        "name": "Wei En",
+        "topic": "Sleep",
+        "organization": "USM",
+        "position": "Student",
+        "imageUrl": "",
+        "socialMedia": [
+          {
+            "id": "f31fd128-b5a0-4c3a-a163-58e08f4f68b7",
+            "platform": "instagram",
+            "url": "https://www.instagram.com/diminecjean2002/"
+          }
+        ]
+      }
+    ],
+    "sponsors": [
+      {
+        "id": "a8ecb891-359b-42cd-a5f7-21293f3b7a00",
+        "name": "GDG Cloud",
+        "sponsorType": "food",
+        "logoUrl": "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
+        "description": "Google Developer Groups\n",
+        "socialLinks": []
+      }
+    ],
+    "galleryImages": [
+      "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
+      "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png"
+    ],
+    "createdAt": { "$date": "2025-01-15T08:30:00Z" },
+    "updatedAt": { "$date": "2025-03-22T14:45:00Z" }
+  }
+]
