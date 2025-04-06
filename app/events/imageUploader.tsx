@@ -9,7 +9,8 @@ import React, {
 interface FormImageUploaderProps {
   name: string;
   label?: string;
-  onChange?: (file: File | null) => void;
+  // onChange?: (file: File | null) => void;
+  onChange?: (file: string | null) => void;
   value?: File | string | null;
   error?: string;
   required?: boolean;
@@ -39,12 +40,14 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
     },
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
+    // example previewUrl: "blob:http://localhost:3000/12345678-1234-1234-1234-123456789012"
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [fileError, setFileError] = useState<string | null>(null);
 
     // Handle initial value if provided
     useEffect(() => {
       if (value instanceof File) {
+        // For when a File object is provided as initial value
         setPreviewUrl(URL.createObjectURL(value));
       } else if (typeof value === "string" && value) {
         // For when a URL is provided as initial value
@@ -97,9 +100,19 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
         const fileUrl = URL.createObjectURL(file);
         setPreviewUrl(fileUrl);
 
-        // Pass the file to parent form
+        // // Pass the file to parent form
+        // if (onChange) {
+        //   onChange(file);
+        // }
+
+        // Generate a mock URL based on the file name
+        // TODO: This is the temporary workaround - replace with actual upload logic later
+        const mockUrl =
+          "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png";
+
+        // Pass the mock URL to parent form
         if (onChange) {
-          onChange(file);
+          onChange(mockUrl);
         }
       }
     };
