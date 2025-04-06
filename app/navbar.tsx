@@ -71,7 +71,8 @@ export default function Navbar() {
   }
 
   return (
-    <NavigationMenu>
+    // TODO: set dynamic background opacity, and fix opacity
+    <NavigationMenu className="bg-black bg-opacity-90 backdrop-blur-sm">
       <NavigationMenuList>
         {!user ? (
           <>

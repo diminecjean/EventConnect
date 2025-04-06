@@ -10,7 +10,14 @@ const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>
 >(({ className, children, ...props }, ref) => (
-  <div className="absolute z-10 flex w-full items-center justify-between px-4">
+  <NavigationMenuPrimitive.Root
+    ref={ref}
+    className={cn(
+      "absolute z-10 flex w-full items-center justify-between px-4",
+      className,
+    )}
+    {...props}
+  >
     <a href="/">
       <Image
         src="/eventconnectlogo.svg"
@@ -20,15 +27,9 @@ const NavigationMenu = React.forwardRef<
         className="object-contain py-4 px-2"
       />
     </a>
-    <NavigationMenuPrimitive.Root
-      ref={ref}
-      className={cn("flex flex-1 items-center justify-end", className)}
-      {...props}
-    >
-      {children}
-      <NavigationMenuViewport />
-    </NavigationMenuPrimitive.Root>
-  </div>
+    {children}
+    <NavigationMenuViewport />
+  </NavigationMenuPrimitive.Root>
 ));
 NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName;
 
