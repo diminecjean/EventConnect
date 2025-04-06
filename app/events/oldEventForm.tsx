@@ -176,23 +176,26 @@ const eventFormSchema = z
         }),
       )
       .optional(),
-    speakers: z.array(
-      z.object({
-        id: z.string(),
-        name: z.string().min(1, "Speaker name is required"),
-        topic: z.string().min(1, "Speaking topic is required"),
-        organization: z.string().optional(),
-        position: z.string().optional(),
-        imageUrl: z.string().optional(),
-        socialMedia: z.array(
-          z.object({
-            id: z.string(),
-            platform: z.string(),
-            url: z.string().url("Must be a valid URL"),
-          }),
-        ),
-      }),
-    ),
+    speakers: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string().min(1, "Speaker name is required"),
+          topic: z.string().min(1, "Speaking topic is required"),
+          organization: z.string().optional(),
+          position: z.string().optional(),
+          imageUrl: z.string().optional(),
+          socialMedia: z.array(
+            z.object({
+              id: z.string(),
+              platform: z.string(),
+              url: z.string().url("Must be a valid URL"),
+            }),
+          ),
+        }),
+      )
+      .optional()
+      .default([]),
     sponsors: z
       .array(
         z.object({
@@ -692,7 +695,7 @@ export default function EventForm({
       description: "",
       location: "",
       startDate: new Date(),
-      endDate: undefined,
+      endDate: new Date(),
       startTime: new Date(new Date().setHours(9, 0, 0, 0)), // Default to 9:00 AM
       endTime: new Date(new Date().setHours(17, 0, 0, 0)), // Default to 5:00 PM
       eventMode: "physical",
@@ -820,27 +823,29 @@ export default function EventForm({
         endTime: undefined,
       };
 
-      const endpoint = isEditMode
-        ? `${BASE_URL}/api/events/${eventId}`
-        : `${BASE_URL}/api/events`;
+      console.log("Submission Data:", JSON.stringify({ submissionData }));
 
-      const method = isEditMode ? "PUT" : "POST";
+      // const endpoint = isEditMode
+      //   ? `${BASE_URL}/api/events/${eventId}`
+      //   : `${BASE_URL}/api/events`;
 
-      const response = await fetch(endpoint, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(submissionData),
-      });
+      // const method = isEditMode ? "PUT" : "POST";
 
-      if (!response.ok) {
-        throw new Error("Failed to save event");
-      }
+      // const response = await fetch(endpoint, {
+      //   method,
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(submissionData),
+      // });
 
-      // Navigate back to organization profile page
-      router.push(`/profile/organization/${organizationId}`);
-      router.refresh(); // Refresh the page to show the updated data
+      // if (!response.ok) {
+      //   throw new Error("Failed to save event");
+      // }
+
+      // // Navigate back to organization profile page
+      // router.push(`/profile/organization/${organizationId}`);
+      // router.refresh(); // Refresh the page to show the updated data
     } catch (error) {
       console.error("Error saving event:", error);
     } finally {
@@ -1044,6 +1049,7 @@ export default function EventForm({
                                 handleDateSelect(field, newDate);
                                 // Also update the startDate field
                                 form.setValue("startDate", newDate);
+                                console.log({ startDate: newDate });
                               }
                             }}
                             initialFocus
@@ -1193,6 +1199,7 @@ export default function EventForm({
                                 handleDateSelect(field, newDate);
                                 // Also update the endDate field
                                 form.setValue("endDate", newDate);
+                                console.log({ endDate: newDate });
 
                                 // Validate that end date is not before start date
                                 const startDate = form.getValues("startDate");
@@ -2384,6 +2391,23 @@ export default function EventForm({
                   ? "Update Event"
                   : "Create Event"}
             </Button>
+            {/* <Button
+              type="button"
+              onClick={() => {
+                console.log("Form values:", form.getValues());
+                console.log("Form errors:", form.formState.errors);
+                console.log("Form is valid:", form.formState.isValid);
+
+                // Try to submit the form programmatically
+                form.handleSubmit((data) => {
+                  console.log("Submit handler called with data:", data);
+                  onSubmit(data);
+                })();
+              }}
+              disabled={isSubmitting}
+            >
+              Debug Submit
+            </Button> */}
           </div>
         </form>
       </Form>

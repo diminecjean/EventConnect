@@ -1,6 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import EventForm from "../eventForm";
+// import EventForm from "../oldEventForm";
 
 export default function NewEventPage() {
   const searchParams = useSearchParams();
