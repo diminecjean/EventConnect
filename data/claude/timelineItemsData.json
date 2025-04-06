@@ -1,0 +1,41 @@
+[
+  {
+    "_id": { "$oid": "6078be13e131f7123456789a" },
+    "eventId": { "$oid": "6078be13e131f71234567890" },
+    "date": { "$date": "2025-07-15T00:00:00Z" },
+    "time": "09:30 AM",
+    "title": "Opening Keynote: AI in 2025 and Beyond",
+    "description": "An overview of the current state of AI and predictions for the next decade",
+    "speakerId": { "$oid": "6078be13e131f7123456789d" },
+    "location": "Main Hall",
+    "durationMinutes": 60,
+    "createdAt": { "$date": "2025-01-25T09:45:00Z" },
+    "updatedAt": { "$date": "2025-03-10T16:30:00Z" }
+  },
+  {
+    "_id": { "$oid": "6078be13e131f7123456789b" },
+    "eventId": { "$oid": "6078be13e131f71234567890" },
+    "date": { "$date": "2025-07-15T00:00:00Z" },
+    "time": "11:00 AM",
+    "title": "Panel Discussion: Ethics in AI Development",
+    "description": "Industry experts discuss the challenges and solutions for ethical AI development",
+    "speakerId": { "$oid": "6078be13e131f7123456789e" },
+    "location": "Conference Room A",
+    "durationMinutes": 90,
+    "createdAt": { "$date": "2025-01-25T10:30:00Z" },
+    "updatedAt": { "$date": "2025-03-10T16:35:00Z" }
+  },
+  {
+    "_id": { "$oid": "6078be13e131f7123456789c" },
+    "eventId": { "$oid": "6078be13e131f71234567890" },
+    "date": { "$date": "2025-07-16T00:00:00Z" },
+    "time": "10:00 AM",
+    "title": "Workshop: Practical Applications of Generative AI",
+    "description": "Hands-on workshop exploring real-world applications of generative AI technologies",
+    "speakerId": { "$oid": "6078be13e131f7123456789d" },
+    "location": "Workshop Hall B",
+    "durationMinutes": 120,
+    "createdAt": { "$date": "2025-01-25T11:15:00Z" },
+    "updatedAt": { "$date": "2025-03-12T14:20:00Z" }
+  }
+]

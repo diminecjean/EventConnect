@@ -1,0 +1,39 @@
+[
+  {
+    "_id": { "$oid": "6078be13e131f7123456789d" },
+    "name": "Dr. Sarah Chen",
+    "topic": "The Future of Generative AI in Healthcare",
+    "organization": "AI Health Innovations",
+    "position": "Chief AI Officer",
+    "bio": "Dr. Chen leads AI research focused on medical applications...",
+    "imageUrl": "https://speakers.example.com/sarah-chen.jpg",
+    "socialMedia": {
+      "twitter": "https://twitter.com/drsarahchen",
+      "linkedin": "https://linkedin.com/in/sarahchen",
+      "website": "https://sarahchen.ai"
+    },
+    "eventIds": [
+      { "$oid": "6078be13e131f71234567890" },
+      { "$oid": "6078be13e131f712345678a1" }
+    ],
+    "createdAt": { "$date": "2024-11-20T10:30:00Z" },
+    "updatedAt": { "$date": "2025-02-15T16:20:00Z" }
+  },
+  {
+    "_id": { "$oid": "6078be13e131f7123456789e" },
+    "name": "Prof. James Wilson",
+    "topic": "Ethical Considerations in AI Development",
+    "organization": "Global Tech Ethics Institute",
+    "position": "Director of AI Ethics",
+    "bio": "Leading researcher in AI ethics and policy implications...",
+    "imageUrl": "https://speakers.example.com/james-wilson.jpg",
+    "socialMedia": {
+      "twitter": "https://twitter.com/profjwilson",
+      "linkedin": "https://linkedin.com/in/jameswilson",
+      "website": "https://jameswilson.edu"
+    },
+    "eventIds": [{ "$oid": "6078be13e131f71234567890" }],
+    "createdAt": { "$date": "2024-12-05T09:15:00Z" },
+    "updatedAt": { "$date": "2025-01-30T11:45:00Z" }
+  }
+]

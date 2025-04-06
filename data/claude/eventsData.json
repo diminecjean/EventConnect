@@ -1,0 +1,112 @@
+[
+  {
+    "_id": { "$oid": "6078be13e131f71234567890" },
+    "title": "Future of AI Conference 2025",
+    "description": "Annual conference exploring the latest advancements in artificial intelligence",
+    "location": "San Francisco Tech Center",
+    "startDateTime": { "$date": "2025-07-15T09:00:00Z" },
+    "endDateTime": { "$date": "2025-07-17T17:00:00Z" },
+    "maxAttendees": 500,
+    "partnerOrganizationIds": [
+      { "$oid": "6078be13e131f71234567891" },
+      { "$oid": "6078be13e131f71234567892" }
+    ],
+    "imageUrl": "https://events.example.com/ai-conf-2025.jpg",
+    "bannerUrl": "https://events.example.com/ai-conf-2025-banner.jpg",
+    "galleryImages": [
+      "https://events.example.com/ai-conf-2025-gallery1.jpg",
+      "https://events.example.com/ai-conf-2025-gallery2.jpg"
+    ],
+    "eventMode": "hybrid",
+    "virtualMeetingLink": "https://meetings.example.com/ai-conf-2025",
+    "organizationId": { "$oid": "6078be13e131f71234567893" },
+    "registrationForms": [
+      {
+        "_id": { "$oid": "6078be13e131f71234567894" },
+        "name": "Standard Registration",
+        "description": "For general attendees",
+        "isDefault": true,
+        "formFields": [
+          {
+            "_id": { "$oid": "6078be13e131f71234567895" },
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "John Doe"
+          },
+          {
+            "_id": { "$oid": "6078be13e131f71234567896" },
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "john@example.com"
+          },
+          {
+            "_id": { "$oid": "6078be13e131f71234567897" },
+            "label": "Job Title",
+            "type": "text",
+            "required": false,
+            "placeholder": "Software Engineer"
+          },
+          {
+            "_id": { "$oid": "6078be13e131f71234567898" },
+            "label": "Dietary Preferences",
+            "type": "select",
+            "required": false,
+            "options": ["None", "Vegetarian", "Vegan", "Gluten-Free"]
+          }
+        ]
+      },
+      {
+        "_id": { "$oid": "6078be13e131f71234567899" },
+        "name": "VIP Registration",
+        "description": "For sponsors and special guests",
+        "isDefault": false,
+        "formFields": [
+          {
+            "_id": { "$oid": "6078be13e131f712345678aa" },
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "John Doe"
+          },
+          {
+            "_id": { "$oid": "6078be13e131f712345678ab" },
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "john@example.com"
+          },
+          {
+            "_id": { "$oid": "6078be13e131f712345678ac" },
+            "label": "Company",
+            "type": "text",
+            "required": true,
+            "placeholder": "Acme Inc."
+          },
+          {
+            "_id": { "$oid": "6078be13e131f712345678ad" },
+            "label": "Special Requirements",
+            "type": "textarea",
+            "required": false
+          }
+        ]
+      }
+    ],
+    "timelineItemIds": [
+      { "$oid": "6078be13e131f7123456789a" },
+      { "$oid": "6078be13e131f7123456789b" },
+      { "$oid": "6078be13e131f7123456789c" }
+    ],
+    "speakerIds": [
+      { "$oid": "6078be13e131f7123456789d" },
+      { "$oid": "6078be13e131f7123456789e" }
+    ],
+    "sponsorIds": [
+      { "$oid": "6078be13e131f7123456789f" },
+      { "$oid": "6078be13e131f712345678a0" }
+    ],
+    "createdAt": { "$date": "2025-01-15T08:30:00Z" },
+    "updatedAt": { "$date": "2025-03-22T14:45:00Z" }
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "_id": { "$oid": "6078be13e131f71234567893" },
+    "name": "TechInnovate Inc.",
+    "description": "Leading technology innovation company",
+    "logo": "https://organizations.example.com/techinnovate-logo.png",
+    "contactEmail": "events@techinnovate.com",
+    "website": "https://techinnovate.com",
+    "address": {
+      "street": "123 Innovation Way",
+      "city": "San Francisco",
+      "state": "CA",
+      "zipCode": "94105",
+      "country": "USA"
+    },
+    "socialLinks": {
+      "twitter": "https://twitter.com/techinnovate",
+      "linkedin": "https://linkedin.com/company/techinnovate"
+    },
+    "createdAt": { "$date": "2024-10-10T12:00:00Z" },
+    "updatedAt": { "$date": "2025-01-05T09:15:00Z" }
+  },
+  {
+    "_id": { "$oid": "6078be13e131f71234567891" },
+    "name": "AI Research Foundation",
+    "description": "Non-profit advancing AI research",
+    "logo": "https://organizations.example.com/airf-logo.png",
+    "contactEmail": "info@airesearch.org",
+    "website": "https://airesearch.org",
+    "address": {
+      "street": "500 Knowledge Avenue",
+      "city": "Boston",
+      "state": "MA",
+      "zipCode": "02110",
+      "country": "USA"
+    },
+    "socialLinks": {
+      "twitter": "https://twitter.com/airesearchfound",
+      "linkedin": "https://linkedin.com/company/airesearchfoundation"
+    },
+    "createdAt": { "$date": "2024-09-15T10:30:00Z" },
+    "updatedAt": { "$date": "2024-12-20T11:45:00Z" }
+  },
+  {
+    "_id": { "$oid": "6078be13e131f71234567892" },
+    "name": "Data Science Academy",
+    "description": "Educational institute focused on data science and AI",
+    "logo": "https://organizations.example.com/dsa-logo.png",
+    "contactEmail": "contact@datascienceacademy.edu",
+    "website": "https://datascienceacademy.edu",
+    "address": {
+      "street": "300 Learning Street",
+      "city": "Austin",
+      "state": "TX",
+      "zipCode": "78701",
+      "country": "USA"
+    },
+    "socialLinks": {
+      "twitter": "https://twitter.com/datascienceacad",
+      "linkedin": "https://linkedin.com/company/datascienceacademy",
+      "youtube": "https://youtube.com/datascienceacademy"
+    },
+    "createdAt": { "$date": "2024-11-05T14:20:00Z" },
+    "updatedAt": { "$date": "2025-02-10T09:30:00Z" }
+  }
+]

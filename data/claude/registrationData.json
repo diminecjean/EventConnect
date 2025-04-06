@@ -1,0 +1,42 @@
+[
+  {
+    "_id": { "$oid": "6078be13e131f712345678a3" },
+    "eventId": { "$oid": "6078be13e131f71234567890" },
+    "registrationFormId": { "$oid": "6078be13e131f71234567894" },
+    "userId": { "$oid": "6078be13e131f712345678a4" },
+    "status": "confirmed",
+    "registrationDate": { "$date": "2025-04-02T15:20:00Z" },
+    "paymentStatus": "completed",
+    "attendanceStatus": "registered",
+    "formData": {
+      "Full Name": "Michael Johnson",
+      "Email": "michael@example.com",
+      "Job Title": "Product Manager",
+      "Dietary Preferences": "Vegetarian"
+    },
+    "notes": "Requested front-row seating",
+    "checkInDate": null,
+    "createdAt": { "$date": "2025-04-02T15:20:00Z" },
+    "updatedAt": { "$date": "2025-04-02T15:25:00Z" }
+  },
+  {
+    "_id": { "$oid": "6078be13e131f712345678a5" },
+    "eventId": { "$oid": "6078be13e131f71234567890" },
+    "registrationFormId": { "$oid": "6078be13e131f71234567899" },
+    "userId": { "$oid": "6078be13e131f712345678a6" },
+    "status": "confirmed",
+    "registrationDate": { "$date": "2025-03-25T10:45:00Z" },
+    "paymentStatus": "completed",
+    "attendanceStatus": "registered",
+    "formData": {
+      "Full Name": "Jennifer Lee",
+      "Email": "jennifer@cloudmatrix.tech",
+      "Company": "CloudMatrix Solutions",
+      "Special Requirements": "Need display area for demo"
+    },
+    "notes": "VIP sponsor representative",
+    "checkInDate": null,
+    "createdAt": { "$date": "2025-03-25T10:45:00Z" },
+    "updatedAt": { "$date": "2025-03-25T10:50:00Z" }
+  }
+]
