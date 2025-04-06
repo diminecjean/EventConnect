@@ -58,23 +58,26 @@ export const eventFormSchema = z
         }),
       )
       .optional(),
-    speakers: z.array(
-      z.object({
-        id: z.string(),
-        name: z.string().min(1, "Speaker name is required"),
-        topic: z.string().min(1, "Speaking topic is required"),
-        organization: z.string().optional(),
-        position: z.string().optional(),
-        imageUrl: z.string().optional(),
-        socialMedia: z.array(
-          z.object({
-            id: z.string(),
-            platform: z.string(),
-            url: z.string().url("Must be a valid URL"),
-          }),
-        ),
-      }),
-    ),
+    speakers: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string().min(1, "Speaker name is required"),
+          topic: z.string().min(1, "Speaking topic is required"),
+          organization: z.string().optional(),
+          position: z.string().optional(),
+          imageUrl: z.string().optional(),
+          socialMedia: z.array(
+            z.object({
+              id: z.string(),
+              platform: z.string(),
+              url: z.string().url("Must be a valid URL"),
+            }),
+          ),
+        }),
+      )
+      .optional()
+      .default([]),
     sponsors: z
       .array(
         z.object({
