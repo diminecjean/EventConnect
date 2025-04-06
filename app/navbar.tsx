@@ -23,7 +23,7 @@ import {
 export default function Navbar() {
   const router = useRouter();
   const { user, organizations, isLoading, clearUser } = useAuth();
-  console.log({ user, organizations });
+  // console.log({ user, organizations });
   const [selectedOrganization, setSelectedOrganization] = useState("");
 
   // Update selectedOrganization whenever organizations changes
@@ -40,10 +40,10 @@ export default function Navbar() {
     }
   }, [organizations]);
 
-  console.log({ selectedOrganization });
+  // console.log({ selectedOrganization });
 
   const handleSignOut = async () => {
-    console.log("Logging out...");
+    // console.log("Logging out...");
     // Clear user data from context and localStorage
     clearUser();
     // Sign out from next-auth

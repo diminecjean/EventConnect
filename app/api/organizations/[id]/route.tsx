@@ -45,7 +45,7 @@ export async function GET(
         { status: 404 },
       );
     }
-    console.log("Organization found:", { organization });
+    // console.log("Organization found:", { organization });
     return NextResponse.json(
       {
         status: "success",

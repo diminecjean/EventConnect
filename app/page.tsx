@@ -211,7 +211,7 @@ export default function Home() {
   useEffect(() => {
     getEvents().then((events) => {
       setEvents(events);
-      console.log("Events:", events);
+      // console.log("Events:", events);
     });
   }, []);
 
