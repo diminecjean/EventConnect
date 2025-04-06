@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import { Noop, RefCallBack, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { eventFormSchema, EventFormValues } from "../eventFormComponents/schemas";
+import {
+  eventFormSchema,
+  EventFormValues,
+} from "../eventFormComponents/schemas";
 import { BASE_URL } from "@/app/api/constants";
 
 export function useEventForm({
@@ -26,7 +29,7 @@ export function useEventForm({
       description: "",
       location: "",
       startDate: new Date(),
-      endDate: undefined,
+      endDate: new Date(),
       startTime: new Date(new Date().setHours(9, 0, 0, 0)), // Default to 9:00 AM
       endTime: new Date(new Date().setHours(17, 0, 0, 0)), // Default to 5:00 PM
       eventMode: "physical",
@@ -65,6 +68,8 @@ export function useEventForm({
       timelineItems: [],
       ...defaultValues,
     },
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
 
   // Fetch event data if in edit mode
@@ -115,6 +120,7 @@ export function useEventForm({
   // Form submission handler
   const onSubmit = async (data: EventFormValues) => {
     setIsSubmitting(true);
+    console.log("Submitting form data");
 
     try {
       // Combine date and time for start and end
@@ -152,121 +158,39 @@ export function useEventForm({
         // Remove the time fields as they're now combined with the dates
         startTime: undefined,
         endTime: undefined,
+        // Add timestamp fields conditionally based on edit mode
+        ...(isEditMode 
+          ? { updatedAt: new Date() } 
+          : { createdAt: new Date(), updatedAt: new Date() })
       };
 
-      const endpoint = isEditMode
-        ? `${BASE_URL}/api/events/${eventId}`
-        : `${BASE_URL}/api/events`;
+      console.log(JSON.stringify({ submissionData }));
 
-      const method = isEditMode ? "PUT" : "POST";
+      // const endpoint = isEditMode
+      //   ? `${BASE_URL}/api/events/${eventId}`
+      //   : `${BASE_URL}/api/events`;
 
-      const response = await fetch(endpoint, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(submissionData),
-      });
+      // const method = isEditMode ? "PUT" : "POST";
 
-      if (!response.ok) {
-        throw new Error("Failed to save event");
-      }
+      // const response = await fetch(endpoint, {
+      //   method,
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(submissionData),
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error("Failed to save event");
+      // }
 
       // Navigate back to organization profile page
-      router.push(`/profile/organization/${organizationId}`);
-      router.refresh(); // Refresh the page to show the updated data
+      // router.push(`/profile/organization/${organizationId}`);
+      // router.refresh(); // Refresh the page to show the updated data
     } catch (error) {
       console.error("Error saving event:", error);
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  // #region Date and Time Utils
-  // Handle date selection
-  const handleDateSelect = (
-    field: {
-      onChange: any;
-      onBlur?: Noop;
-      value?: Date | undefined;
-      disabled?: boolean | undefined;
-      name?: "startTime" | "endTime";
-      ref?: RefCallBack;
-    },
-    date: Date,
-  ) => {
-    if (date) {
-      field.onChange(date);
-    }
-  };
-
-  // Handle time change
-  const handleTimeChange = (
-    field: {
-      onChange: any;
-      onBlur?: Noop;
-      value: any;
-      disabled?: boolean | undefined;
-      name?: "startTime" | "endTime";
-      ref?: RefCallBack;
-    },
-    type: string,
-    value: string,
-  ) => {
-    const currentDate = field.value || new Date();
-    let newDate = new Date(currentDate);
-
-    if (type === "hour") {
-      const hour = parseInt(value, 10);
-      newDate.setHours(newDate.getHours() >= 12 ? hour + 12 : hour);
-    } else if (type === "minute") {
-      newDate.setMinutes(parseInt(value, 10));
-    } else if (type === "ampm") {
-      const hours = newDate.getHours();
-      if (value === "AM" && hours >= 12) {
-        newDate.setHours(hours - 12);
-      } else if (value === "PM" && hours < 12) {
-        newDate.setHours(hours + 12);
-      }
-    }
-
-    field.onChange(newDate);
-  };
-
-  // Helper function to validate end time on the same day
-  const validateEndTime = (
-    startDate: Date,
-    startTime: Date,
-    endTime?: Date,
-  ) => {
-    if (!startDate || !startTime || !endTime) return;
-
-    // Check if it's the same day
-    const sameDay =
-      startDate &&
-      endTime &&
-      startDate.getFullYear() === endTime.getFullYear() &&
-      startDate.getMonth() === endTime.getMonth() &&
-      startDate.getDate() === endTime.getDate();
-
-    if (sameDay) {
-      const startHours = startTime.getHours();
-      const startMinutes = startTime.getMinutes();
-      const endHours = endTime.getHours();
-      const endMinutes = endTime.getMinutes();
-
-      // Compare hours and minutes
-      if (
-        endHours < startHours ||
-        (endHours === startHours && endMinutes <= startMinutes)
-      ) {
-        form.setError("endTime", {
-          type: "manual",
-          message: "End time must be after start time on the same day",
-        });
-      } else {
-        form.clearErrors("endTime");
-      }
     }
   };
 
@@ -278,16 +202,11 @@ export function useEventForm({
     combined.setHours(time.getHours(), time.getMinutes(), 0, 0);
     return combined;
   };
-  // #endregion
 
   return {
     form,
     onSubmit,
     isSubmitting,
     isEditMode,
-    handleDateSelect,
-    handleTimeChange,
-    validateEndTime,
-    combineDateAndTime,
   };
 }

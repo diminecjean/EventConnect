@@ -39,6 +39,8 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Noop, RefCallBack } from "react-hook-form";
+import PartnerOrganizationsField from "./eventFormComponents/PartnerOrgSelector";
 
 export default function EventForm({
   organizationId,
@@ -48,20 +50,148 @@ export default function EventForm({
   defaultValues,
 }: EventFormProps) {
   const router = useRouter();
-  const {
-    form,
-    onSubmit,
-    isSubmitting,
-    isEditMode,
-    handleDateSelect,
-    handleTimeChange,
-    validateEndTime,
-    combineDateAndTime,
-  } = useEventForm({
+  const { form, onSubmit, isSubmitting, isEditMode } = useEventForm({
     organizationId,
     eventId,
     defaultValues,
   });
+
+  const { touchedFields, dirtyFields } = form.formState;
+
+  // #region Date and Time Utils
+  // Handle date selection
+  const handleDateSelect = (
+    field: {
+      onChange: any;
+      onBlur?: Noop;
+      value?: Date | undefined;
+      disabled?: boolean | undefined;
+      name?: "startTime" | "endTime";
+      ref?: RefCallBack;
+    },
+    date: Date,
+  ) => {
+    if (date) {
+      field.onChange(date);
+    }
+  };
+
+  // Handle time change
+  // Handle time change
+  const handleTimeChange = (
+    field: {
+      onChange: any;
+      onBlur?: Noop;
+      value: any;
+      disabled?: boolean | undefined;
+      name?: "startTime" | "endTime";
+      ref?: RefCallBack;
+    },
+    type: string,
+    value: string,
+  ) => {
+    const currentDate = field.value || new Date();
+    let newDate = new Date(currentDate);
+
+    if (type === "hour") {
+      const hour = parseInt(value, 10);
+      newDate.setHours(newDate.getHours() >= 12 ? hour + 12 : hour);
+    } else if (type === "minute") {
+      newDate.setMinutes(parseInt(value, 10));
+    } else if (type === "ampm") {
+      const hours = newDate.getHours();
+      if (value === "AM" && hours >= 12) {
+        newDate.setHours(hours - 12);
+      } else if (value === "PM" && hours < 12) {
+        newDate.setHours(hours + 12);
+      }
+    }
+
+    // Update the field WITHOUT triggering validation on the rest of the form
+    field.onChange(newDate);
+
+    // Handle specific fields - similar pattern to what's already in your date selection
+    if (field.name === "startTime") {
+      // Update the startDate field in the background without triggering validation
+      form.setValue("startDate", new Date(newDate), { shouldValidate: false });
+    } else if (field.name === "endTime") {
+      // Update the endDate field in the background without triggering validation
+      form.setValue("endDate", new Date(newDate), { shouldValidate: false });
+
+      // Only validate the specific time relationship if needed
+      if (form.getValues("startDate")) {
+        // Modify validateEndTime to only set error on endTime, not validate entire form
+        const startTime = form.getValues("startTime");
+        const startDate = form.getValues("startDate");
+
+        if (startDate && startTime && newDate) {
+          // Check if same day
+          const sameDay =
+            startDate.getFullYear() === newDate.getFullYear() &&
+            startDate.getMonth() === newDate.getMonth() &&
+            startDate.getDate() === newDate.getDate();
+
+          if (sameDay) {
+            const startHours = startTime.getHours();
+            const startMinutes = startTime.getMinutes();
+            const endHours = newDate.getHours();
+            const endMinutes = newDate.getMinutes();
+
+            if (
+              endHours < startHours ||
+              (endHours === startHours && endMinutes <= startMinutes)
+            ) {
+              form.setError("endTime", {
+                type: "manual",
+                message: "End time must be after start time on the same day",
+              });
+            } else {
+              form.clearErrors("endTime");
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Helper function to validate end time on the same day
+  // Helper function to validate end time on the same day - can be simplified
+  const validateEndTime = (
+    startDate: Date,
+    startTime: Date,
+    endTime?: Date,
+  ) => {
+    // You can now use this only for explicit validation without affecting other fields
+    if (!startDate || !startTime || !endTime) return;
+
+    // Check if it's the same day
+    const sameDay =
+      startDate.getFullYear() === endTime.getFullYear() &&
+      startDate.getMonth() === endTime.getMonth() &&
+      startDate.getDate() === endTime.getDate();
+
+    if (sameDay) {
+      const startHours = startTime.getHours();
+      const startMinutes = startTime.getMinutes();
+      const endHours = endTime.getHours();
+      const endMinutes = endTime.getMinutes();
+
+      // Compare hours and minutes
+      if (
+        endHours < startHours ||
+        (endHours === startHours && endMinutes <= startMinutes)
+      ) {
+        return {
+          isValid: false,
+          message: "End time must be after start time on the same day",
+        };
+      }
+    }
+
+    return { isValid: true };
+  };
+
+  // # endregion
 
   return (
     <div className="py-8 px-4">
@@ -144,7 +274,7 @@ export default function EventForm({
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <div className="sm:flex">
+                        <div className="sm:flex bg-black">
                           <Calendar
                             mode="single"
                             selected={field.value}
@@ -161,6 +291,7 @@ export default function EventForm({
                                 handleDateSelect(field, newDate);
                                 // Also update the startDate field
                                 form.setValue("startDate", newDate);
+                                console.log({ startDate: newDate });
                               }
                             }}
                             initialFocus
@@ -293,7 +424,7 @@ export default function EventForm({
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <div className="sm:flex">
+                        <div className="sm:flex bg-black">
                           <Calendar
                             mode="single"
                             selected={field.value}
@@ -310,6 +441,7 @@ export default function EventForm({
                                 handleDateSelect(field, newDate);
                                 // Also update the endDate field
                                 form.setValue("endDate", newDate);
+                                console.log({ endDate: newDate });
 
                                 // Validate that end date is not before start date
                                 const startDate = form.getValues("startDate");
@@ -539,88 +671,10 @@ export default function EventForm({
               />
 
               {/* Partner Organizations multi-select */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Partner Organizations</h3>
-                <FormField
-                  control={form.control}
-                  name="partnerOrganizations"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Select Partner Organizations</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Select
-                            onValueChange={(value) => {
-                              // Add the selected value if it's not already in the array
-                              const currentValues = Array.isArray(field.value)
-                                ? field.value
-                                : [];
-                              if (!currentValues.includes(value)) {
-                                field.onChange([...currentValues, value]);
-                              }
-                            }}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select organizations" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {/* This would be populated from API data in a real implementation */}
-                              <SelectItem value="org1">
-                                Organization 1
-                              </SelectItem>
-                              <SelectItem value="org2">
-                                Organization 2
-                              </SelectItem>
-                              <SelectItem value="org3">
-                                Organization 3
-                              </SelectItem>
-                              <SelectItem value="org4">
-                                Organization 4
-                              </SelectItem>
-                              <SelectItem value="org5">
-                                Organization 5
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </FormControl>
-
-                      {/* Display selected organizations as badges */}
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {field.value?.map((org) => (
-                          <Badge
-                            key={org}
-                            variant="secondary"
-                            className="flex items-center gap-2 p-2"
-                          >
-                            {org}
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="h-4 w-4 p-0 hover:bg-transparent"
-                              onClick={() => {
-                                field.onChange(
-                                  field.value.filter((item) => item !== org),
-                                );
-                              }}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </Badge>
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="bg-violet-500 bg-opacity-30 py-4 px-6 rounded-xl border-2 border-violet-700">
-                  <p className="text-xs text-violet-300 text-muted-foreground">
-                    Partner organizations will be displayed on your event page
-                    and can help promote your event to their members.
-                  </p>
-                </div>
-              </div>
+              <PartnerOrganizationsField
+                control={form.control}
+                name="partnerOrganizations"
+              />
             </div>
 
             {/* Right col */}
@@ -746,6 +800,34 @@ export default function EventForm({
                 : isEditMode
                   ? "Update Event"
                   : "Create Event"}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                console.log("Touched fields:", touchedFields);
+                console.log("Dirty fields:", dirtyFields);
+                console.log("Form values:", form.getValues());
+                console.log("Form errors:", form.formState.errors);
+              }}
+            >
+              Check Validation State
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                console.log("Form values:", form.getValues());
+                console.log("Form errors:", form.formState.errors);
+                console.log("Form is valid:", form.formState.isValid);
+
+                // Try to submit the form programmatically
+                form.handleSubmit((data) => {
+                  console.log("Submit handler called with data:", data);
+                  onSubmit(data);
+                })();
+              }}
+              disabled={isSubmitting}
+            >
+              Debug Submit
             </Button>
           </div>
         </form>

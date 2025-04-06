@@ -22,6 +22,7 @@ import { Control } from "react-hook-form";
 import { BASE_URL } from "@/app/api/constants";
 
 interface Organization {
+  _id: string;
   id: string;
   name: string;
 }
@@ -48,7 +49,6 @@ export default function PartnerOrganizationsField({
         }
         const res = await response.json();
 
-        console.log({ organizations: res.organizations });
         if (res.organizations) {
           setOrganizations(res.organizations);
         } else if (Array.isArray(res)) {
@@ -75,87 +75,94 @@ export default function PartnerOrganizationsField({
       <FormField
         control={control}
         name={name}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Select Partner Organizations</FormLabel>
-            <FormControl>
-              <div className="relative">
-                <Select
-                  disabled={isLoading}
-                  onValueChange={(value) => {
-                    const currentValues = Array.isArray(field.value)
-                      ? field.value
-                      : [];
-                    if (!currentValues.includes(value)) {
-                      field.onChange([...currentValues, value]);
-                    }
-                  }}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue
-                      placeholder={
-                        isLoading
-                          ? "Loading organizations..."
-                          : "Select organizations"
+        render={({ field }) => {
+          // Ensure field.value is always an array of IDs
+          const selectedOrgIds = Array.isArray(field.value) ? field.value : [];
+
+          return (
+            <FormItem>
+              <FormLabel>Select Partner Organizations</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={(selectedOrgId) => {
+                      // Only add the ID if it's not already in the list
+                      if (!selectedOrgIds.includes(selectedOrgId)) {
+                        field.onChange([...selectedOrgIds, selectedOrgId]);
                       }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {error ? (
-                      <div className="p-2 text-red-500 text-sm">{error}</div>
-                    ) : isLoading ? (
-                      <div className="p-2 text-sm">
-                        Loading organizations...
-                      </div>
-                    ) : organizations?.length === 0 ? (
-                      <div className="p-2 text-sm">
-                        No organizations available
-                      </div>
-                    ) : (
-                      organizations.map((org) => (
-                        <SelectItem key={org.id} value={org.id}>
-                          {org.name}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-            </FormControl>
-
-            {/* Display selected organizations as badges */}
-            <div className="flex flex-wrap gap-2 pt-2">
-              {field.value?.map((orgId: string) => {
-                const org = organizations.find((o) => o.id === orgId);
-                const displayName = org ? org.name : orgId;
-
-                return (
-                  <Badge
-                    key={orgId}
-                    variant="secondary"
-                    className="flex items-center gap-2 p-2"
+                    }}
                   >
-                    {displayName}
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="h-4 w-4 p-0 hover:bg-transparent"
-                      onClick={() => {
-                        field.onChange(
-                          field.value.filter((item: string) => item !== orgId),
-                        );
-                      }}
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={
+                          isLoading
+                            ? "Loading organizations..."
+                            : "Select organizations"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {error ? (
+                        <div className="p-2 text-red-500 text-sm">{error}</div>
+                      ) : isLoading ? (
+                        <div className="p-2 text-sm">
+                          Loading organizations...
+                        </div>
+                      ) : organizations?.length === 0 ? (
+                        <div className="p-2 text-sm">
+                          No organizations available
+                        </div>
+                      ) : (
+                        organizations.map((org) => (
+                          <SelectItem key={org._id} value={org._id}>
+                            {org.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </FormControl>
+
+              {/* Display selected organizations as badges */}
+              <div className="flex flex-wrap gap-2 pt-2">
+                {selectedOrgIds.map((orgId: string) => {
+                  // Find the organization object to display the name
+                  const org = organizations.find((o) => o._id === orgId);
+                  const displayName = org
+                    ? org.name
+                    : `Organization (${orgId})`;
+
+                  return (
+                    <Badge
+                      key={orgId}
+                      variant="secondary"
+                      className="flex items-center gap-2 p-2"
                     >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </Badge>
-                );
-              })}
-            </div>
-            <FormMessage />
-          </FormItem>
-        )}
+                      {displayName}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 hover:bg-transparent"
+                        onClick={() => {
+                          // Remove this ID from the array
+                          field.onChange(
+                            selectedOrgIds.filter((id: string) => id !== orgId),
+                          );
+                        }}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </Badge>
+                  );
+                })}
+              </div>
+              <FormMessage />
+            </FormItem>
+          );
+        }}
       />
       <div className="bg-violet-500 bg-opacity-30 py-4 px-6 rounded-xl border-2 border-violet-700">
         <p className="text-xs text-violet-300 text-muted-foreground">
