@@ -23,30 +23,9 @@ import {
 export default function Navbar() {
   const router = useRouter();
   const { user, organizations, isLoading, clearUser } = useAuth();
-  // console.log({ user, organizations });
-  const [selectedOrganization, setSelectedOrganization] = useState("");
-
-  // Update selectedOrganization whenever organizations changes
-  useEffect(() => {
-    if (
-      organizations &&
-      Array.isArray(organizations) &&
-      organizations.length > 0
-    ) {
-      setSelectedOrganization(organizations[0]._id);
-    } else if (organizations && !Array.isArray(organizations)) {
-      // Handle case where organizations might be a single object
-      setSelectedOrganization((organizations as any)._id);
-    }
-  }, [organizations]);
-
-  // console.log({ selectedOrganization });
 
   const handleSignOut = async () => {
-    // console.log("Logging out...");
-    // Clear user data from context and localStorage
     clearUser();
-    // Sign out from next-auth
     await signOut({ redirect: false });
     toast("You have been logged out");
     router.push("/");
@@ -59,19 +38,25 @@ export default function Navbar() {
       : text;
   };
 
+  // Normalize organizations to always be an array
+  const normalizedOrganizations = React.useMemo(() => {
+    if (!organizations) return [];
+    if (Array.isArray(organizations)) return organizations;
+    return [organizations];
+  }, [organizations]);
+
   // Show a minimal loader while auth state is being determined
   if (isLoading) {
     return (
       <NavigationMenu>
         <NavigationMenuList>
-          {/* Optional: Add a skeleton loader here */}
+          <NavigationMenuItem>{/* TODO */}</NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
     );
   }
 
   return (
-    // TODO: set dynamic background opacity, and fix opacity
     <NavigationMenu className="bg-black bg-opacity-90 backdrop-blur-sm">
       <NavigationMenuList>
         {!user ? (
@@ -93,7 +78,7 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            {organizations && (
+            {normalizedOrganizations.length > 0 && (
               <NavigationMenuItem>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -104,27 +89,16 @@ export default function Navbar() {
                     </NavigationMenuLink>
                   </PopoverTrigger>
                   <PopoverContent>
-                    {Array.isArray(organizations)
-                      ? organizations.map((org) => (
-                          <Link
-                            key={org._id}
-                            href={`/profile/organization/${org._id}`}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            title={org.name} // Adds tooltip with full name
-                          >
-                            {truncateText(org.name, 25)}
-                          </Link>
-                        ))
-                      : organizations &&
-                        typeof organizations === "object" && (
-                          <Link
-                            href={`/profile/organization/${(organizations as any)._id}`}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            title={(organizations as any).name} // Adds tooltip with full name
-                          >
-                            {truncateText((organizations as any).name, 25)}
-                          </Link>
-                        )}
+                    {normalizedOrganizations.map((org) => (
+                      <Link
+                        key={org._id}
+                        href={`/profile/organization/${org._id}`}
+                        className="block rounded-lg px-4 py-2 text-sm text-gray-300 hover:bg-violet-300 hover:text-black"
+                        title={org.name} // Adds tooltip with full name
+                      >
+                        {truncateText(org.name, 25)}
+                      </Link>
+                    ))}
                   </PopoverContent>
                 </Popover>
               </NavigationMenuItem>
@@ -142,9 +116,9 @@ export default function Navbar() {
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   <div className="flex justify-center items-center gap-2 rounded-full bg-violet-900 py-2 px-4 cursor-pointer">
                     <div className="h-8 w-8 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
-                      {user.profile_picture ? (
+                      {user.profilePicture ? (
                         <img
-                          src={user.profile_picture}
+                          src={user.profilePicture}
                           alt="Profile"
                           className="h-full w-full object-cover"
                         />
