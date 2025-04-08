@@ -67,11 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
 });
 
-// export async function signUp({ email, password, name }: { email: string; password: string; name?: string }) {
-export async function signUp() {
-  const myPlaintextPassword = "s0//P4$$w0rD";
-  const email = "wlooi@moneylion.com";
-  const name = "Wei En Looi";
+export async function signUp({ email, password, name }: { email: string; password: string; name?: string }) {
 
   // Check if user exists
   // For signups, user should not exist
@@ -83,8 +79,8 @@ export async function signUp() {
   }
 
   // Hash the password
-  const hashedPassword = await hashPassword(myPlaintextPassword);
-  console.log({ myPlaintextPassword, hashedPassword });
+  const hashedPassword = await hashPassword(password);
+  console.log({ password, hashedPassword });
 
   // Create user
   const user = {
@@ -108,21 +104,27 @@ export async function signUp() {
         email,
         password: hashedPassword,
         name,
-        registered_at: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       }),
     },
   );
 
   console.log({ response });
-
+  
+  // Implementation:
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error || "Failed to create user");
+    return {
+      success: false,
+      error: errorData.error || "Failed to create user"
+    };
   }
-
+  
   // Return user without password
   const { password: _, ...userWithoutPassword } = user;
   return {
-    ...userWithoutPassword,
+    success: true,
+    data: userWithoutPassword,
+    message: "User created successfully"
   };
 }
