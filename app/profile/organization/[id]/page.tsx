@@ -171,9 +171,7 @@ export default function OrganizationPage() {
         // Check if user can edit this specific organization
         if (user && organizations) {
           // Check if this organization ID is in the user's organizations list
-          const userCanEdit = organizations.some(
-            (org) => org._id === id || org.id === id,
-          );
+          const userCanEdit = organizations.some((org) => org._id === id);
           setCanEditOrg(userCanEdit);
         }
       } catch (error) {

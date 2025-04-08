@@ -32,6 +32,7 @@ export function useEventForm({
       endDate: new Date(),
       startTime: new Date(new Date().setHours(9, 0, 0, 0)), // Default to 9:00 AM
       endTime: new Date(new Date().setHours(17, 0, 0, 0)), // Default to 5:00 PM
+      tags: [],
       eventMode: "physical",
       virtualMeetingLink: "",
       maxAttendees: undefined,
@@ -72,9 +73,12 @@ export function useEventForm({
     reValidateMode: "onSubmit",
   });
 
-  // Fetch event data if in edit mode
+  // #region isEditMode
+
+  // If in edit mode and no default values are provided, fetch the event data
   useEffect(() => {
     if (isEditMode && !defaultValues) {
+      console.log('fetch event to edit');
       const fetchEvent = async () => {
         try {
           const response = await fetch(`${BASE_URL}/api/events/${eventId}`);
@@ -116,6 +120,65 @@ export function useEventForm({
       fetchEvent();
     }
   }, [isEditMode, eventId, organizationId, defaultValues, form]);
+
+  // If in edit mode and default values are provided, set the form with those values
+  useEffect(() => {
+    if (defaultValues && Object.keys(defaultValues).length > 0) {
+      console.log('Setting form with provided defaultValues:', defaultValues);
+      
+      try {
+        // Helper function to safely create a Date object
+        const createSafeDate = (dateValue: any): Date => {
+          if (!dateValue) return new Date();
+          
+          // If it's already a Date object
+          if (dateValue instanceof Date) return new Date(dateValue);
+          
+          // If it's a MongoDB date format with $date property
+          if (typeof dateValue === 'object' && dateValue.$date) {
+            return new Date(dateValue.$date);
+          }
+          
+          // If it's an ISO string or timestamp
+          return new Date(dateValue);
+        };
+        
+        // Create proper Date objects for all date fields
+        const startDate = createSafeDate(defaultValues.startDate);
+        const endDate = defaultValues.endDate ? createSafeDate(defaultValues.endDate) : undefined;
+        
+        // For time fields, use the same dates but ensure they're valid
+        const startTime = defaultValues.startTime ? createSafeDate(defaultValues.startTime) : startDate;
+        const endTime = defaultValues.endTime ? createSafeDate(defaultValues.endTime) : endDate;
+        
+        // Log the processed dates for debugging
+        console.log('Processed dates:', {
+          startDateOriginal: defaultValues.startDate,
+          startDateProcessed: startDate,
+          startTimeProcessed: startTime,
+          endDateOriginal: defaultValues.endDate,
+          endDateProcessed: endDate,
+          endTimeProcessed: endTime,
+        });
+        
+        // Reset the form with all values including processed dates
+        form.reset({
+          ...defaultValues,
+          startDate,
+          endDate,
+          startTime,
+          endTime,
+          // Ensure organizationId is set
+          organizationId: defaultValues.organizationId || organizationId,
+        });
+        
+      } catch (error) {
+        console.error('Error processing date fields:', error);
+      }
+    }
+  }, [defaultValues, form, organizationId]);
+
+  // #endregion isEditMode
 
   // Form submission handler
   const onSubmit = async (data: EventFormValues) => {
