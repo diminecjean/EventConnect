@@ -57,3 +57,82 @@ export async function GET(
     );
   }
 }
+
+// PUT - Update an event by ID
+export async function PUT(
+  request: NextRequest,
+  props: { params: Promise<{ id: string }> },
+) {
+  const params = await props.params;
+  try {
+    // Verify we have an ID
+    if (!params || !params.id) {
+      return NextResponse.json(
+        { error: "Event ID is required" },
+        { status: 400 },
+      );
+    }
+
+    const id = params.id;
+    const updateData = await request.json();
+
+    // Remove fields that shouldn't be updated
+    delete updateData._id;
+    delete updateData.id;
+    delete updateData.createdAt;
+
+    const db = await connectToDB();
+
+    // Try to update by MongoDB ObjectId first, then by custom ID field
+    let result = null;
+
+    if (ObjectId.isValid(id)) {
+      result = await db
+        .collection("events")
+        .updateOne(
+          { _id: new ObjectId(id) },
+          { $set: { ...updateData, updatedAt: new Date() } },
+        );
+    }
+
+    // If not found by ObjectId, try by custom id field
+    if (!result?.matchedCount) {
+      result = await db
+        .collection("events")
+        .updateOne(
+          { id: id },
+          { $set: { ...updateData, updatedAt: new Date() } },
+        );
+    }
+
+    // Return 404 if event not found
+    if (!result?.matchedCount) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    // Get the updated event
+    let updatedEvent = null;
+    if (ObjectId.isValid(id)) {
+      updatedEvent = await db
+        .collection("events")
+        .findOne({ _id: new ObjectId(id) });
+    } else {
+      updatedEvent = await db.collection("events").findOne({ id: id });
+    }
+
+    return NextResponse.json(
+      {
+        status: "success",
+        message: "Event updated successfully",
+        event: updatedEvent,
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error updating event:", error);
+    return NextResponse.json(
+      { error: "Failed to update event" },
+      { status: 500 },
+    );
+  }
+}

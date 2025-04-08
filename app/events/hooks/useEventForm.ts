@@ -229,27 +229,27 @@ export function useEventForm({
 
       console.log(JSON.stringify({ submissionData }));
 
-      // const endpoint = isEditMode
-      //   ? `${BASE_URL}/api/events/${eventId}`
-      //   : `${BASE_URL}/api/events`;
+      const endpoint = isEditMode
+        ? `${BASE_URL}/api/events/${eventId}`
+        : `${BASE_URL}/api/events`;
 
-      // const method = isEditMode ? "PUT" : "POST";
+      const method = isEditMode ? "PUT" : "POST";
 
-      // const response = await fetch(endpoint, {
-      //   method,
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(submissionData),
-      // });
+      const response = await fetch(endpoint, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(submissionData),
+      });
 
-      // if (!response.ok) {
-      //   throw new Error("Failed to save event");
-      // }
+      if (!response.ok) {
+        throw new Error("Failed to save event");
+      }
 
       // Navigate back to organization profile page
-      // router.push(`/profile/organization/${organizationId}`);
-      // router.refresh(); // Refresh the page to show the updated data
+      router.push(`/profile/organization/${organizationId}`);
+      router.refresh(); // Refresh the page to show the updated data
     } catch (error) {
       console.error("Error saving event:", error);
     } finally {
