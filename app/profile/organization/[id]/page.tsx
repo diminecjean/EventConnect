@@ -17,11 +17,13 @@ const OrgPageTabs = ({
   orgId,
   orgName,
   events,
+  partneredEvents,
 }: {
   canEditOrg?: boolean;
   orgId: string;
   orgName: string;
   events: Event[];
+  partneredEvents: Event[];
 }) => {
   const router = useRouter();
 
@@ -81,7 +83,20 @@ const OrgPageTabs = ({
       </TabsContent>
       <TabsContent value="partners">
         <div>
-          <h1 className="font-semibold text-xl my-4">Partners</h1>
+          <div id="header" className="flex flex-row justify-between">
+            <h1 className="font-semibold text-xl my-4">Partnered Events</h1>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {partneredEvents && partneredEvents.length > 0 ? (
+              partneredEvents.map((event) => (
+                <EventCard key={event._id} event={event} />
+              ))
+            ) : (
+              <div className="col-span-2 text-center py-8 text-gray-500">
+                No partnered events found for this organization.
+              </div>
+            )}
+          </div>
         </div>
       </TabsContent>
       <TabsContent value="pictures">
@@ -106,11 +121,13 @@ const OrganizationProfile = ({
   canEditOrg,
   isSubscribed,
   events,
+  partneredEvents,
 }: {
   orgData: OrganizationProfile;
   canEditOrg?: boolean;
   isSubscribed?: boolean;
   events: Event[];
+  partneredEvents: Event[];
 }) => {
   return (
     <>
@@ -154,6 +171,7 @@ const OrganizationProfile = ({
             orgId={orgData._id}
             orgName={orgData.name}
             events={events}
+            partneredEvents={partneredEvents}
           />
         </div>
         <div className="flex flex-col"></div>
@@ -167,6 +185,7 @@ export default function OrganizationPage() {
   const id = params.id as string;
   const [org, setOrg] = useState<OrganizationProfile | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [partneredEvents, setPartneredEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user, organizations } = useAuth();
   const [canEditOrg, setCanEditOrg] = useState(false);
@@ -211,8 +230,25 @@ export default function OrganizationPage() {
       }
     }
 
+    async function fetchPartneredEvents() {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/api/events?partnerOrganizations=${id}`,
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch partner events");
+        }
+        const res = await response.json();
+        console.log(res.events);
+        setPartneredEvents(res.events);
+      } catch (error) {
+        console.error("Error fetching partner events:", error);
+      }
+    }
+
     fetchOrganization();
     fetchEvents();
+    fetchPartneredEvents();
   }, [id, user, organizations]);
 
   if (isLoading) {
@@ -231,6 +267,7 @@ export default function OrganizationPage() {
         orgData={org}
         canEditOrg={canEditOrg}
         events={events}
+        partneredEvents={partneredEvents}
       />
     </main>
   );

@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const query: Record<string, string | null> = {};
+    const query: Record<string, any> = {};
 
     // Add filters based on search parameters
     // Example: ?category=conference&organizationId=12345
@@ -15,6 +15,12 @@ export async function GET(request: NextRequest) {
 
     if (searchParams.has("organizationId")) {
       query["organizationId"] = searchParams.get("organizationId");
+    }
+
+    // Handle searching within the partnerOrganizations array
+    if (searchParams.has("partnerOrganizations")) {
+      const partnerId = searchParams.get("partnerOrganizations");
+      query["partnerOrganizations"] = { $in: [partnerId] };
     }
 
     const db = await connectToDB();
