@@ -1,9 +1,8 @@
 export type OrganizationProfile = {
   _id: string;
-  id?: string;
   name: string;
   description: string;
-  organization_picture: string;
+  logo: string;
   website?: string;
   social_links?: {
     twitter?: string;
@@ -12,11 +11,11 @@ export type OrganizationProfile = {
     facebook?: string;
   };
   location: string;
-  contact_email: string;
-  events_hosted: string[]; // Array of event IDs
-  members_count: number;
+  contactEmail: string;
+  membersCount: number;
   tags: string[]; // Topics of interest
-  created_at: string; // ISO timestamp
+  createdAt: string; // ISO timestamp
+  updatedAt: string; // ISO timestamp
 };
 
 export type UserProfile = {

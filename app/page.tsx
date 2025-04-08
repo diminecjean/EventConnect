@@ -8,28 +8,27 @@ import SearchBar from "./searchBar";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-import eventsDataComplete from "@/data/eventsDataComplete.json";
+import eventsData from "@/data/eventsData.json";
 import userData from "@/data/userData.json";
 import orgData from "@/data/organizationData.json";
 import { useRouter } from "next/navigation";
 import { signIn, signUp } from "./lib/auth";
 
 interface Tag {
-  id: string;
   label: string;
   color: string;
 }
 
-interface Event {
+interface FormattedEvent {
   _id: string;
   id: string;
   eventLogo: { src: string; alt: string; width: number; height: number };
-  host: { logo: string; name: string };
+  organizationId: string;
   title: string;
   tags: Tag[];
-  date: { fullDate: string; time: string };
+  date: { startDate: Date; endDate: Date };
   location: string;
-  description: { preview: string; details: string[] };
+  description: string;
 }
 
 function SeedDatabase() {
@@ -43,7 +42,7 @@ function SeedDatabase() {
       setStatus("loading");
       setMessage("Seeding database...");
 
-      const body = database === "events" ? eventsDataComplete : userData;
+      const body = database === "events" ? eventsData : userData;
 
       const response = await fetch(`/api/admin/seed/${database}`, {
         method: "POST",
@@ -153,7 +152,7 @@ function SeedDatabase() {
 }
 
 export default function Home() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<FormattedEvent[]>([]);
   const router = useRouter();
   async function getEvents() {
     try {
@@ -169,39 +168,24 @@ export default function Home() {
       const data = await res.json();
       // You might need to transform the API response to match the Event interface
       const formattedEvents = data.events.map((event: any) => ({
-        _id: event._id,
-        id: event.id,
+        _id: event._id.toString(),
         eventLogo: {
-          src: event.eventLogo?.src || "/placeholder.svg",
-          alt: event.eventLogo?.alt || event.title,
+          src: event.imageUrl || "/placeholder.svg",
+          alt: event.title,
           width: 300, // Add default width
           height: 200, // Add default height
         },
-        host: {
-          logo: event.host?.logo || "",
-          name: event.host?.name || "Unknown Host",
-        },
+        organizationId: event.organizationId,
         title: event.title || "",
-        tags: Array.isArray(event.tags)
-          ? event.tags.map((tag: any) => ({
-              id: tag.id || tag.label || String(Math.random()),
-              label: tag.label || "Tag",
-              color: tag.color || "bg-gray-100",
-            }))
-          : [],
+        tags: Array.isArray(event.tags) ? event.tags : [],
         date: {
-          fullDate: event.date?.fullDate || "TBA",
-          time: event.date?.time || "",
+          startDate: event.startDate || "TBA",
+          endDate: event.endDate || "",
         },
         location: event.location || "TBA",
-        description: {
-          preview: event.description?.preview || event.description || "",
-          details: Array.isArray(event.description?.details)
-            ? event.description.details
-            : [event.description?.preview || event.description || ""],
-        },
+        description: event.description,
       }));
-      return formattedEvents as Event[];
+      return formattedEvents as FormattedEvent[];
     } catch (error) {
       console.error("Error loading events:", error);
       return [];
@@ -251,7 +235,7 @@ export default function Home() {
             key={index}
             id={event._id}
             eventLogo={event.eventLogo}
-            host={event.host}
+            organizationId={event.organizationId}
             title={event.title}
             tags={event.tags}
             date={event.date}
