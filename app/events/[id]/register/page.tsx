@@ -17,7 +17,6 @@ export default function EventRegistrationPage({
 }) {
   const { id } = use(params);
   const { data: session } = useSession();
-  const router = useRouter();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const { form, onSubmit, formFields, selectedFormType, setSelectedFormType } =

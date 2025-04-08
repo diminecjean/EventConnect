@@ -1,6 +1,45 @@
-// app/api/events/[id]/register/route.tsx
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDB } from "@/app/lib/mongodb";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  try {
+    const eventId = params.id;
+    const userId = request.nextUrl.searchParams.get("userId");
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 },
+      );
+    }
+
+    console.log("Checking registration for user:", userId);
+
+    const db = await connectToDB();
+
+    // Check if user is already registered for this event
+    const existingRegistration = await db.collection("registrations").findOne({
+      eventId,
+      userId,
+    });
+
+    console.log({ existingRegistration });
+
+    return NextResponse.json({
+      isRegistered: !!existingRegistration,
+      registrationId: existingRegistration?._id || null,
+    });
+  } catch (error) {
+    console.error("Error checking registration:", error);
+    return NextResponse.json(
+      { error: "Failed to check registration" },
+      { status: 500 },
+    );
+  }
+}
 
 export async function POST(
   request: NextRequest,

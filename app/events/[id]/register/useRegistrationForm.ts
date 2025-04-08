@@ -171,7 +171,7 @@ export function useRegistrationForm(eventId: string) {
       }
 
       alert("Registration successful!");
-      // router.push(`/events/${eventId}/confirmation`);
+      router.push(`/events/${eventId}`);
     } catch (error) {
       console.error("Registration error:", error);
       alert("Registration failed. Please try again." + error);

@@ -3,7 +3,14 @@ import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, notFound } from "next/navigation";
 import type { Event } from "../../typings/events/typings";
-import { CalendarDays, LucideGlobe, MapPin } from "lucide-react";
+import {
+  CalendarDays,
+  Check,
+  Copy,
+  LucideGlobe,
+  MapPin,
+  Share2,
+} from "lucide-react";
 import {
   Timeline,
   TimelineConnector,
@@ -23,21 +30,7 @@ import GoogleMap from "@/components/GoogleMap";
 import { useAuth } from "@/app/context/authContext";
 import { Button } from "@/components/ui/button";
 import MultiStepLoaderDemo from "./loading";
-
-// export async function generateMetadata({
-//   params,
-// }: {
-//   params: Promise<{ id: string }>;
-// }) {
-//   const { id } = await params;
-//   const event = await getEvent(id);
-
-//   if (!event) return { title: "Event Not Found" };
-//   return {
-//     title: `${event.title} - Event Details`,
-//     description: event.description,
-//   };
-// }
+import { toast } from "sonner";
 
 const getSocialIcon = (platform: string) => {
   switch (platform.toLowerCase()) {
@@ -351,6 +344,9 @@ export default function EventPage({
     date: "",
     time: "",
   });
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [registrationLink, setRegistrationLink] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     async function fetchEvent() {
@@ -379,6 +375,22 @@ export default function EventPage({
           );
           setFormattedDateTime(dateTime);
         }
+
+        if (user && user._id) {
+          // Check if user is registered
+          const regCheckResponse = await fetch(
+            `${BASE_URL}/api/events/${id}/register?userId=${user._id}`,
+          );
+          if (regCheckResponse.ok) {
+            const regData = await regCheckResponse.json();
+            setIsRegistered(regData.isRegistered);
+            if (regData.registrationId) {
+              setRegistrationLink(
+                `${window.location.origin}/events/${id}/registration/${regData.registrationId}`,
+              );
+            }
+          }
+        }
       } catch (error) {
         console.error("Error fetching event ID:", error);
       } finally {
@@ -387,7 +399,7 @@ export default function EventPage({
     }
 
     fetchEvent();
-  }, [id]);
+  }, [id, user]);
 
   if (isLoading) {
     return MultiStepLoaderDemo();
@@ -396,6 +408,20 @@ export default function EventPage({
   if (!event) {
     return notFound();
   }
+
+  const copyRegistrationLink = () => {
+    navigator.clipboard
+      .writeText(registrationLink)
+      .then(() => {
+        setIsCopied(true);
+        toast("Registration link copied to clipboard!");
+        setTimeout(() => setIsCopied(false), 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+        toast("Failed to copy link to clipboard");
+      });
+  };
 
   const handleEditEvent = () => {
     router.push(
@@ -459,14 +485,62 @@ export default function EventPage({
           <div></div>
           {/* TODO: add button for registration */}
           <div className="flex w-full justify-center">
-            <Button
-              onClick={() =>
-                router.push(`/events/${event._id.toString()}/register`)
-              }
-              className="bg-violet-900 w-full text-white rounded-lg p-2"
-            >
-              Register
-            </Button>
+            {isRegistered ? (
+              <div className="flex flex-col w-full gap-2">
+                <button
+                  disabled
+                  className="flex justify-center items-center bg-green-700 w-full text-white rounded-lg p-2"
+                >
+                  <Check className="mr-2 h-4 w-4" /> Registered
+                </button>
+
+                <div className="flex items-center gap-2 border rounded-lg p-2 bg-violet-900 bg-opacity-10 text-sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={copyRegistrationLink}
+                    className="flex-grow"
+                  >
+                    {isCopied ? (
+                      <>
+                        <Check className="mr-2 h-4 w-4" /> Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="mr-2 h-4 w-4" /> Copy Registration Link
+                      </>
+                    )}
+                  </Button>
+
+                  {/* <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      if (navigator.share) {
+                        navigator.share({
+                          title: `Registration for ${event.title}`,
+                          text: `Check out my registration for ${event.title}`,
+                          url: registrationLink,
+                        });
+                      } else {
+                        copyRegistrationLink();
+                      }
+                    }}
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </Button> */}
+                </div>
+              </div>
+            ) : (
+              <Button
+                onClick={() =>
+                  router.push(`/events/${event._id.toString()}/register`)
+                }
+                className="bg-violet-900 w-full text-white rounded-lg p-2"
+              >
+                Register
+              </Button>
+            )}
           </div>
         </div>
         {/* Event details right col*/}
