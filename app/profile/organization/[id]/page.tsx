@@ -9,15 +9,19 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BASE_URL } from "@/app/api/constants";
 import { useAuth } from "@/app/context/authContext";
+import { Event } from "@/app/typings/events/typings";
+import EventCard from "../../EventCard";
 
 const OrgPageTabs = ({
   canEditOrg,
   orgId,
   orgName,
+  events,
 }: {
   canEditOrg?: boolean;
   orgId: string;
   orgName: string;
+  events: Event[];
 }) => {
   const router = useRouter();
 
@@ -26,27 +30,16 @@ const OrgPageTabs = ({
   };
 
   return (
-    <Tabs
-      defaultValue={canEditOrg ? "stats" : "events"}
-      className="my-6 w-full min-w-xl"
-    >
+    <Tabs defaultValue="events" className="my-6 w-full min-w-xl">
       <TabsList
         className={`grid w-full ${canEditOrg ? "grid-cols-5" : "grid-cols-4"}`}
       >
-        {canEditOrg && <TabsTrigger value="stats">Stats</TabsTrigger>}
         <TabsTrigger value="events">Events</TabsTrigger>
+        {canEditOrg && <TabsTrigger value="stats">Stats</TabsTrigger>}
         <TabsTrigger value="team">Team</TabsTrigger>
         <TabsTrigger value="partners">Partners</TabsTrigger>
         <TabsTrigger value="pictures">Pictures</TabsTrigger>
       </TabsList>
-      {canEditOrg && (
-        <TabsContent value="stats">
-          <div>
-            <h1 className="font-semibold text-xl my-4">Stats</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-          </div>
-        </TabsContent>
-      )}
       <TabsContent value="events">
         <div>
           <div id="header" className="flex flex-row justify-between">
@@ -61,9 +54,25 @@ const OrgPageTabs = ({
               </Button>
             )}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {events && events.length > 0 ? (
+              events.map((event) => <EventCard key={event._id} event={event} />)
+            ) : (
+              <div className="col-span-2 text-center py-8 text-gray-500">
+                No events found for this organization.
+              </div>
+            )}
+          </div>
         </div>
       </TabsContent>
+      {canEditOrg && (
+        <TabsContent value="stats">
+          <div>
+            <h1 className="font-semibold text-xl my-4">Stats</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          </div>
+        </TabsContent>
+      )}
       <TabsContent value="team">
         <div>
           <h1 className="font-semibold text-xl my-4">Team</h1>
@@ -96,10 +105,12 @@ const OrganizationProfile = ({
   orgData,
   canEditOrg,
   isSubscribed,
+  events,
 }: {
   orgData: OrganizationProfile;
   canEditOrg?: boolean;
   isSubscribed?: boolean;
+  events: Event[];
 }) => {
   return (
     <>
@@ -142,6 +153,7 @@ const OrganizationProfile = ({
             canEditOrg={canEditOrg}
             orgId={orgData._id}
             orgName={orgData.name}
+            events={events}
           />
         </div>
         <div className="flex flex-col"></div>
@@ -154,6 +166,7 @@ export default function OrganizationPage() {
   const params = useParams();
   const id = params.id as string;
   const [org, setOrg] = useState<OrganizationProfile | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user, organizations } = useAuth();
   const [canEditOrg, setCanEditOrg] = useState(false);
@@ -182,7 +195,24 @@ export default function OrganizationPage() {
       }
     }
 
+    async function fetchEvents() {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/api/events?organizationId=${id}`,
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+        const res = await response.json();
+        console.log(res.events);
+        setEvents(res.events);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    }
+
     fetchOrganization();
+    fetchEvents();
   }, [id, user, organizations]);
 
   if (isLoading) {
@@ -197,7 +227,11 @@ export default function OrganizationPage() {
 
   return (
     <main className="w-full mt-20 flex flex-col gap-4">
-      <OrganizationProfile orgData={org} canEditOrg={canEditOrg} />
+      <OrganizationProfile
+        orgData={org}
+        canEditOrg={canEditOrg}
+        events={events}
+      />
     </main>
   );
 }

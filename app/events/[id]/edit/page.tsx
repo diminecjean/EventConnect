@@ -102,11 +102,13 @@ export default function EditEventPage() {
 
   console.log("Event data:", eventData);
   return (
-    <EventForm
-      organizationId={organizationId}
-      eventId={eventId}
-      eventName={eventName || eventData?.title || ""}
-      defaultValues={eventData || {}}
-    />
+    <main className="w-full mt-20 flex flex-col gap-4">
+      <EventForm
+        organizationId={organizationId}
+        eventId={eventId}
+        eventName={eventName || eventData?.title || ""}
+        defaultValues={eventData || {}}
+      />
+    </main>
   );
 }

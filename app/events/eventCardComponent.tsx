@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/collapsible";
 import { BASE_URL } from "../api/constants";
 import { OrganizationProfile } from "../typings/profile/typings";
+import { formatEventDateTime } from "@/app/utils/formatDate";
 
 // Types for the component props
 type Tag = {
@@ -36,77 +37,6 @@ type EventCardProps = {
 //   { label: "DevOps", color: "bg-yellow-100" },
 //   { label: "Mobile", color: "bg-orange-100" },
 // ];
-
-/**
- * Formats event dates and times for display
- * @param startDate - Event start date (MongoDB format or Date object)
- * @param endDate - Event end date (MongoDB format or Date object)
- * @returns Object with formatted date and time strings
- */
-export const formatEventDateTime = (
-  startDate: Date | string | { $date: string },
-  endDate: Date | string | { $date: string },
-) => {
-  console.log({ startDate, endDate });
-
-  // Handle MongoDB date format ($date property)
-  const startDateValue =
-    startDate && typeof startDate === "object" && "$date" in startDate
-      ? startDate.$date
-      : startDate;
-
-  const endDateValue =
-    endDate && typeof endDate === "object" && "$date" in endDate
-      ? endDate.$date
-      : endDate;
-
-  // Convert to Date objects
-  const start =
-    startDateValue instanceof Date ? startDateValue : new Date(startDateValue);
-  const end =
-    endDateValue instanceof Date ? endDateValue : new Date(endDateValue);
-
-  // Rest of the function stays the same
-  // Format the dates
-  const startDateFormatted = start.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  const endDateFormatted = end.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  // Format the times
-  const startTimeFormatted = start.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-
-  const endTimeFormatted = end.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-
-  // Check if same day (compare year, month, and day)
-  const isSameDay =
-    start.getFullYear() === end.getFullYear() &&
-    start.getMonth() === end.getMonth() &&
-    start.getDate() === end.getDate();
-
-  // Return formatted strings based on whether it's same day or multi-day
-  return {
-    date: isSameDay
-      ? startDateFormatted
-      : `${startDateFormatted} - ${endDateFormatted}`,
-    time: `${startTimeFormatted} - ${endTimeFormatted}`,
-  };
-};
 
 export default function EventCard({
   id,

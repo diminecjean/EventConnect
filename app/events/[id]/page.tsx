@@ -18,10 +18,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Linkedin, Twitter, Github, Instagram } from "lucide-react"; // Import icons
 import EventImage from "@/app/events/EventImage"; // Import the new client component
 import { BASE_URL } from "@/app/api/constants";
-import { formatEventDateTime } from "../eventCardComponent";
+import { formatEventDateTime } from "@/app/utils/formatDate";
 import GoogleMap from "@/components/GoogleMap";
 import { useAuth } from "@/app/context/authContext";
 import { Button } from "@/components/ui/button";
+import MultiStepLoaderDemo from "./loading";
 
 // export async function generateMetadata({
 //   params,
@@ -100,9 +101,11 @@ const EventTabs = ({ event }: { event: Event }) => {
                 })}
               </Timeline>
             ) : (
-              <p className="text-gray-500 italic">
-                No schedule information available at the moment.
-              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <p className="text-gray-500 italic">
+                  No schedule information available at the moment.
+                </p>
+              </div>
             )}
           </div>
         </TabsContent>
@@ -110,58 +113,66 @@ const EventTabs = ({ event }: { event: Event }) => {
           <div>
             <h1 className="font-semibold text-xl my-4">Speakers</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {event.speakers?.map((speaker, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center text-clip max-w-xl p-4 hover:bg-white hover:bg-opacity-10 border rounded-lg shadow-sm hover:shadow-md transition-shadow h-full"
-                >
-                  <div className="flex flex-col items-center flex-grow">
-                    <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-3">
-                      {speaker.imageUrl ? (
-                        <img
-                          src={speaker.imageUrl}
-                          alt={speaker.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-violet-200 text-violet-700 text-xl font-bold">
-                          {speaker.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </div>
+              {event.speakers && event.speakers.length > 0 ? (
+                event.speakers?.map((speaker, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center text-clip max-w-xl p-4 hover:bg-white hover:bg-opacity-10 border rounded-lg shadow-sm hover:shadow-md transition-shadow h-full"
+                  >
+                    <div className="flex flex-col items-center flex-grow">
+                      <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-3">
+                        {speaker.imageUrl ? (
+                          <img
+                            src={speaker.imageUrl}
+                            alt={speaker.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-violet-200 text-violet-700 text-xl font-bold">
+                            {speaker.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="font-semibold text-lg">{speaker.name}</h3>
+                      <p className="text-sm text-violet-600 mb-2">
+                        {speaker.position}
+                        {speaker.organization
+                          ? ` in ${speaker.organization}`
+                          : ""}
+                      </p>
+                      {speaker.introduction ?? (
+                        <p className="text-sm text-center text-gray-600">
+                          {speaker.introduction}
+                        </p>
                       )}
                     </div>
-                    <h3 className="font-semibold text-lg">{speaker.name}</h3>
-                    <p className="text-sm text-violet-600 mb-2">
-                      {speaker.position}
-                      {speaker.organization
-                        ? ` in ${speaker.organization}`
-                        : ""}
-                    </p>
-                    {speaker.introduction ?? (
-                      <p className="text-sm text-center text-gray-600">
-                        {speaker.introduction}
-                      </p>
+                    {speaker.socialMedia && (
+                      <div className="flex gap-3 mt-3">
+                        {speaker.socialMedia.map((link, id) => (
+                          <a
+                            key={id}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-500 hover:text-violet-700"
+                          >
+                            {getSocialIcon(link.platform)}
+                          </a>
+                        ))}
+                      </div>
                     )}
                   </div>
-                  {speaker.socialMedia && (
-                    <div className="flex gap-3 mt-3">
-                      {speaker.socialMedia.map((link, id) => (
-                        <a
-                          key={id}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-gray-500 hover:text-violet-700"
-                        >
-                          {getSocialIcon(link.platform)}
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                ))
+              ) : (
+                <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
+                  <p className="text-gray-500 italic">
+                    No speakers available for this event yet.
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </TabsContent>
@@ -245,10 +256,12 @@ const EventTabs = ({ event }: { event: Event }) => {
                 ))}
               </div>
             ) : (
-              <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
-                <p className="text-gray-500 italic">
-                  No sponsors available for this event yet.
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
+                  <p className="text-gray-500 italic">
+                    No sponsors available for this event yet.
+                  </p>
+                </div>
               </div>
             )}
           </div>
@@ -275,10 +288,12 @@ const EventTabs = ({ event }: { event: Event }) => {
                 ))}
               </div>
             ) : (
-              <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
-                <p className="text-gray-500 italic">
-                  No pictures available for this event yet.
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
+                  <p className="text-gray-500 italic">
+                    No pictures available for this event yet.
+                  </p>
+                </div>
               </div>
             )}
           </div>
@@ -375,12 +390,7 @@ export default function EventPage({
   }, [id]);
 
   if (isLoading) {
-    return (
-      <div className="w-full mt-20 flex justify-center">
-        {/* TODO: https://ui.aceternity.com/components/multi-step-loader */}
-        Loading event details...
-      </div>
-    );
+    return MultiStepLoaderDemo();
   }
 
   if (!event) {
