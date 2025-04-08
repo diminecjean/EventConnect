@@ -1,25 +1,24 @@
 // app/api/events/[id]/register/route.tsx
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDB } from "@/app/lib/mongodb";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  props: { params: Promise<{ id: string }> },
 ) {
+  const params = await props.params;
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
+    // Verify we have an ID
+    if (!params || !params.id) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 },
+        { error: "Event ID is required" },
+        { status: 400 },
       );
     }
 
-    const { id: eventId } = await params;
+    const id = params.id;
     const registrationData = await request.json();
+    console.log("Registration data:", registrationData);
 
     // Validate required data
     if (!registrationData.userId || !registrationData.registrationFormId) {
@@ -33,7 +32,7 @@ export async function POST(
 
     // Check if user already registered for this event
     const existingRegistration = await db.collection("registrations").findOne({
-      eventId,
+      eventId: id,
       userId: registrationData.userId,
     });
 
