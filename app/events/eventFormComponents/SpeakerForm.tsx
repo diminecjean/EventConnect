@@ -38,14 +38,14 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
     socialIndex: number,
     newValue: SpeakerSocialMedia,
   ) => {
-    const updatedSocialMedia = [...speaker.socialMedia];
+    const updatedSocialMedia = [...(speaker.socialMedia || [])];
     updatedSocialMedia[socialIndex] = newValue;
     update(index, "socialMedia", updatedSocialMedia);
   };
 
   // Helper function to remove social media
   const removeSocialMedia = (socialIndex: number) => {
-    const updatedSocialMedia = [...speaker.socialMedia];
+    const updatedSocialMedia = [...(speaker.socialMedia || [])];
     updatedSocialMedia.splice(socialIndex, 1);
     update(index, "socialMedia", updatedSocialMedia);
   };
@@ -57,7 +57,10 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
       platform: "twitter",
       url: "",
     };
-    update(index, "socialMedia", [...speaker.socialMedia, newSocialMedia]);
+    update(index, "socialMedia", [
+      ...(speaker.socialMedia || []),
+      newSocialMedia,
+    ]);
   };
 
   return (
@@ -125,12 +128,16 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
               <FormLabel>Profile Image</FormLabel>
               <FormControl>
                 <FormImageUploader
-                  name={`speaker-image-${index}`}
-                  onChange={(file) => field.onChange(file)}
-                  required={false}
+                  name={`speaker-image-${speaker.id}`}
+                  onChange={(file) => {
+                    console.log("Speaker image changed:", file);
+                    field.onChange(file);
+                  }}
+                  value={field.value}
+                  width={120}
+                  height={120}
+                  scaleDesc="Square image recommended"
                   maxSizeMB={1}
-                  width={150}
-                  height={150}
                 />
               </FormControl>
               <FormMessage />
@@ -143,17 +150,18 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
             <FormLabel>Social Media</FormLabel>
           </div>
 
-          {speaker.socialMedia.map((social, socialIndex) => (
-            <SocialMediaInput
-              key={social.id}
-              value={social}
-              index={socialIndex}
-              speakerIndex={index}
-              update={updateSocialMedia}
-              remove={removeSocialMedia}
-              register={register}
-            />
-          ))}
+          {speaker.socialMedia &&
+            speaker.socialMedia.map((social, socialIndex) => (
+              <SocialMediaInput
+                key={social.id}
+                value={social}
+                index={socialIndex}
+                speakerIndex={index}
+                update={updateSocialMedia}
+                remove={removeSocialMedia}
+                register={register}
+              />
+            ))}
 
           <Button
             type="button"

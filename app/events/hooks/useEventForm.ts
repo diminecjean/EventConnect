@@ -7,6 +7,7 @@ import {
   EventFormValues,
 } from "../eventFormComponents/schemas";
 import { BASE_URL } from "@/app/api/constants";
+import { uploadImageToSupabase } from "@/app/utils/supabase/imageUploadUtil";
 
 export function useEventForm({
   organizationId,
@@ -186,6 +187,74 @@ export function useEventForm({
     console.log("Submitting form data");
 
     try {
+      // Upload all images to Supabase
+      const uploadTasks = [];
+      
+      // Process main images
+      if (data.bannerUrl instanceof File) {
+        uploadTasks.push(
+          uploadImageToSupabase(data.bannerUrl, 'banners')
+            .then(url => { data.bannerUrl = url; })
+        );
+      }
+      
+      if (data.imageUrl instanceof File) {
+        uploadTasks.push(
+          uploadImageToSupabase(data.imageUrl, 'posters')
+            .then(url => { data.imageUrl = url; })
+        );
+      }
+      
+      // Process gallery images
+      if (data.galleryImages && data.galleryImages.length) {
+        const galleryImages = data.galleryImages;
+        for (let i = 0; i < galleryImages.length; i++) {
+          const image = galleryImages[i];
+          if (image instanceof File) {
+            uploadTasks.push(
+              uploadImageToSupabase(image, 'gallery')
+                .then(url => { galleryImages[i] = url; })
+            );
+          }
+        }
+      }
+      
+            // Process speaker images
+      if (data.speakers && data.speakers.length) {
+        const speakers = data.speakers;
+        for (let i = 0; i < speakers.length; i++) {
+          const imageUrl = speakers[i].imageUrl;
+          if (imageUrl instanceof File) {
+            uploadTasks.push(
+              uploadImageToSupabase(imageUrl, 'speakers')
+                .then(url => { 
+                  if (url) speakers[i].imageUrl = url;
+                })
+            );
+          }
+        }
+      }
+      
+      // Process sponsor logos
+      if (data.sponsors && data.sponsors.length) {
+        const sponsors = data.sponsors;
+        for (let i = 0; i < sponsors.length; i++) {
+          const logoUrl = sponsors[i].logoUrl;
+          if (logoUrl instanceof File) {
+            uploadTasks.push(
+              uploadImageToSupabase(logoUrl, 'sponsors')
+                .then(url => { 
+                  if (url) sponsors[i].logoUrl = url;
+                })
+            );
+          }
+        }
+      }
+      
+      // Wait for all uploads to complete
+      await Promise.all(uploadTasks);
+      
+      // Continue with existing logic
       // Combine date and time for start and end
       const combinedStartDateTime = combineDateAndTime(
         data.startDate,
@@ -197,11 +266,10 @@ export function useEventForm({
           : undefined;
 
       // Process registration forms
-      // Format the form fields data as needed
       const processedRegistrationForms = data.registrationForms.map((form) => ({
         ...form,
         formFields: form.formFields.map((field) => {
-          // Convert options from array to proper format if needed
+          // Process field options
           if (field.type === "select" && field.options) {
             return {
               ...field,
@@ -248,7 +316,11 @@ export function useEventForm({
       }
 
       // Navigate back to organization profile page
-      router.push(`/profile/organization/${organizationId}`);
+      if(!isEditMode) {
+        router.push(`/profile/organization/${organizationId}`);
+      } else {
+        router.push(`/events/${eventId}`);
+      }
       router.refresh(); // Refresh the page to show the updated data
     } catch (error) {
       console.error("Error saving event:", error);
@@ -256,6 +328,7 @@ export function useEventForm({
       setIsSubmitting(false);
     }
   };
+
 
   // Helper function to combine date and time
   const combineDateAndTime = (date: Date, time: Date): Date | null => {

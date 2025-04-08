@@ -9,16 +9,15 @@ import React, {
 interface FormImageUploaderProps {
   name: string;
   label?: string;
-  // onChange?: (file: File | null) => void;
-  onChange?: (file: string | null) => void;
+  onChange?: (file: File | string | null) => void;
   value?: File | string | null;
   error?: string;
   required?: boolean;
   maxSizeMB?: number;
   acceptedFormats?: string;
   className?: string;
-  width?: number;
-  height?: number;
+  width?: number | string;
+  height?: number | string;
   scaleDesc?: string;
   previewUrl?: string;
 }
@@ -42,10 +41,11 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
     },
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
-    // example previewUrl: "blob:http://localhost:3000/12345678-1234-1234-1234-123456789012"
     const [preview, setPreview] = useState<string | null>(null);
     const [fileError, setFileError] = useState<string | null>(null);
+    const [fileObject, setFileObject] = useState<File | null>(null);
 
+    // Handle previewUrl if provided
     useEffect(() => {
       if (previewUrl) {
         setPreview(previewUrl);
@@ -55,19 +55,26 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
     // Handle initial value if provided
     useEffect(() => {
       if (value instanceof File) {
-        // For when a File object is provided as initial value
-        setPreview(URL.createObjectURL(value));
+        setFileObject(value);
+        const newUrl = URL.createObjectURL(value);
+        setPreview(newUrl);
+        console.log("Created object URL from File:", newUrl);
       } else if (typeof value === "string" && value) {
-        // For when a URL is provided as initial value
         setPreview(value);
+        console.log("Set preview from string value:", value);
+      } else if (value === null) {
+        setPreview(null);
+        setFileObject(null);
+        console.log("Cleared preview");
       }
-    }, []);
+    }, [value]);
 
     // Clean up object URL when component unmounts
     useEffect(() => {
       return () => {
-        if (preview && preview.startsWith("blob:")) {
+        if (typeof preview === "string" && preview?.startsWith("blob:")) {
           URL.revokeObjectURL(preview);
+          console.log("Revoked URL:", preview);
         }
       };
     }, [preview]);
@@ -100,38 +107,32 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
         }
 
         // Clean up previous preview if it exists
-        if (preview && preview.startsWith("blob:")) {
+        if (typeof preview === "string" && preview?.startsWith("blob:")) {
           URL.revokeObjectURL(preview);
         }
 
         // Create a URL for the preview
         const fileUrl = URL.createObjectURL(file);
+        console.log("Created new preview URL:", fileUrl);
         setPreview(fileUrl);
+        setFileObject(file);
 
-        // // Pass the file to parent form
-        // if (onChange) {
-        //   onChange(file);
-        // }
-
-        // Generate a mock URL based on the file name
-        // TODO: This is the temporary workaround - replace with actual upload logic later
-        const mockUrl =
-          "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png";
-
-        // Pass the mock URL to parent form
+        // Pass the file to parent form
         if (onChange) {
-          onChange(mockUrl);
+          onChange(file);
         }
       }
     };
 
     const handleRemove = (): void => {
-      if (preview && preview.startsWith("blob:")) {
+      // Use type guard before calling startsWith
+      if (typeof preview === "string" && preview?.startsWith("blob:")) {
         URL.revokeObjectURL(preview);
       }
 
       setPreview(null);
       setFileError(null);
+      setFileObject(null);
 
       // Pass null to parent form to clear the value
       if (onChange) {
@@ -150,14 +151,10 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
       objectFit: "cover" as const,
     };
 
+    console.log("Rendering with preview:", preview);
+
     return (
       <div className={`form-control ${className}`} style={{ width }}>
-        {/* {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          {label} {required && <span className="text-red-500">*</span>}
-        </label>
-      )} */}
-
         <div className="mt-1 flex flex-col items-center">
           {!preview ? (
             <label
@@ -210,7 +207,7 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
               <img
                 src={preview}
                 alt="Preview"
-                className="object-cover"
+                className="object-cover w-full"
                 style={imageStyle}
               />
               <button
@@ -244,5 +241,8 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
     );
   },
 );
+
+// Add a display name
+FormImageUploader.displayName = "FormImageUploader";
 
 export default FormImageUploader;

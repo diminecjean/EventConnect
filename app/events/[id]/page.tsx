@@ -430,7 +430,7 @@ export default function EventPage({
                 <CalendarDays size={24} />
               </div>
               <div className="flex flex-col items-start">
-                <div className="font-medium text-sm">
+                <div className="font-semibold text-sm">
                   {formattedDateTime.date}
                 </div>
                 <div className="font-light text-sm">

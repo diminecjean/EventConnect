@@ -40,8 +40,8 @@ export interface EventSpeaker {
   topic: string;
   organization?: string;
   position?: string;
-  imageUrl?: string;
-  socialMedia: SpeakerSocialMedia[];
+  imageUrl?: string | File | undefined | null;
+  socialMedia?: SpeakerSocialMedia[];
 }
 
 export interface EventFormProps {

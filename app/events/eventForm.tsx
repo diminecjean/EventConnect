@@ -211,12 +211,15 @@ export default function EventForm({
                 <FormControl>
                   <FormImageUploader
                     name="banner"
-                    onChange={(file) => field.onChange(file)}
+                    onChange={(file) => {
+                      console.log("Banner changed:", file);
+                      field.onChange(file);
+                    }}
+                    value={field.value} // Pass the current value directly
                     required={true}
                     maxSizeMB={2}
                     height={256}
                     scaleDesc="1080px x 256px"
-                    previewUrl={field.value} // Add this prop to show existing image
                   />
                 </FormControl>
                 <FormMessage />
@@ -235,12 +238,15 @@ export default function EventForm({
                     <FormControl>
                       <FormImageUploader
                         name="image"
-                        onChange={(file) => field.onChange(file)}
+                        onChange={(file) => {
+                          console.log("Image changed:", file);
+                          field.onChange(file);
+                        }}
+                        value={field.value} // Pass the current value directly
                         required={true}
                         maxSizeMB={2}
                         width={350}
                         height={350}
-                        previewUrl={field.value} // Add this prop to show existing image
                       />
                     </FormControl>
                     <FormMessage />
