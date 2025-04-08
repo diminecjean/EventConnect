@@ -459,9 +459,14 @@ export default function EventPage({
           <div></div>
           {/* TODO: add button for registration */}
           <div className="flex w-full justify-center">
-            <button className="bg-violet-700 w-full text-white rounded-lg p-2">
+            <Button
+              onClick={() =>
+                router.push(`/events/${event._id.toString()}/register`)
+              }
+              className="bg-violet-900 w-full text-white rounded-lg p-2"
+            >
               Register
-            </button>
+            </Button>
           </div>
         </div>
         {/* Event details right col*/}

@@ -134,7 +134,7 @@ export default async function UserProfilePage({
                 {user.eventsAttended.map((eventId, index) => (
                   <Link
                     key={index}
-                    href={`/event/${eventId}`}
+                    href={`/events/${eventId}`}
                     className="block p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition"
                   >
                     Event {index + 1}{" "}
