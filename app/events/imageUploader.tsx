@@ -20,6 +20,7 @@ interface FormImageUploaderProps {
   width?: number;
   height?: number;
   scaleDesc?: string;
+  previewUrl?: string;
 }
 
 const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
@@ -37,32 +38,39 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
       width = "100%",
       height = "auto",
       scaleDesc = "",
+      previewUrl,
     },
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     // example previewUrl: "blob:http://localhost:3000/12345678-1234-1234-1234-123456789012"
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [preview, setPreview] = useState<string | null>(null);
     const [fileError, setFileError] = useState<string | null>(null);
+
+    useEffect(() => {
+      if (previewUrl) {
+        setPreview(previewUrl);
+      }
+    }, [previewUrl]);
 
     // Handle initial value if provided
     useEffect(() => {
       if (value instanceof File) {
         // For when a File object is provided as initial value
-        setPreviewUrl(URL.createObjectURL(value));
+        setPreview(URL.createObjectURL(value));
       } else if (typeof value === "string" && value) {
         // For when a URL is provided as initial value
-        setPreviewUrl(value);
+        setPreview(value);
       }
     }, []);
 
     // Clean up object URL when component unmounts
     useEffect(() => {
       return () => {
-        if (previewUrl && previewUrl.startsWith("blob:")) {
-          URL.revokeObjectURL(previewUrl);
+        if (preview && preview.startsWith("blob:")) {
+          URL.revokeObjectURL(preview);
         }
       };
-    }, [previewUrl]);
+    }, [preview]);
 
     const validateFile = (file: File): string | null => {
       // Check file size (convert maxSizeMB to bytes)
@@ -92,13 +100,13 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
         }
 
         // Clean up previous preview if it exists
-        if (previewUrl && previewUrl.startsWith("blob:")) {
-          URL.revokeObjectURL(previewUrl);
+        if (preview && preview.startsWith("blob:")) {
+          URL.revokeObjectURL(preview);
         }
 
         // Create a URL for the preview
         const fileUrl = URL.createObjectURL(file);
-        setPreviewUrl(fileUrl);
+        setPreview(fileUrl);
 
         // // Pass the file to parent form
         // if (onChange) {
@@ -118,11 +126,11 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
     };
 
     const handleRemove = (): void => {
-      if (previewUrl && previewUrl.startsWith("blob:")) {
-        URL.revokeObjectURL(previewUrl);
+      if (preview && preview.startsWith("blob:")) {
+        URL.revokeObjectURL(preview);
       }
 
-      setPreviewUrl(null);
+      setPreview(null);
       setFileError(null);
 
       // Pass null to parent form to clear the value
@@ -133,12 +141,12 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
 
     const containerStyle = {
       width,
-      height: !previewUrl ? height : "auto",
+      height: !preview ? height : "auto",
     };
 
     const imageStyle = {
       width: "100%",
-      height: previewUrl ? height : "auto",
+      height: preview ? height : "auto",
       objectFit: "cover" as const,
     };
 
@@ -151,7 +159,7 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
       )} */}
 
         <div className="mt-1 flex flex-col items-center">
-          {!previewUrl ? (
+          {!preview ? (
             <label
               htmlFor={`image-upload-${name}`}
               className="block border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors flex justify-center items-center"
@@ -200,7 +208,7 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
               style={{ width: "100%" }}
             >
               <img
-                src={previewUrl}
+                src={preview}
                 alt="Preview"
                 className="object-cover"
                 style={imageStyle}
