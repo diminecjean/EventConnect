@@ -36,6 +36,15 @@ export const eventFormSchema = z
     endDate: z.date().optional(),
     startTime: z.date(),
     endTime: z.date().optional(),
+    tags: z.array(
+      z.union([
+        z.string(), 
+        z.object({ 
+          label: z.string(),
+          color: z.string()
+        })
+      ])
+    ).optional(),
     maxAttendees: z.number().positive().optional(),
     partnerOrganizations: z.array(z.string()).default([]),
     imageUrl: z.string().optional(),

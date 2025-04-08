@@ -56,6 +56,7 @@ export default function EventForm({
     defaultValues,
   });
 
+  // For debugging purposes
   const { touchedFields, dirtyFields } = form.formState;
 
   // #region Date and Time Utils
@@ -76,7 +77,6 @@ export default function EventForm({
     }
   };
 
-  // Handle time change
   // Handle time change
   const handleTimeChange = (
     field: {
@@ -154,7 +154,6 @@ export default function EventForm({
     }
   };
 
-  // Helper function to validate end time on the same day
   // Helper function to validate end time on the same day - can be simplified
   const validateEndTime = (
     startDate: Date,
@@ -191,7 +190,7 @@ export default function EventForm({
     return { isValid: true };
   };
 
-  // # endregion
+  // #endregion
 
   return (
     <div className="py-8 px-4">
@@ -711,6 +710,167 @@ export default function EventForm({
                 )}
               />
 
+              {/* Tags Input Field */}
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <FormControl>
+                          <Input
+                            placeholder="Add tags (press Enter to add)"
+                            id="tag-input"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                const input = e.currentTarget;
+                                const value = input.value.trim();
+
+                                if (value) {
+                                  // Check if this tag text already exists
+                                  const tagExists = field.value?.some((tag) =>
+                                    typeof tag === "object"
+                                      ? tag.label === value
+                                      : tag === value,
+                                  );
+
+                                  if (!tagExists) {
+                                    // Generate a random color class
+                                    const colors = [
+                                      "bg-blue-100",
+                                      "bg-purple-100",
+                                      "bg-green-100",
+                                      "bg-yellow-100",
+                                      "bg-orange-100",
+                                      "bg-pink-100",
+                                      "bg-indigo-100",
+                                      "bg-red-100",
+                                      "bg-teal-100",
+                                    ];
+                                    const randomColor =
+                                      colors[
+                                        Math.floor(
+                                          Math.random() * colors.length,
+                                        )
+                                      ];
+
+                                    // Create tag object
+                                    const newTag = {
+                                      label: value,
+                                      color: randomColor,
+                                    };
+
+                                    const newTags = [
+                                      ...(field.value || []),
+                                      newTag,
+                                    ];
+                                    field.onChange(newTags);
+                                    input.value = "";
+                                  }
+                                }
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            const input = document.getElementById(
+                              "tag-input",
+                            ) as HTMLInputElement;
+                            const value = input.value.trim();
+
+                            if (value) {
+                              // Check if this tag text already exists
+                              const tagExists = field.value?.some((tag) =>
+                                typeof tag === "object"
+                                  ? tag.label === value
+                                  : tag === value,
+                              );
+
+                              if (!tagExists) {
+                                // Generate a random color class
+                                const colors = [
+                                  "bg-blue-100",
+                                  "bg-purple-100",
+                                  "bg-green-100",
+                                  "bg-yellow-100",
+                                  "bg-orange-100",
+                                  "bg-pink-100",
+                                  "bg-indigo-100",
+                                  "bg-red-100",
+                                  "bg-teal-100",
+                                ];
+                                const randomColor =
+                                  colors[
+                                    Math.floor(Math.random() * colors.length)
+                                  ];
+
+                                // Create tag object
+                                const newTag = {
+                                  label: value,
+                                  color: randomColor,
+                                };
+
+                                const newTags = [
+                                  ...(field.value || []),
+                                  newTag,
+                                ];
+                                field.onChange(newTags);
+                                input.value = "";
+                              }
+                            }
+                          }}
+                        >
+                          Add
+                        </Button>
+                      </div>
+
+                      {Array.isArray(field.value) && field.value.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2 pt-4">
+                          {field.value.map((tag: any, index: number) => (
+                            <Badge
+                              key={index}
+                              variant="secondary"
+                              className={`py-1 px-2 flex items-center gap-1 ${
+                                typeof tag === "object" && tag.color
+                                  ? tag.color
+                                  : "bg-gray-100"
+                              }`}
+                            >
+                              {typeof tag === "object" ? tag.label : tag}
+                              <Trash2
+                                className="h-3 w-3 cursor-pointer"
+                                onClick={() => {
+                                  const newTags = (field.value || []).filter(
+                                    (_: any, i: number) => i !== index,
+                                  );
+                                  field.onChange(newTags);
+                                }}
+                              />
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* 
+                Tabs section (optional fields)
+                 - Registration Form
+                 - Timeline (Agenda)
+                 - Speaker lineup
+                 - Sponsors lineup
+                 - Pictures 
+              */}
+
               {/* 
                 Tabs section (optional fields)
                  - Registration Form
@@ -801,7 +961,7 @@ export default function EventForm({
                   ? "Update Event"
                   : "Create Event"}
             </Button>
-            <Button
+            {/* <Button
               type="button"
               onClick={() => {
                 console.log("Touched fields:", touchedFields);
@@ -811,8 +971,8 @@ export default function EventForm({
               }}
             >
               Check Validation State
-            </Button>
-            <Button
+            </Button> */}
+            {/* <Button
               type="button"
               onClick={() => {
                 console.log("Form values:", form.getValues());
@@ -828,7 +988,7 @@ export default function EventForm({
               disabled={isSubmitting}
             >
               Debug Submit
-            </Button>
+            </Button> */}
           </div>
         </form>
       </Form>
