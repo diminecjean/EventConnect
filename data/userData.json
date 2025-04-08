@@ -3,19 +3,21 @@
     "name": "Wei En Looi",
     "email": "looi.weien02@student.usm.my",
     "bio": "Software engineer passionate about event organizing and the tech community.",
-    "profile_picture": "https://avatars.githubusercontent.com/u/93825624?v=4",
-    "organization": ["67e01112817da4e9ba59a385", "67e01112817da4e9ba59a386"],
+    "profilePicture": "https://avatars.githubusercontent.com/u/93825624?v=4",
+    "organizations": ["67f3a586c20214ebc385a0cf", "67f3a586c20214ebc385a0d0"],
     "interests": ["DevOps", "Cloud", "Mobile Development"],
-    "events_attended": ["event_001", "event_002"],
-    "badges_earned": ["community_builder", "speaker"]
+    "eventsAttended": [],
+    "badgesEarned": ["community_builder", "speaker"],
+    "createdAt": "2023-10-01T12:00:00Z"
   },
   {
     "name": "Aisha Tan",
     "email": "aisha@example.com",
     "bio": "Frontend developer and community speaker.",
-    "profile_picture": "https://images.pexels.com/photos/1704488/pexels-photo-1704488.…",
+    "profilePicture": "https://images.pexels.com/photos/1704488/pexels-photo-1704488.…",
     "interests": ["React.js", "UX/UI", "Web Performance"],
-    "events_attended": ["event_001", "event_003"],
-    "badges_earned": ["frequent_attendee"]
+    "eventsAttended": ["67f3a5ebc20214ebc385a0d1"],
+    "badgesEarned": ["frequent_attendee"],
+    "createdAt": "2023-10-01T12:00:00Z"
   }
 ]

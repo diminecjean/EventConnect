@@ -1,17 +1,27 @@
 [
-    {
+  {
     "title": "Test event",
-    "description": "This is a test event\n",
+    "description": "Join us for a vibrant tech meetup focused on mobile development with Flutter! Connect with fellow developers, explore the latest in cross-platform app development, and learn from expert-led talks and live demos. Whether you're a beginner or a seasoned dev, there's something for everyone. Let’s build beautiful apps together!\n",
     "location": "USM",
     "startDate": {"$date": "2025-04-06T01:00:00.000Z"},
     "endDate": {"$date": "2025-04-06T09:00:00.000Z"},
+    "tags": [
+      {
+        "label": "Flutter",
+        "color": "bg-yellow-100"
+      },
+      {
+        "label": "Mobile Development",
+        "color": "bg-indigo-100"
+      }
+    ],
     "maxAttendees": 80,
-    "partnerOrganizations": [{"$oid": "67e01112817da4e9ba59a386"}],
+    "partnerOrganizations": ["67f3a586c20214ebc385a0d0"],
     "imageUrl": "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
     "bannerUrl": "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
     "eventMode": "physical",
     "virtualMeetingLink": "",
-    "organizationId": {"$oid": "67e01112817da4e9ba59a385"},
+    "organizationId": "67f3a586c20214ebc385a0cf",
     "registrationForms": [
       {
         "id": "a5fb7aed-58c4-41aa-b2b0-dd926eadb073",
@@ -88,7 +98,8 @@
         "topic": "Sleep",
         "organization": "USM",
         "position": "Student",
-        "imageUrl": "",
+        "introduction": "I am a student at USM",
+        "imageUrl": "https://avatars.githubusercontent.com/u/93825624?v=4",
         "socialMedia": [
           {
             "id": "f31fd128-b5a0-4c3a-a163-58e08f4f68b7",

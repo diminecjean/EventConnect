@@ -34,6 +34,7 @@ async function getUserProfile(email: string) {
 
 async function getOrganizationProfile(id: string) {
   try {
+    console.log("Fetching organization profile for ID:", id);
     const response = await fetch(`${BASE_URL}/api/organizations/${id}`);
     if (!response.ok) {
       throw new Error("Failed to fetch organization data");
@@ -118,14 +119,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
             // Check for organizer status
             if (
-              userProfile.organization &&
-              userProfile.organization.length > 0
+              userProfile.organizations &&
+              userProfile.organizations.length > 0
             ) {
               setIsOrganizer(true);
               localStorage.setItem("userRole", "Organizer");
 
               // Fetch organizations data
-              const organizationPromises = userProfile.organization.map(
+              const organizationPromises = userProfile.organizations.map(
                 (orgId: string) => getOrganizationProfile(orgId),
               );
 

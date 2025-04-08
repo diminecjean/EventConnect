@@ -1,32 +1,34 @@
 [
   {
-    "id": "gdg-kuala-lumpur",
-    "name": "Google Developer Group Kuala Lumpur (GDG Kuala Lumpur)",
-    "organization_picture": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-goog/events/DF24-Bevy-Event-Thumbnail-Editable%20Location_a6rYqRp.png",
+    "name": "GDG Kuala Lumpur",
     "description": "An independent developer group that discusses and shares experiences developing applications using Google technologies like Android, Google Maps, and Google App Engine.",
+    "banner": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-goog/events/DF24-Bevy-Event-Thumbnail-Editable%20Location_a6rYqRp.png",
+    "logo": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-goog/events/DF24-Bevy-Event-Thumbnail-Editable%20Location_a6rYqRp.png",
+    "contactEmail": "gdgkl@gmail.com",
     "website": "https://gdg.community.dev/gdg-kuala-lumpur/",
     "social_links": {
-      "twitter": "https://twitter.com/gdgkl",
-      "facebook": "https://www.facebook.com/gdgkl"
+      "instagram": "https://www.instagram.com/gdg.kl/",
+      "facebook": "https://www.facebook.com/GDGKualaLumpur"
     },
     "location": "Kuala Lumpur, Malaysia",
-    "contact_email": "randomeemail@gmail.com",
-    "events_hosted": ["gdg-meetup-10", "gdg-meetup-11"],
-    "members_count": 886,
+    "membersCount": 886,
     "tags": ["Google technologies", "Android", "Cloud", "Web Development"],
-    "created_at": "2023-01-01T00:00:00Z"
+    "createdAt": { "$date": "2024-10-10T12:00:00Z" },
+    "updatedAt": { "$date": "2025-01-05T09:15:00Z" }
   },
   {
-    "id": "cncf-cloud-native-kuala-lumpur",
-    "name": "CNCF Cloud Native Kuala Lumpur",
-    "organization_picture": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-goog/events/DF24-Bevy-Event-Thumbnail-Editable%20Location_a6rYqRp.png",
+    "name": "Cloud Native Kuala Lumpur",
     "description": "A community of enthusiasts consisting of end-users and contributors to Cloud Native projects, meeting monthly to discuss the latest in cloud computing, operations, and architecture.",
+    "banner": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-cncf/events/Cloud%20Native%20Community%20Group%20Kuala%20Lumpur%20-%20Logo%20-%20Color_OU9b6UW.png",
+    "logo": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-cncf/events/Cloud%20Native%20Community%20Group%20Kuala%20Lumpur%20-%20Logo%20-%20Color_OU9b6UW.png",
+    "contactEmail": "cncfkl@gmail.com",
     "website": "https://community.cncf.io/cloud-native-kuala-lumpur/",
+    "social_links": {
+      "instagram": "https://www.instagram.com/cloudnativecomputingfoundation/"    },
     "location": "Kuala Lumpur, Malaysia",
-    "contact_email": "randomeemail@gmail.com",
-    "events_hosted": ["cncf-meetup-april-2025", "cncf-meetup-february-2025"],
     "members_count": 253,
     "tags": ["Cloud Native", "Kubernetes", "DevOps", "Microservices"],
-    "created_at": "2023-01-01T00:00:00Z"
+    "createdAt": { "$date": "2024-10-10T12:00:00Z" },
+    "updatedAt": { "$date": "2025-01-05T09:15:00Z" }
   }
 ]
