@@ -7,6 +7,7 @@ const nextConfig = {
       "res.cloudinary.com",
       "avatars.githubusercontent.com",
       "dpxvvqkjcqorqqkkamxa.supabase.co",
+      "www.cncf.io",
     ],
   },
 };
