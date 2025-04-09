@@ -187,9 +187,7 @@ export default function Home() {
             </Button>
           )}
         </div>
-        <div className="flex">
-          <SeedDatabase />
-        </div>
+        <div className="flex">{/* <SeedDatabase /> */}</div>
       </div>
       <SearchBar onSearch={handleSearch} isSearching={isSearching} />
 
