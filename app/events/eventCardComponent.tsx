@@ -182,8 +182,6 @@ export default function EventCard({
                 </CollapsibleTrigger>
               </div>
               <CollapsibleContent className="text-xs text-gray-700 dark:text-gray-200 pt-2">
-                {/* No need to repeat the full text, just show a separator */}
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
                 {/* The rest of the description is already visible since line-clamp is removed */}
               </CollapsibleContent>
             </Collapsible>
