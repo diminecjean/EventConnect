@@ -1,27 +1,21 @@
 [
   {
-    "title": "Test event",
+    "title": "Flutter Kuala Lumpur Meetup #8",
     "description": "Join us for a vibrant tech meetup focused on mobile development with Flutter! Connect with fellow developers, explore the latest in cross-platform app development, and learn from expert-led talks and live demos. Whether you're a beginner or a seasoned dev, there's something for everyone. Let’s build beautiful apps together!\n",
     "location": "USM",
-    "startDate": {"$date": "2025-04-06T01:00:00.000Z"},
-    "endDate": {"$date": "2025-04-06T09:00:00.000Z"},
+    "startDate": "2025-04-06T01:00:00.000Z",
+    "endDate": "2025-04-06T09:00:00.000Z",
     "tags": [
-      {
-        "label": "Flutter",
-        "color": "bg-yellow-100"
-      },
-      {
-        "label": "Mobile Development",
-        "color": "bg-indigo-100"
-      }
+      { "label": "Flutter", "color": "bg-yellow-100" },
+      { "label": "Mobile Development", "color": "bg-indigo-100" }
     ],
     "maxAttendees": 80,
-    "partnerOrganizations": ["67f3a586c20214ebc385a0d0"],
-    "imageUrl": "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
-    "bannerUrl": "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
+    "partnerOrganizations": ["67f5e76fb1598ab19bdb503b"],
+    "imageUrl": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/posters/b370af0e-70cc-45d8-ad05-55e6b79f56e1.png",
+    "bannerUrl": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/banners/620ed681-3b4f-4fee-b7f1-34f0e12af4df.png",
     "eventMode": "physical",
     "virtualMeetingLink": "",
-    "organizationId": "67f3a586c20214ebc385a0cf",
+    "organizationId": "67f5e76fb1598ab19bdb503a",
     "registrationForms": [
       {
         "id": "a5fb7aed-58c4-41aa-b2b0-dd926eadb073",
@@ -81,30 +75,58 @@
         "date": "2025-04-06T11:40:15.741Z",
         "time": "9:00 AM",
         "title": "Registration",
-        "description": "In the pantry"
+        "description": "(breakfast provided)"
       },
       {
         "id": "9faa62b8-d67f-454b-8bfc-225ef0ad8bf7",
         "date": "2025-04-06T11:40:15.741Z",
         "time": "10:00 AM",
-        "title": "Talk 1",
-        "description": "by pro developer"
+        "title": "Welcome Note, WORQ Introduction",
+        "description": ""
+      },
+      {
+        "id": "9fab62b8-as8f-454b-8bfc-325eadss8bf7",
+        "date": "2025-04-06T11:40:15.741Z",
+        "time": "10:30 AM",
+        "title": "Shielding Secrets: Securing App Secrets and Keys for Production",
+        "description": ""
+      },
+      {
+        "id": "s3f8s2b8-as8f-454b-8bfc-325eaddufje6",
+        "date": "2025-04-06T11:40:15.741Z",
+        "time": "11:30 AM",
+        "title": "Building with Flutter to Innovate Career Growth with IMPRESSO",
+        "description": ""
       }
     ],
     "speakers": [
       {
         "id": "4e69cd02-066a-4d1d-a5f8-d49cd28322ca",
-        "name": "Wei En",
-        "topic": "Sleep",
-        "organization": "USM",
-        "position": "Student",
-        "introduction": "I am a student at USM",
+        "name": "Osama Ghazal",
+        "topic": "Shielding Secrets: Securing App Secrets and Keys for Production",
+        "organization": "Deriv",
+        "position": "Mobile Application Developer (Flutter)",
         "imageUrl": "https://avatars.githubusercontent.com/u/93825624?v=4",
         "socialMedia": [
           {
             "id": "f31fd128-b5a0-4c3a-a163-58e08f4f68b7",
             "platform": "instagram",
             "url": "https://www.instagram.com/diminecjean2002/"
+          }
+        ]
+      },
+      {
+        "id": "70bdeb44-c262-4f05-bafa-ca0f8135bfdc",
+        "name": "Benjamin Beh",
+        "topic": "Building with Flutter to Innovate Career Growth with IMPRESSO",
+        "organization": "IMPRESSO",
+        "position": "Founder",
+        "imageUrl": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/speakers/b7165bd9-d340-4efd-8e8f-2378dd133737.jpeg",
+        "socialMedia": [
+          {
+            "id": "14bf3a3f-6e29-4406-9122-9d0401152396",
+            "platform": "instagram",
+            "url": "https://www.instagram.com/vandyck.lai/"
           }
         ]
       }
@@ -114,7 +136,7 @@
         "id": "a8ecb891-359b-42cd-a5f7-21293f3b7a00",
         "name": "GDG Cloud",
         "sponsorType": "food",
-        "logoUrl": "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
+        "logoUrl": "https://media.licdn.com/dms/image/v2/C510BAQGuyyKKEl12gA/company-logo_200_200/company-logo_200_200/0/1630626545276?e=2147483647&v=beta&t=8fo-z4riSM6snbevauMmpObSTF80NUQe5OtG-dbajsQ",
         "description": "Google Developer Groups\n",
         "socialLinks": []
       }
@@ -125,5 +147,186 @@
     ],
     "createdAt": { "$date": "2025-01-15T08:30:00Z" },
     "updatedAt": { "$date": "2025-03-22T14:45:00Z" }
+  },
+  {
+    "title": "CNCF Meetup - April 2025",
+    "description": "Jom Raya @ Cloud Native Kuala Lumpur!Join us for the Jom Raya edition of the Cloud Native Kuala Lumpur Meetup. Network with professionals passionate about cloud-native technologies and celebrate together.",
+    "location": "AWS Malaysia, Level 35, The Gardens North Tower, Kuala Lumpur",
+    "startDate": "2025-04-16T10:00:00.000Z",
+    "endDate": "2025-04-16T13:30:00.000Z",
+    "tags": [
+      { "label": "Cloud Native", "color": "bg-blue-100" },
+      { "label": "Networking", "color": "bg-green-100" }
+    ],
+    "maxAttendees": 100,
+    "partnerOrganizations": ["67f5e76fb1598ab19bdb503a"],
+    "imageUrl": "https://secure.meetupstatic.com/photos/event/3/6/3/0/600_526753872.webp?w=750",
+    "bannerUrl": "https://secure.meetupstatic.com/photos/event/3/6/3/0/600_526753872.webp?w=750",
+    "eventMode": "physical",
+    "virtualMeetingLink": "",
+    "organizationId": "67f5e76fb1598ab19bdb503b",
+    "registrationForms": [
+      {
+        "id": "participant-form",
+        "name": "Participant",
+        "description": "Registration form for participants",
+        "formFields": [
+          {
+            "id": "full-name",
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "id": "email",
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "Enter your email address"
+          }
+        ],
+        "isDefault": true
+      }
+    ],
+    "timelineItems": [
+      {
+        "id": "registration",
+        "date": "2025-04-16T10:00:00.000Z",
+        "time": "6:00 PM",
+        "title": "Registration",
+        "description": "Arrival and registration"
+      },
+      {
+        "id": "welcome-note",
+        "date": "2025-04-16T11:30:00.000Z",
+        "time": "7:30 PM",
+        "title": "Welcome Note",
+        "description": "Opening remarks by organizers"
+      }
+    ],
+    "speakers": [
+      {
+        "id": "speaker-1",
+        "name": "Nasir Ahmed",
+        "topic": "Cloud Security Best Practices",
+        "organization": "Crypto.com",
+        "position": "Security Operations Center Analyst",
+        "imageUrl": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_250,h_250,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-cncf/avatars/mohammed_fazalullah_qudrath_kvkCRRY.pngg",
+        "socialMedia": [
+          {
+            "id": "linkedin",
+            "platform": "LinkedIn",
+            "url": "https://www.linkedin.com/in/nasir-ahmed"
+          }
+        ]
+      }
+    ],
+    "sponsors": [
+      {
+        "id": "aws-malaysia",
+        "name": "AWS Malaysia",
+        "sponsorType": "venue",
+        "logoUrl": "https://figmaresource.com/wp-content/uploads/2024/05/AWS-Marketplace-Logo-PNG-to-svg-1.svg",
+        "description": "Amazon Web Services Malaysia",
+        "socialLinks": []
+      }
+    ],
+    "galleryImages": [
+      "https://example.com/gallery/jom-raya-1.png",
+      "https://example.com/gallery/jom-raya-2.png"
+    ],
+    "createdAt": { "$date": "2025-03-01T08:30:00Z" },
+    "updatedAt": { "$date": "2025-03-15T14:45:00Z" }
+  },
+  {
+    "title": "Cloud Native AI Day Malaysia",
+    "description": "Explore the intersection of cloud-native technologies and artificial intelligence at the Cloud Native AI Day Malaysia. Engage with experts and enhance your understanding of AI in the cloud.",
+    "location": "AWS Malaysia, Level 35, The Gardens North Tower, Kuala Lumpur",
+    "startDate": "2025-04-17T02:00:00.000Z",
+    "endDate": "2025-04-17T09:00:00.000Z",
+    "tags": [
+      { "label": "Artificial Intelligence", "color": "bg-purple-100" },
+      { "label": "Cloud Native", "color": "bg-blue-100" }
+    ],
+    "maxAttendees": 150,
+    "imageUrl": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/d68e1a97-5629-4a7e-8935-b9f75e722f15.png",
+    "bannerUrl": "https://media.licdn.com/dms/image/sync/v2/D5627AQHGGERGp5oNFQ/articleshare-shrink_800/articleshare-shrink_800/0/1739748810712?e=2147483647&v=beta&t=_L2nzJDcDU0bSZ8u3gxMNyUWJBi6BLqPaId8TUXiDvQ",
+    "eventMode": "physical",
+    "virtualMeetingLink": "",
+    "organizationId": "67f5e76fb1598ab19bdb503b",
+    "registrationForms": [
+      {
+        "id": "participant-form",
+        "name": "Participant",
+        "description": "Registration form for participants",
+        "formFields": [
+          {
+            "id": "full-name",
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "id": "email",
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "Enter your email address"
+          }
+        ],
+        "isDefault": true
+      }
+    ],
+    "timelineItems": [
+      {
+        "id": "registration",
+        "date": "2025-04-17T02:00:00.000Z",
+        "time": "10:00 AM",
+        "title": "Registration",
+        "description": "Arrival and registration"
+      },
+      {
+        "id": "keynote",
+        "date": "2025-04-17T03:00:00.000Z",
+        "time": "11:00 AM",
+        "title": "Keynote: AI in the Cloud",
+        "description": "Insights into AI integration with cloud technologies"
+      }
+    ],
+    "speakers": [
+      {
+        "id": "speaker-2",
+        "name": "Jane Doe",
+        "topic": "AI in the Cloud",
+        "organization": "Tech Innovators",
+        "position": "Chief AI Officer",
+        "imageUrl": "https://media.istockphoto.com/id/1317804578/photo/one-businesswoman-headshot-smiling-at-the-camera.jpg?s=612x612&w=0&k=20&c=EqR2Lffp4tkIYzpqYh8aYIPRr-gmZliRHRxcQC5yylY=",
+        "socialMedia": [
+          {
+            "id": "twitter",
+            "platform": "Twitter",
+            "url": "https://twitter.com/janedoe"
+          }
+        ]
+      }
+    ],
+    "sponsors": [
+      {
+        "id": "tech-innovators",
+        "name": "Tech Innovators",
+        "sponsorType": "platinum",
+        "logoUrl": "https://media.licdn.com/dms/image/v2/C561BAQGfdzdjV4rIOg/company-background_10000/company-background_10000/0/1611995751406/techinnovators_cover?e=2147483647&v=beta&t=GA7_zMyKhAx-NhwWG-_POyNM44xxosf-qU7q-At3bas",
+        "description": "Leading AI solutions provider",
+        "socialLinks": []
+      }
+    ],
+    "galleryImages": [
+      "https://example.com/gallery/ai-day-1.png",
+      "https://example.com/gallery/ai-day-2.png"
+    ],
+    "createdAt": { "$date": "2025-03-02T10:00:00Z" },
+    "updatedAt": { "$date": "2025-03-20T16:00:00Z" }
   }
 ]
