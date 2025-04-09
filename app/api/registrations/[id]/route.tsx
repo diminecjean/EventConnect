@@ -5,10 +5,19 @@ import { ObjectId } from "mongodb";
 // Pass in event ID to get number of registrations
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  props: { params: Promise<{ id: string }> },
 ) {
+  const params = await props.params;
   try {
-    const { id } = params;
+    // Verify we have an ID
+    if (!params || !params.id) {
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 },
+      );
+    }
+
+    const id = params.id;
 
     console.log({ eventId: id });
 
