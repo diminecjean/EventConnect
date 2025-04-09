@@ -67,8 +67,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
 });
 
-export async function signUp({ email, password, name }: { email: string; password: string; name?: string }) {
-
+export async function signUp({
+  email,
+  password,
+  name,
+}: {
+  email: string;
+  password: string;
+  name?: string;
+}) {
   // Check if user exists
   // For signups, user should not exist
   const res = await fetch(`${BASE_URL}/api/users/email/${email}`);
@@ -110,21 +117,21 @@ export async function signUp({ email, password, name }: { email: string; passwor
   );
 
   console.log({ response });
-  
+
   // Implementation:
   if (!response.ok) {
     const errorData = await response.json();
     return {
       success: false,
-      error: errorData.error || "Failed to create user"
+      error: errorData.error || "Failed to create user",
     };
   }
-  
+
   // Return user without password
   const { password: _, ...userWithoutPassword } = user;
   return {
     success: true,
     data: userWithoutPassword,
-    message: "User created successfully"
+    message: "User created successfully",
   };
 }

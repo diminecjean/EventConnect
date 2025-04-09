@@ -79,60 +79,58 @@ export const formatSingleDate = (
   date: Date | string | { $date: string },
   options: {
     includeTime?: boolean;
-    format?: 'short' | 'medium' | 'long';
-  } = { includeTime: false, format: 'medium' }
+    format?: "short" | "medium" | "long";
+  } = { includeTime: false, format: "medium" },
 ) => {
   // Handle MongoDB date format ($date property)
-  const dateValue = 
-    date && typeof date === "object" && "$date" in date
-      ? date.$date
-      : date;
+  const dateValue =
+    date && typeof date === "object" && "$date" in date ? date.$date : date;
 
   // Convert to Date object
   const dateObj = dateValue instanceof Date ? dateValue : new Date(dateValue);
 
   // Apply different formatting based on the format option
   let dateFormat: Intl.DateTimeFormatOptions = {};
-  
+
   switch (options.format) {
-    case 'short':
+    case "short":
       dateFormat = {
-        month: 'numeric',
-        day: 'numeric',
-        year: '2-digit'
+        month: "numeric",
+        day: "numeric",
+        year: "2-digit",
       };
       break;
-    case 'long':
+    case "long":
       dateFormat = {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric'
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
       };
       break;
-    case 'medium':
+    case "medium":
     default:
       dateFormat = {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
+        month: "short",
+        day: "numeric",
+        year: "numeric",
       };
       break;
   }
 
   // Format the date
-  const formattedDate = dateObj.toLocaleDateString('en-US', dateFormat);
-  
+  const formattedDate = dateObj.toLocaleDateString("en-US", dateFormat);
+
   // Add time if requested
   if (options.includeTime) {
-    const formattedTime = dateObj.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+    const formattedTime = dateObj.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
     return `${formattedDate}, ${formattedTime}`;
   }
-  
+
   return formattedDate;
 };
 

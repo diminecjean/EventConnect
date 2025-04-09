@@ -79,7 +79,7 @@ export function useEventForm({
   // If in edit mode and no default values are provided, fetch the event data
   useEffect(() => {
     if (isEditMode && !defaultValues) {
-      console.log('fetch event to edit');
+      console.log("fetch event to edit");
       const fetchEvent = async () => {
         try {
           const response = await fetch(`${BASE_URL}/api/events/${eventId}`);
@@ -125,35 +125,41 @@ export function useEventForm({
   // If in edit mode and default values are provided, set the form with those values
   useEffect(() => {
     if (defaultValues && Object.keys(defaultValues).length > 0) {
-      console.log('Setting form with provided defaultValues:', defaultValues);
-      
+      console.log("Setting form with provided defaultValues:", defaultValues);
+
       try {
         // Helper function to safely create a Date object
         const createSafeDate = (dateValue: any): Date => {
           if (!dateValue) return new Date();
-          
+
           // If it's already a Date object
           if (dateValue instanceof Date) return new Date(dateValue);
-          
+
           // If it's a MongoDB date format with $date property
-          if (typeof dateValue === 'object' && dateValue.$date) {
+          if (typeof dateValue === "object" && dateValue.$date) {
             return new Date(dateValue.$date);
           }
-          
+
           // If it's an ISO string or timestamp
           return new Date(dateValue);
         };
-        
+
         // Create proper Date objects for all date fields
         const startDate = createSafeDate(defaultValues.startDate);
-        const endDate = defaultValues.endDate ? createSafeDate(defaultValues.endDate) : undefined;
-        
+        const endDate = defaultValues.endDate
+          ? createSafeDate(defaultValues.endDate)
+          : undefined;
+
         // For time fields, use the same dates but ensure they're valid
-        const startTime = defaultValues.startTime ? createSafeDate(defaultValues.startTime) : startDate;
-        const endTime = defaultValues.endTime ? createSafeDate(defaultValues.endTime) : endDate;
-        
+        const startTime = defaultValues.startTime
+          ? createSafeDate(defaultValues.startTime)
+          : startDate;
+        const endTime = defaultValues.endTime
+          ? createSafeDate(defaultValues.endTime)
+          : endDate;
+
         // Log the processed dates for debugging
-        console.log('Processed dates:', {
+        console.log("Processed dates:", {
           startDateOriginal: defaultValues.startDate,
           startDateProcessed: startDate,
           startTimeProcessed: startTime,
@@ -161,7 +167,7 @@ export function useEventForm({
           endDateProcessed: endDate,
           endTimeProcessed: endTime,
         });
-        
+
         // Reset the form with all values including processed dates
         form.reset({
           ...defaultValues,
@@ -172,9 +178,8 @@ export function useEventForm({
           // Ensure organizationId is set
           organizationId: defaultValues.organizationId || organizationId,
         });
-        
       } catch (error) {
-        console.error('Error processing date fields:', error);
+        console.error("Error processing date fields:", error);
       }
     }
   }, [defaultValues, form, organizationId]);
@@ -189,22 +194,24 @@ export function useEventForm({
     try {
       // Upload all images to Supabase
       const uploadTasks = [];
-      
+
       // Process main images
       if (data.bannerUrl instanceof File) {
         uploadTasks.push(
-          uploadImageToSupabase(data.bannerUrl, 'banners')
-            .then(url => { data.bannerUrl = url; })
+          uploadImageToSupabase(data.bannerUrl, "banners").then((url) => {
+            data.bannerUrl = url;
+          }),
         );
       }
-      
+
       if (data.imageUrl instanceof File) {
         uploadTasks.push(
-          uploadImageToSupabase(data.imageUrl, 'posters')
-            .then(url => { data.imageUrl = url; })
+          uploadImageToSupabase(data.imageUrl, "posters").then((url) => {
+            data.imageUrl = url;
+          }),
         );
       }
-      
+
       // Process gallery images
       if (data.galleryImages && data.galleryImages.length) {
         const galleryImages = data.galleryImages;
@@ -212,29 +219,29 @@ export function useEventForm({
           const image = galleryImages[i];
           if (image instanceof File) {
             uploadTasks.push(
-              uploadImageToSupabase(image, 'gallery')
-                .then(url => { galleryImages[i] = url; })
+              uploadImageToSupabase(image, "gallery").then((url) => {
+                galleryImages[i] = url;
+              }),
             );
           }
         }
       }
-      
-            // Process speaker images
+
+      // Process speaker images
       if (data.speakers && data.speakers.length) {
         const speakers = data.speakers;
         for (let i = 0; i < speakers.length; i++) {
           const imageUrl = speakers[i].imageUrl;
           if (imageUrl instanceof File) {
             uploadTasks.push(
-              uploadImageToSupabase(imageUrl, 'speakers')
-                .then(url => { 
-                  if (url) speakers[i].imageUrl = url;
-                })
+              uploadImageToSupabase(imageUrl, "speakers").then((url) => {
+                if (url) speakers[i].imageUrl = url;
+              }),
             );
           }
         }
       }
-      
+
       // Process sponsor logos
       if (data.sponsors && data.sponsors.length) {
         const sponsors = data.sponsors;
@@ -242,18 +249,17 @@ export function useEventForm({
           const logoUrl = sponsors[i].logoUrl;
           if (logoUrl instanceof File) {
             uploadTasks.push(
-              uploadImageToSupabase(logoUrl, 'sponsors')
-                .then(url => { 
-                  if (url) sponsors[i].logoUrl = url;
-                })
+              uploadImageToSupabase(logoUrl, "sponsors").then((url) => {
+                if (url) sponsors[i].logoUrl = url;
+              }),
             );
           }
         }
       }
-      
+
       // Wait for all uploads to complete
       await Promise.all(uploadTasks);
-      
+
       // Continue with existing logic
       // Combine date and time for start and end
       const combinedStartDateTime = combineDateAndTime(
@@ -290,9 +296,9 @@ export function useEventForm({
         startTime: undefined,
         endTime: undefined,
         // Add timestamp fields conditionally based on edit mode
-        ...(isEditMode 
-          ? { updatedAt: new Date() } 
-          : { createdAt: new Date(), updatedAt: new Date() })
+        ...(isEditMode
+          ? { updatedAt: new Date() }
+          : { createdAt: new Date(), updatedAt: new Date() }),
       };
 
       console.log(JSON.stringify({ submissionData }));
@@ -316,7 +322,7 @@ export function useEventForm({
       }
 
       // Navigate back to organization profile page
-      if(!isEditMode) {
+      if (!isEditMode) {
         router.push(`/profile/organization/${organizationId}`);
       } else {
         router.push(`/events/${eventId}`);
@@ -328,7 +334,6 @@ export function useEventForm({
       setIsSubmitting(false);
     }
   };
-
 
   // Helper function to combine date and time
   const combineDateAndTime = (date: Date, time: Date): Date | null => {

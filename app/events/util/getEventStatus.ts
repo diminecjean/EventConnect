@@ -1,4 +1,4 @@
-type EventStatus = 'Upcoming' | 'Ongoing' | 'Completed';
+type EventStatus = "Upcoming" | "Ongoing" | "Completed";
 
 /**
  * Determines the status of an event based on its start and end dates
@@ -6,29 +6,36 @@ type EventStatus = 'Upcoming' | 'Ongoing' | 'Completed';
  * @param endDate The end date of the event
  * @returns 'Upcoming', 'Ongoing', or 'Completed'
  */
-export function getEventStatus(startDate?: string | Date, endDate?: string | Date): EventStatus {
+export function getEventStatus(
+  startDate?: string | Date,
+  endDate?: string | Date,
+): EventStatus {
   const now = new Date();
-  
+
   // If no dates are provided, default to Upcoming
   if (!startDate) {
-    return 'Upcoming';
+    return "Upcoming";
   }
-  
-  const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
-  const end = endDate ? (typeof endDate === 'string' ? new Date(endDate) : endDate) : null;
-  
+
+  const start = typeof startDate === "string" ? new Date(startDate) : startDate;
+  const end = endDate
+    ? typeof endDate === "string"
+      ? new Date(endDate)
+      : endDate
+    : null;
+
   // If event hasn't started yet
   if (now < start) {
-    return 'Upcoming';
+    return "Upcoming";
   }
-  
+
   // If event has ended
   if (end && now > end) {
-    return 'Completed';
+    return "Completed";
   }
-  
+
   // If event has started but not ended (or no end date specified)
-  return 'Ongoing';
+  return "Ongoing";
 }
 
 /**
@@ -38,13 +45,13 @@ export function getEventStatus(startDate?: string | Date, endDate?: string | Dat
  */
 export function getEventStatusStyle(status: EventStatus): string {
   switch (status) {
-    case 'Upcoming':
-      return 'text-blue-600 bg-blue-50';
-    case 'Ongoing':
-      return 'text-green-600 bg-green-50';
-    case 'Completed':
-      return 'text-gray-600 bg-gray-50';
+    case "Upcoming":
+      return "text-blue-600 bg-blue-50";
+    case "Ongoing":
+      return "text-green-600 bg-green-50";
+    case "Completed":
+      return "text-gray-600 bg-gray-50";
     default:
-      return 'text-gray-600 bg-gray-50';
+      return "text-gray-600 bg-gray-50";
   }
 }

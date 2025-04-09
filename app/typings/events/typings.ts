@@ -14,7 +14,7 @@ export interface Event {
   partnerOrganizations: Array<{ $oid: string }>;
   imageUrl: string;
   bannerUrl: string;
-  eventMode: 'physical' | 'hybrid' | 'online';
+  eventMode: "physical" | "hybrid" | "online";
   virtualMeetingLink?: string;
   organizationId: { $oid: string };
   registrationForms: RegistrationForm[];
@@ -24,7 +24,7 @@ export interface Event {
   galleryImages: string[];
   createdAt?: string | Date;
   updatedAt?: string | Date;
-  
+
   // Keep these for backward compatibility
   eventLogo?: EventLogo;
   host?: Host;
@@ -70,7 +70,7 @@ export interface RegistrationForm {
 export interface FormField {
   id: string;
   label: string;
-  type: 'text' | 'email' | 'number' | 'select' | 'textarea' | 'checkbox';
+  type: "text" | "email" | "number" | "select" | "textarea" | "checkbox";
   required: boolean;
   placeholder?: string;
   options?: string[];

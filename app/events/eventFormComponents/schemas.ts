@@ -17,11 +17,7 @@ export const registrationFormSchema = z.object({
   isDefault: z.boolean().default(false),
 });
 
-const FileOrString = z.union([
-  z.instanceof(File),
-  z.string(),
-  z.null()
-]);
+const FileOrString = z.union([z.instanceof(File), z.string(), z.null()]);
 
 // Define the form schema using Zod
 export const eventFormSchema = z
@@ -42,23 +38,25 @@ export const eventFormSchema = z
     endDate: z.date().optional(),
     startTime: z.date(),
     endTime: z.date().optional(),
-    tags: z.array(
-      z.union([
-        z.string(), 
-        z.object({ 
-          label: z.string(),
-          color: z.string()
-        })
-      ])
-    ).optional(),
+    tags: z
+      .array(
+        z.union([
+          z.string(),
+          z.object({
+            label: z.string(),
+            color: z.string(),
+          }),
+        ]),
+      )
+      .optional(),
     maxAttendees: z.number().positive().optional(),
     partnerOrganizations: z.array(z.string()).default([]),
     // Images can now be File objects, strings, or null
-  imageUrl: FileOrString.optional(),
-  bannerUrl: FileOrString.optional(),
-  // For arrays of images
-  galleryImages: z.array(FileOrString).optional(),
-  // Other fields remain the same
+    imageUrl: FileOrString.optional(),
+    bannerUrl: FileOrString.optional(),
+    // For arrays of images
+    galleryImages: z.array(FileOrString).optional(),
+    // Other fields remain the same
     eventMode: z.enum(["physical", "hybrid", "online"]),
     virtualMeetingLink: z.string().url().optional().or(z.literal("")),
     organizationId: z.string(), // Required to associate event with organization
@@ -80,19 +78,21 @@ export const eventFormSchema = z
     speakers: z
       .array(
         z.object({
-    id: z.string(),
+          id: z.string(),
           name: z.string().min(1, "Speaker name is required"),
           topic: z.string().min(1, "Speaking topic is required"),
           organization: z.string().optional(),
           position: z.string().optional(),
           imageUrl: FileOrString.optional(),
-          socialMedia: z.array(
-            z.object({
-              id: z.string(),
-              platform: z.string(),
-              url: z.string().url("Must be a valid URL"),
-            }),
-          ).optional(),
+          socialMedia: z
+            .array(
+              z.object({
+                id: z.string(),
+                platform: z.string(),
+                url: z.string().url("Must be a valid URL"),
+              }),
+            )
+            .optional(),
         }),
       )
       .optional()
@@ -108,8 +108,8 @@ export const eventFormSchema = z
           socialLinks: z
             .array(
               z.object({
-      platform: z.string(),
-      url: z.string(),
+                platform: z.string(),
+                url: z.string(),
               }),
             )
             .optional(),

@@ -12,13 +12,15 @@ export function useRegistrationForm(eventId: string) {
   const [event, setEvent] = useState<Event | null>(null);
   const [formFields, setFormFields] = useState<any[]>([]);
   const [selectedFormType, setSelectedFormType] = useState<string>("");
-  const [registrationSchema, setRegistrationSchema] = useState<any>(z.object({}));
+  const [registrationSchema, setRegistrationSchema] = useState<any>(
+    z.object({}),
+  );
 
   // Create form with dynamic validation
   const form = useForm<any>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {},
-    mode: "onChange"
+    mode: "onChange",
   });
 
   // Fetch event data including registration forms
@@ -27,15 +29,16 @@ export function useRegistrationForm(eventId: string) {
       try {
         const response = await fetch(`/api/events/${eventId}`);
         if (!response.ok) throw new Error("Failed to fetch event");
-        
+
         const res = await response.json();
         const eventData = res.event;
         setEvent(eventData);
-        
+
         // Set the default registration form
-        const defaultForm = eventData.registrationForms.find((f: any) => f.isDefault) || 
-                           eventData.registrationForms[0];
-        
+        const defaultForm =
+          eventData.registrationForms.find((f: any) => f.isDefault) ||
+          eventData.registrationForms[0];
+
         if (defaultForm) {
           setSelectedFormType(defaultForm.id);
           updateFormFields(defaultForm);
@@ -53,71 +56,92 @@ export function useRegistrationForm(eventId: string) {
   // Update form fields when selected form type changes
   useEffect(() => {
     if (event && selectedFormType) {
-      const selectedForm = event.registrationForms.find((f: any) => f.id === selectedFormType);
+      const selectedForm = event.registrationForms.find(
+        (f: any) => f.id === selectedFormType,
+      );
       if (selectedForm) {
         updateFormFields(selectedForm);
       }
     }
   }, [selectedFormType, event]);
 
-
   // Update form fields and validation schema
   const updateFormFields = (formData: any) => {
     const fields = formData.formFields || [];
     setFormFields(fields);
-    
+
     // Create dynamic schema based on form fields
     const schemaObj: Record<string, any> = {};
-    
+
     // Initialize default values for all fields
     const defaultValues: Record<string, any> = {};
-    
+
     // Helper function to check if a field is related to user's name
     const isNameField = (fieldLabel: string): boolean => {
-      const nameLikeTerms = ['name', 'full name', 'first name', 'last name'];
-      return nameLikeTerms.some(term => 
-        fieldLabel.toLowerCase().includes(term.toLowerCase()));
+      const nameLikeTerms = ["name", "full name", "first name", "last name"];
+      return nameLikeTerms.some((term) =>
+        fieldLabel.toLowerCase().includes(term.toLowerCase()),
+      );
     };
-    
+
     // Helper function to check if a field is related to user's email
     const isEmailField = (fieldLabel: string, fieldType: string): boolean => {
-      return fieldType === 'email' || 
-        fieldLabel.toLowerCase().includes('email');
+      return (
+        fieldType === "email" || fieldLabel.toLowerCase().includes("email")
+      );
     };
-    
+
     fields.forEach((field: any) => {
       // Create schema based on field type first
       let fieldSchema: any;
-      
+
       // Special validations for different field types
       if (field.type === "email") {
         if (field.required) {
-          fieldSchema = z.string().min(1, `${field.label} is required`).email(`Please enter a valid email address`);
+          fieldSchema = z
+            .string()
+            .min(1, `${field.label} is required`)
+            .email(`Please enter a valid email address`);
         } else {
-          fieldSchema = z.string().email(`Please enter a valid email address`).optional();
+          fieldSchema = z
+            .string()
+            .email(`Please enter a valid email address`)
+            .optional();
         }
-        
+
         // Pre-fill with user's email if field appears to be an email field
-        defaultValues[field.label] = isEmailField(field.label, field.type) && user?.email 
-          ? user.email 
-          : "";
-          
+        defaultValues[field.label] =
+          isEmailField(field.label, field.type) && user?.email
+            ? user.email
+            : "";
       } else if (field.type === "number") {
         if (field.required) {
-          fieldSchema = z.string().min(1, `${field.label} is required`).refine(val => !isNaN(Number(val)), "Please enter a valid number");
+          fieldSchema = z
+            .string()
+            .min(1, `${field.label} is required`)
+            .refine(
+              (val) => !isNaN(Number(val)),
+              "Please enter a valid number",
+            );
         } else {
-          fieldSchema = z.string().refine(val => val === '' || !isNaN(Number(val)), "Please enter a valid number").optional();
+          fieldSchema = z
+            .string()
+            .refine(
+              (val) => val === "" || !isNaN(Number(val)),
+              "Please enter a valid number",
+            )
+            .optional();
         }
         defaultValues[field.label] = "";
-        
       } else if (field.type === "checkbox") {
         if (field.required) {
-          fieldSchema = z.boolean().refine(val => val === true, `${field.label} is required`);
+          fieldSchema = z
+            .boolean()
+            .refine((val) => val === true, `${field.label} is required`);
         } else {
           fieldSchema = z.boolean().optional();
         }
         defaultValues[field.label] = false;
-        
       } else {
         // Default for text fields and others
         if (field.required) {
@@ -125,18 +149,17 @@ export function useRegistrationForm(eventId: string) {
         } else {
           fieldSchema = z.string().optional();
         }
-        
+
         // Pre-fill with user's name if field appears to be a name field
-        defaultValues[field.label] = isNameField(field.label) && user?.name 
-          ? user.name 
-          : "";
+        defaultValues[field.label] =
+          isNameField(field.label) && user?.name ? user.name : "";
       }
-      
+
       schemaObj[field.label] = fieldSchema;
     });
-    
+
     setRegistrationSchema(z.object(schemaObj));
-    
+
     // Reset form with new default values
     form.reset(defaultValues);
   };
@@ -184,6 +207,6 @@ export function useRegistrationForm(eventId: string) {
     formFields,
     event,
     selectedFormType,
-    setSelectedFormType
+    setSelectedFormType,
   };
 }
