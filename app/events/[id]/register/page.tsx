@@ -9,6 +9,7 @@ import RegistrationFormRenderer from "./RegistrationFormRenderer";
 import { useRegistrationForm } from "./useRegistrationForm";
 import { Event } from "@/app/typings/events/typings";
 import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
 
 export default function EventRegistrationPage({
   params,
@@ -17,6 +18,7 @@ export default function EventRegistrationPage({
 }) {
   const { id } = use(params);
   const { data: session } = useSession();
+  const router = useRouter();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const { form, onSubmit, formFields, selectedFormType, setSelectedFormType } =
@@ -44,19 +46,37 @@ export default function EventRegistrationPage({
 
   if (loading)
     return (
-      // <div className="flex justify-center mt-20">
-      //   Loading registration form...
-      // </div>
       <div className="flex justify-center items-center min-h-[60vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   if (!event) return <div className="p-8">Event not found</div>;
   if (!session)
-    return <div className="p-8">Please sign in to register for this event</div>;
+    return (
+      <div className="p-8 mt-20">
+        Please sign in to register for this event.
+        <Button
+          variant="outline"
+          className="my-4 flex items-center gap-2"
+          onClick={() => router.push(`/events/${id}`)}
+        >
+          <ArrowLeft size={16} />
+          Back to Event
+        </Button>
+      </div>
+    );
 
   return (
     <div className="w-full mx-auto p-6 mt-20">
+      <Button
+        variant="outline"
+        className="mb-4 flex items-center gap-2"
+        onClick={() => router.push(`/events/${id}`)}
+      >
+        <ArrowLeft size={16} />
+        Back to Event
+      </Button>
+
       <div className="relative w-full h-64 overflow-hidden rounded-lg bg-violet-800">
         <Image
           className="object-cover"

@@ -9,10 +9,10 @@ export default function FooterSection() {
           <FooterBottom className="px-8 flex flex-col items-center gap-4 sm:flex-col md:flex-row">
             <div>© 2025 EventConnect. All rights reserved</div>
             <div className="flex items-center gap-4">
-              <a href="#">Sign in</a> <a href="#">Sign up</a>|
-              <a href="#">Privacy Policy</a>
-              <a href="#">Terms of Service</a>
-              <ModeToggle />
+              <a href="/login">Sign in</a> <a href="/signup">Sign up</a>|
+              {/* <a href="#">Privacy Policy</a>
+              <a href="#">Terms of Service</a> */}
+              {/* <ModeToggle /> */}
             </div>
           </FooterBottom>
         </Footer>

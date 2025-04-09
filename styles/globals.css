@@ -32,3 +32,9 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+/* Hide error overlay */
+/* doc: https://stackoverflow.com/questions/71297130/i-want-to-hide-the-error-overlay-in-nextjs */
+nextjs-portal {
+  display: none;
+}

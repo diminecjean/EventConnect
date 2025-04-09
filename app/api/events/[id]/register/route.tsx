@@ -3,10 +3,19 @@ import { connectToDB } from "@/app/lib/mongodb";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  props: { params: Promise<{ id: string }> },
 ) {
+  const params = await props.params;
   try {
-    const eventId = params.id;
+    // Verify we have an ID
+    if (!params || !params.id) {
+      return NextResponse.json(
+        { error: "Event ID is required" },
+        { status: 400 },
+      );
+    }
+
+    const id = params.id;
     const userId = request.nextUrl.searchParams.get("userId");
 
     if (!userId) {
@@ -22,7 +31,7 @@ export async function GET(
 
     // Check if user is already registered for this event
     const existingRegistration = await db.collection("registrations").findOne({
-      eventId,
+      eventId: id,
       userId,
     });
 

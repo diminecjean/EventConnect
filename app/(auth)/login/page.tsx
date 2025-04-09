@@ -64,10 +64,6 @@ export default function LoginCard() {
   useEffect(() => {
     if (session?.user && !toastShownRef.current) {
       toast(`Logged in as ${session.user.email}`, {
-        action: {
-          label: "Browse events",
-          onClick: () => router.push("/events"),
-        },
         duration: Infinity,
         dismissible: true,
       });
