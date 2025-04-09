@@ -131,8 +131,15 @@ const OrganizationProfile = ({
 }) => {
   return (
     <>
-      <div className="w-full bg-violet-800 h-64 rounded-lg flex justify-center align-center items-center">
-        Organization Banner
+      <div className="relative w-full h-64 overflow-hidden rounded-lg bg-violet-800">
+        <Image
+          className="object-cover"
+          src={orgData.banner || "/default-banner.jpg"}
+          alt={orgData.name + " banner"}
+          fill
+          sizes="100vw"
+          priority
+        />
       </div>
       <div className="flex flex-row p-4">
         <div className="flex flex-col w-full">
@@ -140,7 +147,7 @@ const OrganizationProfile = ({
             <div className="flex flex-row gap-8 justify-start">
               <div className="w-[150px] h-[150px] relative overflow-hidden rounded-full border-2 border-stone-500 flex-shrink-0">
                 <Image
-                  src={"/notionai.svg"}
+                  src={orgData.logo || "/default-logo.jpg"}
                   alt={"orgLogo"}
                   fill
                   sizes="150px"
@@ -256,9 +263,12 @@ export default function OrganizationPage() {
 
   if (isLoading) {
     return (
-      <main className="w-full mt-20 flex flex-col gap-4 items-center justify-center">
-        <p>Loading organization details...</p>
-      </main>
+      // <main className="w-full mt-20 flex flex-col gap-4 items-center justify-center">
+      //   <p>Loading organization details...</p>
+      // </main>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
     );
   }
 

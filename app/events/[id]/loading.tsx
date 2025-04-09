@@ -14,10 +14,13 @@ const loadingStates = [
 
 export default function MultiStepLoaderDemo() {
   return (
-    <div className="w-full h-[60vh] flex items-center justify-center">
-      {/* Core Loader Modal */}
-      {/* <Loader loadingStates={loadingStates} loading={true} duration={2000} /> */}
-      Loading Event ...
+    // <div className="w-full h-[60vh] flex items-center justify-center">
+    //   {/* Core Loader Modal */}
+    //   {/* <Loader loadingStates={loadingStates} loading={true} duration={2000} /> */}
+    //   Loading Event ...
+    // </div>
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
     </div>
   );
 }
