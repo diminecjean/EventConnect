@@ -31,6 +31,7 @@ import { useAuth } from "@/app/context/authContext";
 import { Button } from "@/components/ui/button";
 import MultiStepLoaderDemo from "./loading";
 import { toast } from "sonner";
+import RegisteredParticipantsCount from "./RegisteredParticipantsCount";
 
 const getSocialIcon = (platform: string) => {
   switch (platform.toLowerCase()) {
@@ -483,6 +484,9 @@ export default function EventPage({
           </div>
           {/* Attendee details */}
           <div></div>
+          <div className="mt-4">
+            <RegisteredParticipantsCount eventId={event._id.toString()} />
+          </div>
         </div>
         {/* Event details right col*/}
         <div className="flex flex-row gap-4 w-full">
