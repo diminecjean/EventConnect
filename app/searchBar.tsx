@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Search, Calendar, MapPin } from "lucide-react";
+import { Search, Calendar, MapPin, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const categories = [
+export const categories = [
   { id: "all", label: "All Categories" },
   { id: "tech", label: "Tech" },
   { id: "business", label: "Business" },
@@ -37,7 +37,7 @@ const categories = [
   { id: "entertainment", label: "Entertainment" },
 ] as const;
 
-const locations = [
+export const locations = [
   { id: "new-york", name: "New York" },
   { id: "london", name: "London" },
   { id: "tokyo", name: "Tokyo" },
@@ -48,7 +48,22 @@ const locations = [
   { id: "toronto", name: "Toronto" },
 ] as const;
 
-export default function EventSearch() {
+export interface SearchParams {
+  query: string;
+  category: string;
+  date?: Date | null;
+  location: string;
+}
+
+interface EventSearchProps {
+  onSearch: (searchParams: SearchParams) => void;
+  isSearching?: boolean;
+}
+
+export default function EventSearch({
+  onSearch,
+  isSearching = false,
+}: EventSearchProps) {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
@@ -57,15 +72,43 @@ export default function EventSearch() {
   const [selectedLocation, setSelectedLocation] = React.useState("");
   const [isLocationOpen, setIsLocationOpen] = React.useState(false);
 
+  // Handle search submission
   const handleSearch = () => {
-    const searchParams = {
+    onSearch({
       query: searchQuery,
-      category: selectedCategory === "all" ? null : selectedCategory,
+      category: selectedCategory,
       date: selectedDate,
       location: selectedLocation,
-    };
-    console.log("Search params:", searchParams);
-    // Add your search logic here
+    });
+  };
+
+  // Handle keyboard submission
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedCategory("all");
+    setSelectedDate(undefined);
+    setSelectedLocation("");
+
+    // Trigger search with cleared filters
+    onSearch({
+      query: "",
+      category: "all",
+      date: null,
+      location: "",
+    });
+  };
+
+  // Clear date selection
+  const clearDate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedDate(undefined);
   };
 
   return (
@@ -78,6 +121,7 @@ export default function EventSearch() {
             placeholder="Search events..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="pl-10"
           />
         </div>
@@ -102,12 +146,20 @@ export default function EventSearch() {
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="min-w-[160px] w-full justify-start text-left font-normal"
+                className="min-w-[160px] w-full justify-start text-left font-normal group"
               >
                 <Calendar className="mr-2 h-4 w-4" />
-                {selectedDate
-                  ? selectedDate.toLocaleDateString()
-                  : "Pick a date"}
+                <span className="flex-1">
+                  {selectedDate
+                    ? selectedDate.toLocaleDateString()
+                    : "Pick a date"}
+                </span>
+                {selectedDate && (
+                  <X
+                    className="h-4 w-4 opacity-70 hover:opacity-100 ml-2"
+                    onClick={clearDate}
+                  />
+                )}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -158,9 +210,29 @@ export default function EventSearch() {
         </div>
 
         {/* Search Button */}
-        <Button onClick={handleSearch} variant={"secondary"}>
-          Search
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleSearch}
+            variant={"secondary"}
+            disabled={isSearching}
+          >
+            {isSearching ? "Searching..." : "Search"}
+          </Button>
+
+          {(searchQuery ||
+            selectedCategory !== "all" ||
+            selectedDate ||
+            selectedLocation) && (
+            <Button
+              onClick={clearFilters}
+              variant="outline"
+              className="px-2"
+              title="Clear all filters"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

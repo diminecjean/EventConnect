@@ -1,15 +1,14 @@
 "use client";
 
 import Image from "next/image";
-
 import EventCard from "./events/eventCardComponent";
-import SearchBar from "./searchBar";
-
+import SearchBar, { SearchParams, categories, locations } from "./searchBar";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/app/context/authContext";
 import { useRouter } from "next/navigation";
 import SeedDatabase from "./utils/seedDB";
+import { BASE_URL } from "./api/constants";
 
 interface Tag {
   label: string;
@@ -30,11 +29,17 @@ interface FormattedEvent {
 
 export default function Home() {
   const [events, setEvents] = useState<FormattedEvent[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<FormattedEvent[] | null>(
+    null,
+  );
+  const [activeFilters, setActiveFilters] = useState<SearchParams | null>(null);
   const { user } = useAuth();
   const router = useRouter();
+
+  // Get all events (initial load)
   async function getEvents() {
     try {
-      // Use server-side fetch with no-cache to get latest data
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/events`,
         {
@@ -44,38 +49,120 @@ export default function Home() {
       );
 
       const data = await res.json();
-      // You might need to transform the API response to match the Event interface
-      const formattedEvents = data.events.map((event: any) => ({
-        _id: event._id.toString(),
-        eventLogo: {
-          src: event.imageUrl || "/placeholder.svg",
-          alt: event.title,
-          width: 300, // Add default width
-          height: 200, // Add default height
-        },
-        organizationId: event.organizationId,
-        title: event.title || "",
-        tags: Array.isArray(event.tags) ? event.tags : [],
-        date: {
-          startDate: event.startDate || "TBA",
-          endDate: event.endDate || "",
-        },
-        location: event.location || "TBA",
-        description: event.description,
-      }));
-      return formattedEvents as FormattedEvent[];
+      // Transform the API response to match the Event interface
+      const formattedEvents = formatEvents(data.events);
+      return formattedEvents;
     } catch (error) {
       console.error("Error loading events:", error);
       return [];
     }
   }
 
+  // Format events from API to match our interface
+  const formatEvents = (eventsData: any[]): FormattedEvent[] => {
+    return eventsData.map((event: any) => ({
+      _id: event._id.toString(),
+      id: event._id.toString(), // Add id field which is required by FormattedEvent interface
+      eventLogo: {
+        src: event.imageUrl || "/placeholder.svg",
+        alt: event.title,
+        width: 300,
+        height: 200,
+      },
+      organizationId: event.organizationId,
+      title: event.title || "",
+      tags: Array.isArray(event.tags) ? event.tags : [],
+      date: {
+        startDate: event.startDate || "TBA",
+        endDate: event.endDate || "",
+      },
+      location: event.location || "TBA",
+      description: event.description,
+    }));
+  };
+
+  // Initial loading of events
   useEffect(() => {
     getEvents().then((events) => {
       setEvents(events);
-      // console.log("Events:", events);
     });
   }, []);
+
+  // Handle search
+  const handleSearch = async (searchParams: SearchParams) => {
+    setIsSearching(true);
+    setActiveFilters(searchParams);
+
+    try {
+      // If all filters are empty/default, show all events
+      if (
+        !searchParams.query &&
+        (searchParams.category === "all" || !searchParams.category) &&
+        !searchParams.date &&
+        !searchParams.location
+      ) {
+        setSearchResults(null);
+        return;
+      }
+
+      // Build the search URL with filters
+      const params = new URLSearchParams();
+      if (searchParams.query) params.append("q", searchParams.query);
+      if (searchParams.category && searchParams.category !== "all") {
+        params.append("category", searchParams.category);
+      }
+      if (searchParams.date) {
+        params.append("date", searchParams.date.toISOString().split("T")[0]);
+      }
+      if (searchParams.location)
+        params.append("location", searchParams.location);
+
+      // Call the API
+      const response = await fetch(`${BASE_URL}/api/events/search?${params}`);
+      const data = await response.json();
+
+      // Format and set results
+      const formattedEvents = formatEvents(data.events);
+      setSearchResults(formattedEvents);
+    } catch (error) {
+      console.error("Error searching events:", error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Get the list of events to display (search results or all events)
+  const displayedEvents = searchResults !== null ? searchResults : events;
+
+  // Get active filter summary text
+  const getFilterSummary = () => {
+    if (!activeFilters) return null;
+
+    const filters = [];
+    if (activeFilters.query) filters.push(`"${activeFilters.query}"`);
+
+    if (activeFilters.category && activeFilters.category !== "all") {
+      const categoryLabel = categories.find(
+        (c) => c.id === activeFilters.category,
+      )?.label;
+      filters.push(categoryLabel);
+    }
+
+    if (activeFilters.date) {
+      filters.push(`on ${activeFilters.date.toLocaleDateString()}`);
+    }
+
+    if (activeFilters.location) {
+      const locationName = locations.find(
+        (l) => l.id === activeFilters.location,
+      )?.name;
+      filters.push(`in ${locationName}`);
+    }
+
+    if (filters.length === 0) return null;
+
+    return `Filtered by: ${filters.join(", ")}`;
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pt-20 ">
@@ -88,7 +175,7 @@ export default function Home() {
           </h1>
           <p className="text-lg font-light dark:text-white pb-12">
             The first meetup platform made
-            <br /> specificallly for the tech community.
+            <br /> specifically for the tech community.
           </p>
           {!user && (
             <Button
@@ -104,25 +191,58 @@ export default function Home() {
           <SeedDatabase />
         </div>
       </div>
-      <SearchBar />
+      <SearchBar onSearch={handleSearch} isSearching={isSearching} />
 
-      <div className="flex flex-col max-w-6xl place-items-center gap-6">
-        <div className="w-full p-2 justify-start text-xl font-semibold">
-          Upcoming <span className="text-violet-400">Events</span>
+      <div className="flex flex-col max-w-6xl place-items-center gap-6 w-full">
+        <div className="w-full p-2 flex justify-between items-center">
+          <h2 className="text-xl font-semibold">
+            {searchResults !== null ? "Search Results" : "Upcoming"}{" "}
+            <span className="text-violet-400">Events</span>
+          </h2>
+          {getFilterSummary() && (
+            <div className="text-sm text-gray-400">{getFilterSummary()}</div>
+          )}
         </div>
-        {events.map((event, index) => (
-          <EventCard
-            key={index}
-            id={event._id}
-            eventLogo={event.eventLogo}
-            organizationId={event.organizationId}
-            title={event.title}
-            tags={event.tags}
-            date={event.date}
-            location={event.location}
-            description={event.description}
-          />
-        ))}
+
+        {isSearching ? (
+          <div className="w-full py-12 flex justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
+          </div>
+        ) : displayedEvents.length > 0 ? (
+          displayedEvents.map((event) => (
+            <EventCard
+              key={event._id}
+              id={event._id}
+              eventLogo={event.eventLogo}
+              organizationId={event.organizationId}
+              title={event.title}
+              tags={event.tags}
+              date={event.date}
+              location={event.location}
+              description={event.description}
+            />
+          ))
+        ) : (
+          <div className="w-full p-12 text-center border border-dashed rounded-lg border-gray-700">
+            <p className="text-gray-400">
+              {searchResults !== null
+                ? "No events found matching your search criteria"
+                : "No upcoming events found"}
+            </p>
+            {searchResults !== null && (
+              <Button
+                variant="link"
+                className="mt-2"
+                onClick={() => {
+                  setSearchResults(null);
+                  setActiveFilters(null);
+                }}
+              >
+                View all events instead
+              </Button>
+            )}
+          </div>
+        )}
       </div>
       <div className="fixed inset-0 -z-10">
         <Image
