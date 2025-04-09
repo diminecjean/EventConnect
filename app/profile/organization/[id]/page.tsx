@@ -136,15 +136,18 @@ const OrganizationProfile = ({
       </div>
       <div className="flex flex-row p-4">
         <div className="flex flex-col w-full">
-          <div className="flex flex-row items-center justify-between bg-black/60">
+          <div className="flex flex-row items-center justify-between rounded-lg bg-black/60">
             <div className="flex flex-row gap-8 justify-start">
-              <Image
-                src={"/notionai.svg"}
-                alt={"orgLogo"}
-                width={150}
-                height={150}
-                className="rounded-full"
-              />
+              <div className="w-[150px] h-[150px] relative overflow-hidden rounded-full border-2 border-stone-500 flex-shrink-0">
+                <Image
+                  src={"/notionai.svg"}
+                  alt={"orgLogo"}
+                  fill
+                  sizes="150px"
+                  className="object-cover"
+                  priority
+                />
+              </div>
               <div className="flex flex-col h-full gap-3 items-start py-4">
                 <h1 className="font-semibold text-2xl">{orgData.name}</h1>
                 <p className="font-normal text-md">{orgData.description}</p>
