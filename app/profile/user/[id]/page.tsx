@@ -48,21 +48,24 @@ export default async function UserProfilePage({
 
   const formattedDateCreatedAt = formatSingleDate(user.createdAt);
 
+  console.log("page", { user });
   return (
     <main className="p-6 max-w-3xl mx-auto mt-20">
-      <div className="border-2 border-stone-500 shadow-md rounded-lg overflow-hidden">
+      <div className="border-2 border-stone-500 shadow-md rounded-lg overflow-hidden bg-black/60">
         <div className="p-6">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
             {/* Profile Picture */}
             <div className="flex shrink-0">
               {user.profilePicture ? (
-                <Image
-                  src={user.profilePicture}
-                  alt={`${user.name}'s profile picture`}
-                  width={120}
-                  height={120}
-                  className="rounded-full object-cover border-stone-500 border-2"
-                />
+                <div className="flex shrink-0 w-[120px] h-[120px] rounded-full overflow-hidden border-stone-500 border-2">
+                  <Image
+                    src={user.profilePicture}
+                    alt={`${user.name}'s profile picture`}
+                    width={120}
+                    height={120}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               ) : (
                 <div className="w-[120px] h-[120px] rounded-full bg-gray-200 flex items-center justify-center">
                   <span className="text-2xl text-gray-500">
@@ -74,7 +77,17 @@ export default async function UserProfilePage({
 
             {/* User Info */}
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-2xl font-bold py-1">{user.name}</h1>
+              <div className="flex flex-row items-center justify-between gap-2">
+                <h1 className="text-2xl font-bold py-1">{user.name}</h1>
+                <div className="flex justify-center md:justify-start">
+                  <Link
+                    href={`/profile/user/${id}/edit`}
+                    className="text-sm px-4 py-1 border-2 border-violet-400 text-white rounded-md hover:bg-violet-700 transition"
+                  >
+                    Edit Profile
+                  </Link>
+                </div>
+              </div>
               <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-400">
                 <Mail size={16} />
                 <p>{user.email}</p>
