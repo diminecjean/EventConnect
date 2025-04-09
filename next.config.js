@@ -8,6 +8,10 @@ const nextConfig = {
       "avatars.githubusercontent.com",
       "dpxvvqkjcqorqqkkamxa.supabase.co",
       "www.cncf.io",
+      "images.lumacdn.com",
+      "example.com",
+      "secure.meetupstatic.com",
+      "media.licdn.com",
     ],
   },
 };
