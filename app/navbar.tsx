@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import {
@@ -57,7 +56,7 @@ export default function Navbar() {
   }
 
   return (
-    <NavigationMenu className="bg-black bg-opacity-90 backdrop-blur-sm">
+    <NavigationMenu className="bg-black bg-black/70 backdrop-blur-sm">
       <NavigationMenuList>
         {!user ? (
           <>

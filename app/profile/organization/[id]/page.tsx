@@ -136,7 +136,7 @@ const OrganizationProfile = ({
       </div>
       <div className="flex flex-row p-4">
         <div className="flex flex-col w-full">
-          <div className="flex flex-row items-center justify-between">
+          <div className="flex flex-row items-center justify-between bg-black/60">
             <div className="flex flex-row gap-8 justify-start">
               <Image
                 src={"/notionai.svg"}

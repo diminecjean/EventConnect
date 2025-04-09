@@ -483,65 +483,6 @@ export default function EventPage({
           </div>
           {/* Attendee details */}
           <div></div>
-          {/* TODO: add button for registration */}
-          <div className="flex w-full justify-center">
-            {isRegistered ? (
-              <div className="flex flex-col w-full gap-2">
-                <button
-                  disabled
-                  className="flex justify-center items-center bg-green-700 w-full text-white rounded-lg p-2"
-                >
-                  <Check className="mr-2 h-4 w-4" /> Registered
-                </button>
-
-                <div className="flex items-center gap-2 border rounded-lg p-2 bg-violet-900 bg-opacity-10 text-sm">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={copyRegistrationLink}
-                    className="flex-grow"
-                  >
-                    {isCopied ? (
-                      <>
-                        <Check className="mr-2 h-4 w-4" /> Copied
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="mr-2 h-4 w-4" /> Copy Registration Link
-                      </>
-                    )}
-                  </Button>
-
-                  {/* <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      if (navigator.share) {
-                        navigator.share({
-                          title: `Registration for ${event.title}`,
-                          text: `Check out my registration for ${event.title}`,
-                          url: registrationLink,
-                        });
-                      } else {
-                        copyRegistrationLink();
-                      }
-                    }}
-                  >
-                    <Share2 className="h-4 w-4" />
-                  </Button> */}
-                </div>
-              </div>
-            ) : (
-              <Button
-                onClick={() =>
-                  router.push(`/events/${event._id.toString()}/register`)
-                }
-                className="bg-violet-900 w-full text-white rounded-lg p-2"
-              >
-                Register
-              </Button>
-            )}
-          </div>
         </div>
         {/* Event details right col*/}
         <div className="flex flex-row gap-4 w-full">
@@ -559,6 +500,66 @@ export default function EventPage({
               )}
             </div>
             <p className="mt-4">{event.description}</p>
+            {/* Button for registration */}
+            <div className="flex w-full justify-center my-4">
+              {isRegistered ? (
+                <div className="flex flex-row w-full gap-2">
+                  <button
+                    disabled
+                    className="flex justify-center items-center bg-green-700 w-full text-white rounded-lg"
+                  >
+                    <Check className="mr-2 h-4 w-4" /> Registered
+                  </button>
+
+                  <div className="flex items-center gap-2 border rounded-lg bg-violet-900 bg-opacity-10 text-sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={copyRegistrationLink}
+                      className="flex-grow"
+                    >
+                      {isCopied ? (
+                        <>
+                          <Check className="mr-2 h-4 w-4" /> Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="mr-2 h-4 w-4" /> Copy Registration
+                          Link
+                        </>
+                      )}
+                    </Button>
+
+                    {/* <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      if (navigator.share) {
+                        navigator.share({
+                          title: `Registration for ${event.title}`,
+                          text: `Check out my registration for ${event.title}`,
+                          url: registrationLink,
+                        });
+                      } else {
+                        copyRegistrationLink();
+                      }
+                    }}
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </Button> */}
+                  </div>
+                </div>
+              ) : (
+                <Button
+                  onClick={() =>
+                    router.push(`/events/${event._id.toString()}/register`)
+                  }
+                  className="bg-violet-900 w-full text-white rounded-lg"
+                >
+                  Register
+                </Button>
+              )}
+            </div>
             <EventTabs event={event} />
           </div>
         </div>

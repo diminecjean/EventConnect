@@ -244,14 +244,6 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div className="fixed inset-0 -z-10">
-        <Image
-          src="/landingbg.png"
-          fill
-          alt="Landing page background"
-          className="object-cover"
-        />
-      </div>
     </main>
   );
 }

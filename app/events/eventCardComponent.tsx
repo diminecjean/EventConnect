@@ -30,14 +30,6 @@ type EventCardProps = {
   description: string;
 };
 
-// const tags = [
-//   { label: "Web Dev", color: "bg-blue-100" },
-//   { label: "AI", color: "bg-purple-100" },
-//   { label: "Cloud", color: "bg-green-100" },
-//   { label: "DevOps", color: "bg-yellow-100" },
-//   { label: "Mobile", color: "bg-orange-100" },
-// ];
-
 export default function EventCard({
   id,
   eventLogo,
