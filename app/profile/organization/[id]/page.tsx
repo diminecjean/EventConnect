@@ -129,6 +129,7 @@ const OrganizationProfile = ({
   events: Event[];
   partneredEvents: Event[];
 }) => {
+  const router = useRouter();
   return (
     <>
       <div className="relative w-full h-64 overflow-hidden rounded-lg bg-violet-800">
@@ -167,6 +168,10 @@ const OrganizationProfile = ({
               <Button
                 variant="outline_violet"
                 className="rounded-lg text-violet-500 font-semibold"
+                onClick={() => {
+                  if (canEditOrg)
+                    router.push(`/profile/organization/${orgData._id}/edit`);
+                }}
               >
                 {canEditOrg
                   ? "Edit Organization"
