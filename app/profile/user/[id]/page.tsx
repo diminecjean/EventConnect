@@ -25,17 +25,6 @@ async function getUserProfile(id: string): Promise<UserProfile | null> {
   }
 }
 
-// export async function generateMetadata({ params }: { params: { id: string } }) {
-//   const id = await params.id;
-//   const user = await getUserProfile(id);
-
-//   if (!user) return { title: "User Not Found" };
-//   return {
-//     title: `${user.name} - Profile | EventConnect`,
-//     description: user.bio || `${user.name}'s profile on EventConnect`,
-//   };
-// }
-
 export default async function UserProfilePage({
   params,
 }: {
