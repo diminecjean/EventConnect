@@ -8,7 +8,7 @@ export const formatEventDateTime = (
   startDate: Date | string | { $date: string },
   endDate: Date | string | { $date: string },
 ) => {
-  console.log({ startDate, endDate });
+  // console.log({ startDate, endDate });
 
   // Handle MongoDB date format ($date property)
   const startDateValue =

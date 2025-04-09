@@ -1049,7 +1049,7 @@ export default function EventForm({
                                 handleDateSelect(field, newDate);
                                 // Also update the startDate field
                                 form.setValue("startDate", newDate);
-                                console.log({ startDate: newDate });
+                                // console.log({ startDate: newDate });
                               }
                             }}
                             initialFocus
