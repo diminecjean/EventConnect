@@ -4,10 +4,10 @@ import { ObjectId } from "mongodb";
 
 export async function GET(
   _request: NextRequest,
-  props: { params: { id: string } },
+  props: { params: Promise<{ id: string }> },
 ) {
   try {
-    const params = props.params;
+    const params = await props.params;
     const { id } = params;
 
     if (!id) {
@@ -48,10 +48,11 @@ export async function GET(
 // This is done by inserting the organization id to the respective user profiles.
 export async function POST(
   request: NextRequest,
-  props: { params: { id: string } },
+  props: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = props.params;
+    const params = await props.params;
+    const { id } = params;
     const body = await request.json();
     const { userIds } = body;
 
