@@ -15,6 +15,7 @@ import { useAuth } from "@/app/context/authContext";
 import { Event } from "@/app/typings/events/typings";
 import EventCard from "../../EventCard";
 import TeamMemberCard from "./TeamMemberCard";
+import AddTeamMembersModal from "./AddTeamMemberModal";
 
 function TeamMembers({ orgId }: { orgId: string }) {
   const [members, setMembers] = useState<UserProfile[]>([]);
@@ -83,104 +84,123 @@ const OrgPageTabs = ({
   partneredEvents: Event[];
 }) => {
   const router = useRouter();
+  const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
+  const [teamMembersKey, setTeamMembersKey] = useState(Date.now()); // Key to force re-render
 
   const handleCreateEvent = () => {
     router.push(`/events/new?orgId=${orgId}&&orgName=${orgName}`);
   };
 
+  const refreshTeamMembers = () => {
+    // This will force the TeamMembers component to re-fetch
+    setTeamMembersKey(Date.now());
+  };
+
   return (
-    <Tabs defaultValue="events" className="my-6 w-full min-w-xl">
-      <TabsList
-        className={`grid w-full ${canEditOrg ? "grid-cols-5" : "grid-cols-4"}`}
-      >
-        <TabsTrigger value="events">Events</TabsTrigger>
-        {canEditOrg && <TabsTrigger value="stats">Stats</TabsTrigger>}
-        <TabsTrigger value="team">Team</TabsTrigger>
-        <TabsTrigger value="partners">Partners</TabsTrigger>
-        <TabsTrigger value="pictures">Pictures</TabsTrigger>
-      </TabsList>
-      <TabsContent value="events">
-        <div>
-          <div id="header" className="flex flex-row justify-between">
-            <h1 className="font-semibold text-xl my-4">Events</h1>
-            {canEditOrg && (
-              <Button
-                variant="outline_violet"
-                className="rounded-full text-violet-500 font-semibold"
-                onClick={handleCreateEvent}
-              >
-                +
-              </Button>
-            )}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {events && events.length > 0 ? (
-              events.map((event) => <EventCard key={event._id} event={event} />)
-            ) : (
-              <div className="col-span-2 text-center py-8 text-gray-500">
-                No events found for this organization.
-              </div>
-            )}
-          </div>
-        </div>
-      </TabsContent>
-      {canEditOrg && (
-        <TabsContent value="stats">
+    <>
+      <Tabs defaultValue="events" className="my-6 w-full min-w-xl">
+        <TabsList
+          className={`grid w-full ${canEditOrg ? "grid-cols-5" : "grid-cols-4"}`}
+        >
+          <TabsTrigger value="events">Events</TabsTrigger>
+          {canEditOrg && <TabsTrigger value="stats">Stats</TabsTrigger>}
+          <TabsTrigger value="team">Team</TabsTrigger>
+          <TabsTrigger value="partners">Partners</TabsTrigger>
+          <TabsTrigger value="pictures">Pictures</TabsTrigger>
+        </TabsList>
+        <TabsContent value="events">
           <div>
-            <h1 className="font-semibold text-xl my-4">Stats</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            <div id="header" className="flex flex-row justify-between">
+              <h1 className="font-semibold text-xl my-4">Events</h1>
+              {canEditOrg && (
+                <Button
+                  variant="outline_violet"
+                  className="rounded-full text-violet-500 font-semibold"
+                  onClick={handleCreateEvent}
+                >
+                  +
+                </Button>
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {events && events.length > 0 ? (
+                events.map((event) => (
+                  <EventCard key={event._id} event={event} />
+                ))
+              ) : (
+                <div className="col-span-2 text-center py-8 text-gray-500">
+                  No events found for this organization.
+                </div>
+              )}
+            </div>
           </div>
         </TabsContent>
-      )}
-      <TabsContent value="team">
-        <div>
-          <div className="flex flex-row justify-between items-center">
-            <h1 className="font-semibold text-xl my-4">Team</h1>
+        {canEditOrg && (
+          <TabsContent value="stats">
+            <div>
+              <h1 className="font-semibold text-xl my-4">Stats</h1>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+          </TabsContent>
+        )}
+        <TabsContent value="team">
+          <div>
+            <div className="flex flex-row justify-between items-center">
+              <h1 className="font-semibold text-xl my-4">Team</h1>
+              {canEditOrg && (
+                <Button
+                  variant="outline_violet"
+                  className="rounded-lg text-violet-500 font-semibold"
+                  onClick={() => setIsAddTeamModalOpen(true)}
+                >
+                  <UserPlus className="mr-2 h-4 w-4" /> Add Team Member
+                </Button>
+              )}
+            </div>
+
+            <TeamMembers key={teamMembersKey} orgId={orgId} />
+          </div>
+        </TabsContent>
+        <TabsContent value="partners">
+          <div>
+            <div id="header" className="flex flex-row justify-between">
+              <h1 className="font-semibold text-xl my-4">Partnered Events</h1>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {partneredEvents && partneredEvents.length > 0 ? (
+                partneredEvents.map((event) => (
+                  <EventCard key={event._id} event={event} />
+                ))
+              ) : (
+                <div className="col-span-2 text-center py-8 text-gray-500">
+                  No partnered events found for this organization.
+                </div>
+              )}
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="pictures">
+          <div>
+            <h1 className="font-semibold text-xl my-4">Pictures</h1>
             {canEditOrg && (
               <Button
                 variant="outline_violet"
                 className="rounded-lg text-violet-500 font-semibold"
               >
-                <UserPlus className="mr-2 h-4 w-4" /> Add Team Member
+                Upload Pictures
               </Button>
             )}
           </div>
+        </TabsContent>
+      </Tabs>
 
-          <TeamMembers orgId={orgId} />
-        </div>
-      </TabsContent>
-      <TabsContent value="partners">
-        <div>
-          <div id="header" className="flex flex-row justify-between">
-            <h1 className="font-semibold text-xl my-4">Partnered Events</h1>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {partneredEvents && partneredEvents.length > 0 ? (
-              partneredEvents.map((event) => (
-                <EventCard key={event._id} event={event} />
-              ))
-            ) : (
-              <div className="col-span-2 text-center py-8 text-gray-500">
-                No partnered events found for this organization.
-              </div>
-            )}
-          </div>
-        </div>
-      </TabsContent>
-      <TabsContent value="pictures">
-        <div>
-          <h1 className="font-semibold text-xl my-4">Pictures</h1>
-          {canEditOrg && (
-            <Button
-              variant="outline_violet"
-              className="rounded-lg text-violet-500 font-semibold"
-            >
-              Upload Pictures
-            </Button>
-          )}
-        </div>
-      </TabsContent>
-    </Tabs>
+      <AddTeamMembersModal
+        isOpen={isAddTeamModalOpen}
+        onOpenChange={setIsAddTeamModalOpen}
+        orgId={orgId}
+        onSuccess={refreshTeamMembers}
+      />
+    </>
   );
 };
 
