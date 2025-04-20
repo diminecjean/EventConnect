@@ -1,16 +1,73 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { notFound, useParams, useRouter } from "next/navigation";
-import type { OrganizationProfile } from "../../../typings/profile/typings";
+import type {
+  OrganizationProfile,
+  UserProfile,
+} from "../../../typings/profile/typings";
 
 import Image from "next/image";
-import { MapPin } from "lucide-react";
+import { MapPin, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BASE_URL } from "@/app/api/constants";
 import { useAuth } from "@/app/context/authContext";
 import { Event } from "@/app/typings/events/typings";
 import EventCard from "../../EventCard";
+import TeamMemberCard from "./TeamMemberCard";
+
+function TeamMembers({ orgId }: { orgId: string }) {
+  const [members, setMembers] = useState<UserProfile[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchTeamMembers = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `${BASE_URL}/api/organizations/${orgId}/team`,
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch team members");
+      }
+
+      const data = await response.json();
+      setMembers(data.teamMembers);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [orgId]);
+
+  useEffect(() => {
+    fetchTeamMembers();
+  }, [fetchTeamMembers]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (members.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        No team members found for this organization.
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {members.map((member) => (
+        <TeamMemberCard key={member._id} member={member} />
+      ))}
+    </div>
+  );
+}
 
 const OrgPageTabs = ({
   canEditOrg,
@@ -77,8 +134,19 @@ const OrgPageTabs = ({
       )}
       <TabsContent value="team">
         <div>
-          <h1 className="font-semibold text-xl my-4">Team</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          <div className="flex flex-row justify-between items-center">
+            <h1 className="font-semibold text-xl my-4">Team</h1>
+            {canEditOrg && (
+              <Button
+                variant="outline_violet"
+                className="rounded-lg text-violet-500 font-semibold"
+              >
+                <UserPlus className="mr-2 h-4 w-4" /> Add Team Member
+              </Button>
+            )}
+          </div>
+
+          <TeamMembers orgId={orgId} />
         </div>
       </TabsContent>
       <TabsContent value="partners">
