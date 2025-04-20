@@ -25,16 +25,19 @@ import {
 import { uploadImageToSupabase } from "@/app/utils/supabase/imageUploadUtil";
 
 interface OrganizationProfileFormProps {
-  orgId: string;
-  defaultValues: Partial<OrganizationProfileFormValues>;
+  orgId?: string;
+  userId?: string;
+  defaultValues?: Partial<OrganizationProfileFormValues>;
 }
 
 export default function OrganizationProfileForm({
   orgId,
-  defaultValues,
+  userId,
+  defaultValues = {},
 }: OrganizationProfileFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const isCreating = !orgId;
 
   const form = useForm<OrganizationProfileFormValues>({
     resolver: zodResolver(organizationProfileFormSchema),
@@ -89,37 +92,60 @@ export default function OrganizationProfileForm({
         }
       }
 
-      console.log({ logoUrl, bannerUrl });
+      const organizationData = {
+        name: data.name,
+        description: data.description,
+        location: data.location,
+        logo: logoUrl,
+        banner: bannerUrl,
+        website: data.website,
+        contactEmail: data.contactEmail,
+        socialLinks: data.socialLinks,
+      };
 
-      const response = await fetch(`${BASE_URL}/api/organizations/${orgId}`, {
-        method: "PATCH",
+      // For creating a new organization, include the userId
+      if (isCreating && userId) {
+        Object.assign(organizationData, { userId });
+      }
+
+      const url = isCreating
+        ? `${BASE_URL}/api/organizations`
+        : `${BASE_URL}/api/organizations/${orgId}`;
+
+      const method = isCreating ? "POST" : "PATCH";
+
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: data.name,
-          description: data.description,
-          location: data.location,
-          logo: logoUrl,
-          banner: bannerUrl,
-          website: data.website,
-          contactEmail: data.contactEmail,
-          socialLinks: data.socialLinks,
-        }),
+        body: JSON.stringify(organizationData),
       });
 
       if (!response.ok) {
         const error = await response.json();
         throw new Error(
-          error.message || "Failed to update organization profile",
+          error.message ||
+            `Failed to ${isCreating ? "create" : "update"} organization profile`,
         );
       }
 
-      toast.success("Organization profile updated successfully");
-      router.push(`/profile/organization/${orgId}`);
+      const result = await response.json();
+      const successMessage = isCreating
+        ? "Organization created successfully"
+        : "Organization profile updated successfully";
+
+      toast.success(successMessage);
+
+      // Redirect to the organization profile page
+      const redirectId = isCreating ? result.id : orgId;
+      router.push(`/profile/organization/${redirectId}`);
       router.refresh();
     } catch (error: any) {
-      toast.error(error.message || "Failed to update organization profile");
+      toast.error(
+        error.message ||
+          `Failed to ${isCreating ? "create" : "update"} organization profile`,
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -127,7 +153,9 @@ export default function OrganizationProfileForm({
 
   return (
     <div className="w-3/4 mx-auto p-6 bg-black/50 border-2 border-stone-500 shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold mb-6">Edit Organization</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {isCreating ? "Create Organization" : "Edit Organization"}
+      </h1>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -149,7 +177,11 @@ export default function OrganizationProfileForm({
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save Changes"}
+              {isSubmitting
+                ? "Saving..."
+                : isCreating
+                  ? "Create Organization"
+                  : "Save Changes"}
             </Button>
           </div>
         </form>
