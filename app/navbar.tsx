@@ -24,6 +24,7 @@ import { Plus, PlusCircle } from "lucide-react";
 export default function Navbar() {
   const router = useRouter();
   const { user, organizations, isLoading, clearUser } = useAuth();
+  const [showCreateOrgText, setShowCreateOrgText] = React.useState(false);
 
   const handleSignOut = async () => {
     clearUser();
@@ -85,17 +86,24 @@ export default function Navbar() {
                   if (user._id) {
                     router.push(`/profile/organization/new?userId=${user._id}`);
                   } else {
-                    // Handle case when user is not logged in
                     router.push("/login");
                   }
                 }}
-                className="flex items-center bg-violet-900/50 hover:bg-violet-800 rounded-full overflow-hidden transition-all duration-300 ease-in-out cursor-pointer group"
+                onMouseEnter={() => setShowCreateOrgText(true)}
+                onMouseLeave={() => setShowCreateOrgText(false)}
+                className="flex items-center hover:bg-violet-800 rounded-full overflow-hidden transition-all duration-300 ease-in-out cursor-pointer"
               >
                 <PlusCircle
-                  size={20}
-                  className="text-violet-400 group-hover:text-white m-2 flex-shrink-0"
+                  size={24}
+                  className={`${showCreateOrgText ? "text-white" : "text-violet-400"} rounded-full m-2 flex-shrink-0 transition-colors`}
                 />
-                <span className="max-w-0 group-hover:max-w-xs transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-transparent group-hover:text-white text-sm pr-2">
+                <span
+                  className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-white text-sm pr-2`}
+                  style={{
+                    maxWidth: showCreateOrgText ? "200px" : "0",
+                    opacity: showCreateOrgText ? 1 : 0,
+                  }}
+                >
                   Create Organization
                 </span>
               </div>
