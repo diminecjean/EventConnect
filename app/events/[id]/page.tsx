@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import MultiStepLoaderDemo from "./loading";
 import { toast } from "sonner";
 import RegisteredParticipantsCount from "./RegisteredParticipantsCount";
+import { SkeletonEvent } from "@/components/ui/skeleton";
 
 const getSocialIcon = (platform: string) => {
   switch (platform.toLowerCase()) {
@@ -403,7 +404,7 @@ export default function EventPage({
   }, [id, user]);
 
   if (isLoading) {
-    return MultiStepLoaderDemo();
+    return <SkeletonEvent />;
   }
 
   if (!event) {

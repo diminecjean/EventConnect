@@ -9,6 +9,7 @@ import { useAuth } from "@/app/context/authContext";
 import { useRouter } from "next/navigation";
 import SeedDatabase from "./utils/seedDB";
 import { BASE_URL } from "./api/constants";
+import { Skeleton, SkeletonEventCard } from "@/components/ui/skeleton";
 
 interface Tag {
   label: string;
@@ -30,6 +31,7 @@ interface FormattedEvent {
 export default function Home() {
   const [events, setEvents] = useState<FormattedEvent[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<FormattedEvent[] | null>(
     null,
   );
@@ -83,8 +85,10 @@ export default function Home() {
 
   // Initial loading of events
   useEffect(() => {
+    setIsInitialLoading(true);
     getEvents().then((events) => {
       setEvents(events);
+      setIsInitialLoading(false);
     });
   }, []);
 
@@ -205,6 +209,11 @@ export default function Home() {
         {isSearching ? (
           <div className="w-full py-12 flex justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
+          </div>
+        ) : isInitialLoading ? (
+          // Show skeletons when initially loading
+          <div className="w-full flex flex-col gap-6">
+            <SkeletonEventCard array={[1, 2, 3]} />
           </div>
         ) : displayedEvents.length > 0 ? (
           displayedEvents.map((event) => (

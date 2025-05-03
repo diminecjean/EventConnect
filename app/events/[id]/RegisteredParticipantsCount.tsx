@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BASE_URL } from "@/app/api/constants";
 import { Users } from "lucide-react";
 import RegisteredAttendeesList from "./RegisteredAttendeesList";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface RegisteredParticipantsCountProps {
   eventId: string;
@@ -45,7 +46,7 @@ const RegisteredParticipantsCount: React.FC<
     return (
       <div className="flex items-center gap-2 text-sm text-gray-400">
         <Users size={20} />
-        <span>Loading participants...</span>
+        <Skeleton className="h-4 w-32 bg-violet-300 rounded" />
       </div>
     );
   }

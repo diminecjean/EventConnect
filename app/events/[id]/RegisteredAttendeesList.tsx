@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
 import { BASE_URL } from "@/app/api/constants";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonUserCardHorziontal } from "@/components/ui/skeleton";
 
 interface Attendee {
   _id: string;
@@ -73,7 +73,7 @@ export default function RegisteredAttendeesList({
   );
 
   const handleViewProfile = (userId: string) => {
-    router.push(`/profile/${userId}`);
+    router.push(`/profile/user/${userId}`);
     setIsOpen(false);
   };
 
@@ -127,15 +127,7 @@ export default function RegisteredAttendeesList({
           <div className="max-h-[50vh] overflow-y-auto pr-1">
             {isLoading ? (
               <div className="space-y-3">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                    <div className="space-y-1.5">
-                      <Skeleton className="h-4 w-28" />
-                      <Skeleton className="h-3 w-36" />
-                    </div>
-                  </div>
-                ))}
+                <SkeletonUserCardHorziontal array={[1, 2, 3]} />
               </div>
             ) : filteredAttendees.length > 0 ? (
               <div className="space-y-2">
