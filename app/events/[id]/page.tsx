@@ -506,7 +506,16 @@ export default function EventPage({
             <p className="mt-4">{event.description}</p>
             {/* Button for registration */}
             <div className="flex w-full justify-center my-4">
-              {isRegistered ? (
+              {canEditOrg ? (
+                <Button
+                  className="bg-violet-900 w-full text-white rounded-lg"
+                  onClick={() =>
+                    router.push(`/events/${event._id.toString()}/attendees`)
+                  }
+                >
+                  View Attendees
+                </Button>
+              ) : isRegistered ? (
                 <div className="flex flex-row w-full gap-2">
                   <button
                     disabled
@@ -533,24 +542,6 @@ export default function EventPage({
                         </>
                       )}
                     </Button>
-
-                    {/* <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      if (navigator.share) {
-                        navigator.share({
-                          title: `Registration for ${event.title}`,
-                          text: `Check out my registration for ${event.title}`,
-                          url: registrationLink,
-                        });
-                      } else {
-                        copyRegistrationLink();
-                      }
-                    }}
-                  >
-                    <Share2 className="h-4 w-4" />
-                  </Button> */}
                   </div>
                 </div>
               ) : (

@@ -3,6 +3,7 @@
  * @param startDate - Event start date (MongoDB format or Date object)
  * @param endDate - Event end date (MongoDB format or Date object)
  * @returns Object with formatted date and time strings
+ * @example const { date, time } = formatEventDateTime(event.startDate, event.endDate);
  */
 export const formatEventDateTime = (
   startDate: Date | string | { $date: string },
