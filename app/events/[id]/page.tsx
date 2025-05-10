@@ -35,13 +35,21 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import RegisteredParticipantsCount from "./RegisteredParticipantsCount";
 import { SkeletonEvent } from "@/components/ui/skeleton";
+import {
+  OrganizationProfile,
+  UserProfile,
+} from "@/app/typings/profile/typings";
 
 // Note:
 // This hook fetches data in a more efficient way by caching the results,
 // separating this out for better organization.
 // Solves the issue of re-rendering every single fucking time
 // TODO: move this into a separate file
-function useEventData(id: string, user: any) {
+function useEventData(
+  id: string,
+  user: UserProfile | null,
+  organizations: OrganizationProfile[] | null,
+) {
   const [event, setEvent] = useState<Event | null>(null);
   const [orgName, setOrgName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -136,9 +144,9 @@ function useEventData(id: string, user: any) {
 
   // Check if user can edit org
   useEffect(() => {
-    if (user?.organizations && event?.organizationId) {
+    if (organizations && event?.organizationId) {
       // Check if this organization ID is in the user's organizations list
-      const userCanEdit = user.organizations.some(
+      const userCanEdit = organizations.some(
         (org: any) => org._id === event.organizationId,
       );
       setCanEditOrg(userCanEdit);
@@ -734,7 +742,7 @@ export default function EventPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, organizations } = useAuth();
 
   const {
     event,
@@ -744,7 +752,7 @@ export default function EventPage({
     isRegistered,
     registrationLink,
     canEditOrg,
-  } = useEventData(id, user);
+  } = useEventData(id, user, organizations);
 
   const [isCopied, setIsCopied] = useState(false);
 
