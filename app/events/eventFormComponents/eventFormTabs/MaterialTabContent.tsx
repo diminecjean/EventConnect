@@ -105,8 +105,15 @@ export const MaterialTabContent: React.FC<MaterialsTabContentProps> = ({
     const materials = form.getValues("materials") || { uploads: [] };
     const currentUploads = [...(materials.uploads || [])];
 
-    // For now, store the File object
-    currentUploads.push(file);
+    // Create a structured object with id, name, and url properties
+    const fileObject = {
+      id: crypto.randomUUID(), // Use the same method as in the sponsors component
+      name: file.name,
+      url: file, // During form submission, this will be replaced with the actual URL
+    };
+
+    // Add structured object to uploads array
+    currentUploads.push(fileObject);
 
     form.setValue("materials.uploads", currentUploads);
 

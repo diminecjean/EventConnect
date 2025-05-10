@@ -61,7 +61,6 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
         console.log("Created object URL from File:", newUrl);
       } else if (typeof value === "string" && value) {
         setPreview(value);
-        console.log("Set preview from string value:", value);
       } else if (value === null) {
         setPreview(null);
         setFileObject(null);
@@ -150,8 +149,6 @@ const FormImageUploader = forwardRef<HTMLInputElement, FormImageUploaderProps>(
       height: preview ? height : "auto",
       objectFit: "cover" as const,
     };
-
-    console.log("Rendering with preview:", preview);
 
     return (
       <div className={`form-control ${className}`} style={{ width }}>

@@ -38,23 +38,27 @@ export function isValidMaterialSize(file: File): boolean {
  * Uploads event materials to Supabase storage
  * @param file The file to upload
  * @param folder Storage folder path (default: 'materials')
- * @returns Public URL of the uploaded file or null if upload failed
+ * @returns Object with public URL of the uploaded file and error message if any
  */
 export async function uploadMaterialToSupabase(
   file: File,
   folder: string = "materials",
-): Promise<string | null> {
+): Promise<{ url: string | null; error: string | null }> {
   try {
     // Validate file type
     if (!isValidMaterialType(file)) {
-      console.error("Invalid file type for material upload:", file.type);
-      return null;
+      return {
+        url: null,
+        error: `Invalid file type: ${file.type}. Only PDF, PPT, PPTX, DOC, DOCX, XLS, XLSX, CSV, TXT, and ZIP files are allowed.`,
+      };
     }
 
     // Validate file size
     if (!isValidMaterialSize(file)) {
-      console.error("File too large for upload:", file.size);
-      return null;
+      return {
+        url: null,
+        error: `File too large: ${(file.size / (1024 * 1024)).toFixed(2)}MB. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`,
+      };
     }
 
     // Generate a unique filename that preserves the original extension
@@ -70,9 +74,14 @@ export async function uploadMaterialToSupabase(
         upsert: false,
       });
 
+    console.log("Upload data:", data);
+
     if (error) {
       console.error("Error uploading material:", error);
-      return null;
+      return {
+        url: null,
+        error: `Storage upload failed: ${error.message}`,
+      };
     }
 
     // Get public URL for the file
@@ -80,9 +89,17 @@ export async function uploadMaterialToSupabase(
       .from("event-materials")
       .getPublicUrl(filePath);
 
-    return publicUrlData.publicUrl;
+    console.log("Public URL data:", publicUrlData);
+
+    return {
+      url: publicUrlData.publicUrl,
+      error: null,
+    };
   } catch (error) {
     console.error("Error in uploadMaterialToSupabase:", error);
-    return null;
+    return {
+      url: null,
+      error: `Unexpected error during upload: ${error instanceof Error ? error.message : String(error)}`,
+    };
   }
 }

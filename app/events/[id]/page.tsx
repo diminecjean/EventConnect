@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, notFound } from "next/navigation";
 import type { Event } from "../../typings/events/typings";
@@ -35,6 +35,130 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import RegisteredParticipantsCount from "./RegisteredParticipantsCount";
 import { SkeletonEvent } from "@/components/ui/skeleton";
+
+// Note:
+// This hook fetches data in a more efficient way by caching the results,
+// separating this out for better organization.
+// Solves the issue of re-rendering every single fucking time
+// TODO: move this into a separate file
+function useEventData(id: string, user: any) {
+  const [event, setEvent] = useState<Event | null>(null);
+  const [orgName, setOrgName] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [formattedDateTime, setFormattedDateTime] = useState({
+    date: "",
+    time: "",
+  });
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [registrationLink, setRegistrationLink] = useState("");
+  const [canEditOrg, setCanEditOrg] = useState(false);
+
+  // Cache the fetch results in ref to persist between renders
+  const dataCache = React.useRef({
+    event: null as Event | null,
+    orgName: null as string | null,
+    formattedDateTime: { date: "", time: "" },
+    isRegistered: false,
+    registrationLink: "",
+  });
+
+  const fetchEventData = useCallback(async () => {
+    try {
+      // Start with loading state, but show cached data if available
+      setIsLoading(true);
+
+      if (dataCache.current.event) {
+        // Immediately show cached data
+        setEvent(dataCache.current.event);
+        setOrgName(dataCache.current.orgName);
+        setFormattedDateTime(dataCache.current.formattedDateTime);
+        setIsRegistered(dataCache.current.isRegistered);
+        setRegistrationLink(dataCache.current.registrationLink);
+
+        // Slight delay to ensure UI updates before potentially showing loading again
+        await new Promise((r) => setTimeout(r, 10));
+      }
+
+      // Fetch new data in the background
+      const response = await fetch(`${BASE_URL}/api/events/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch event data");
+      }
+
+      const res = await response.json();
+      setEvent(res.event);
+      dataCache.current.event = res.event;
+
+      // Fetch organization data
+      const orgResponse = await fetch(
+        `${BASE_URL}/api/organizations/${res.event.organizationId}`,
+      );
+      if (!orgResponse.ok) {
+        throw new Error("Failed to fetch organization data");
+      }
+      const orgData = await orgResponse.json();
+      setOrgName(orgData.organization.name);
+      dataCache.current.orgName = orgData.organization.name;
+
+      // Format date time
+      if (res.event?.startDate && res.event?.endDate) {
+        const dateTime = formatEventDateTime(
+          res.event.startDate,
+          res.event.endDate,
+        );
+        setFormattedDateTime(dateTime);
+        dataCache.current.formattedDateTime = dateTime;
+      }
+
+      // Check registration status
+      if (user && user._id) {
+        const regCheckResponse = await fetch(
+          `${BASE_URL}/api/events/${id}/register?userId=${user._id}`,
+        );
+        if (regCheckResponse.ok) {
+          const regData = await regCheckResponse.json();
+          setIsRegistered(regData.isRegistered);
+          dataCache.current.isRegistered = regData.isRegistered;
+
+          if (regData.registrationId) {
+            const link = `${window.location.origin}/events/${id}/registration/${regData.registrationId}`;
+            setRegistrationLink(link);
+            dataCache.current.registrationLink = link;
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching event data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id, user]);
+
+  // Check if user can edit org
+  useEffect(() => {
+    if (user?.organizations && event?.organizationId) {
+      // Check if this organization ID is in the user's organizations list
+      const userCanEdit = user.organizations.some(
+        (org: any) => org._id === event.organizationId,
+      );
+      setCanEditOrg(userCanEdit);
+    }
+  }, [user, event]);
+
+  useEffect(() => {
+    fetchEventData();
+  }, [fetchEventData]);
+
+  return {
+    event,
+    orgName,
+    isLoading,
+    formattedDateTime,
+    isRegistered,
+    registrationLink,
+    canEditOrg,
+  };
+}
 
 const getSocialIcon = (platform: string) => {
   switch (platform.toLowerCase()) {
@@ -323,13 +447,13 @@ const EventTabs = ({
                     {event.materials?.uploads &&
                     event.materials.uploads.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {event.materials.uploads.map((fileUrl, index) => {
-                          const fileName =
-                            fileUrl.split("/").pop() || `File ${index + 1}`;
-                          const fileExtension = fileName
-                            .split(".")
-                            .pop()
-                            ?.toLowerCase();
+                        {event.materials.uploads.map((file, index) => {
+                          const fileName = file.name;
+                          const fileUrl = file.url.toString();
+                          console.log({ fileUrl });
+                          const fileExtension = fileUrl
+                            ? fileUrl.split(".").pop()?.toLowerCase()
+                            : "";
 
                           let fileIcon;
                           let iconColor;
@@ -424,7 +548,7 @@ const EventTabs = ({
                           return (
                             <a
                               key={index}
-                              href={fileUrl}
+                              href={file.url}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center p-4 bg-gray-800 bg-opacity-40 rounded-lg hover:bg-opacity-60 transition-all"
@@ -610,83 +734,23 @@ export default function EventPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
-  const [event, setEvent] = useState<Event | null>(null);
-  const [orgName, setOrgName] = useState<string | null>(null);
-  const { user, organizations } = useAuth();
-  const [canEditOrg, setCanEditOrg] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [formattedDateTime, setFormattedDateTime] = useState({
-    date: "",
-    time: "",
-  });
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [registrationLink, setRegistrationLink] = useState("");
+  const { user } = useAuth();
+
+  const {
+    event,
+    orgName,
+    isLoading,
+    formattedDateTime,
+    isRegistered,
+    registrationLink,
+    canEditOrg,
+  } = useEventData(id, user);
+
   const [isCopied, setIsCopied] = useState(false);
 
-  useEffect(() => {
-    async function fetchEvent() {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`${BASE_URL}/api/events/${id}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch event data");
-        }
-
-        const res = await response.json();
-        setEvent(res.event);
-
-        // get org name
-        const orgResponse = await fetch(
-          `${BASE_URL}/api/organizations/${res.event.organizationId}`,
-        );
-        if (!orgResponse.ok) {
-          throw new Error("Failed to fetch organization data");
-        }
-        const orgData = await orgResponse.json();
-        setOrgName(orgData.organization.name);
-
-        if (user && organizations) {
-          // Check if this organization ID is in the user's organizations list
-          const userCanEdit = organizations.some(
-            (org) => org._id === res.event.organizationId,
-          );
-          setCanEditOrg(userCanEdit);
-        }
-
-        if (res.event?.startDate && res.event?.endDate) {
-          const dateTime = formatEventDateTime(
-            res.event.startDate,
-            res.event.endDate,
-          );
-          setFormattedDateTime(dateTime);
-        }
-
-        if (user && user._id) {
-          // Check if user is registered
-          const regCheckResponse = await fetch(
-            `${BASE_URL}/api/events/${id}/register?userId=${user._id}`,
-          );
-          if (regCheckResponse.ok) {
-            const regData = await regCheckResponse.json();
-            setIsRegistered(regData.isRegistered);
-            if (regData.registrationId) {
-              setRegistrationLink(
-                `${window.location.origin}/events/${id}/registration/${regData.registrationId}`,
-              );
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching event ID:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchEvent();
-  }, [id, user]);
-
-  if (isLoading) {
+  // Rest of your component remains the same
+  if (isLoading && !event) {
+    // Only show skeleton if we have no event data yet
     return <SkeletonEvent />;
   }
 

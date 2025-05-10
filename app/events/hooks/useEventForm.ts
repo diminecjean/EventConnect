@@ -8,6 +8,8 @@ import {
 } from "../eventFormComponents/schemas";
 import { BASE_URL } from "@/app/api/constants";
 import { uploadImageToSupabase } from "@/app/utils/supabase/imageUploadUtil";
+import { uploadMaterialToSupabase } from "@/app/utils/supabase/materialUploadUtil";
+import { toast } from "sonner";
 
 export function useEventForm({
   organizationId,
@@ -268,11 +270,22 @@ export function useEventForm({
       if (data.materials?.uploads && data.materials.uploads.length > 0) {
         const uploads = data.materials.uploads;
         for (let i = 0; i < uploads.length; i++) {
-          const uploadUrl = uploads[i];
-          if (uploadUrl instanceof File) {
+          const upload = uploads[i];
+          if (upload.url instanceof File) {
+            console.log("Uploading material:", upload);
             uploadTasks.push(
-              uploadImageToSupabase(uploadUrl, "uploads").then((url) => {
-                if (url) uploads[i] = url;
+              uploadMaterialToSupabase(upload.url, "uploads").then((result) => {
+                if (result.error) {
+                  console.log("Upload error:", result.error);
+                  // Log the error but continue the process
+                  throw new Error(
+                    `Failed to upload file: ${result.error}. Please try again.`,
+                  );
+                } else if (result.url) {
+                  console.log("Upload successful:", result.url);
+                  // Update the URL only if upload was successful
+                  uploads[i].url = result.url;
+                }
               }),
             );
           }
@@ -342,7 +355,7 @@ export function useEventForm({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save event");
+        throw new Error(response.statusText);
       }
 
       // Navigate back to organization profile page
@@ -352,8 +365,13 @@ export function useEventForm({
         router.push(`/events/${eventId}`);
       }
       router.refresh(); // Refresh the page to show the updated data
-    } catch (error) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "An unknown error occurred";
       console.error("Error saving event:", error);
+      toast.error(`Failed to save event. Please try again.`, {
+        description: message,
+      });
     } finally {
       setIsSubmitting(false);
     }

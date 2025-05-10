@@ -111,9 +111,14 @@ export interface Sponsor {
   socialLinks?: SocialMediaLink[];
 }
 
+interface MaterialUploads {
+  id: string;
+  name: string;
+  url: string;
+}
 export interface Materials {
   // These strings should all be URLs, either from internal Supabase or from the uploader themselves.
   galleryImages: string[];
-  uploads: string[];
+  uploads: MaterialUploads[];
   urls: string[];
 }

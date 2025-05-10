@@ -58,7 +58,15 @@ export const eventFormSchema = z
     materials: z
       .object({
         galleryImages: z.array(FileOrString).optional(),
-        uploads: z.array(FileOrString).optional(),
+        uploads: z
+          .array(
+            z.object({
+              id: z.string(),
+              name: z.string(),
+              url: FileOrString,
+            }),
+          )
+          .optional(),
         urls: z.array(z.string().url()).optional(),
       })
       .optional(),
