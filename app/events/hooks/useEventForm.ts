@@ -213,8 +213,8 @@ export function useEventForm({
       }
 
       // Process gallery images
-      if (data.galleryImages && data.galleryImages.length) {
-        const galleryImages = data.galleryImages;
+      if (data.materials.galleryImages && data.materials.galleryImages.length) {
+        const galleryImages = data.materials.galleryImages;
         for (let i = 0; i < galleryImages.length; i++) {
           const image = galleryImages[i];
           if (image instanceof File) {

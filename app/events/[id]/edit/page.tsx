@@ -75,8 +75,9 @@ export default function EditEventPage() {
             : [],
           speakers: Array.isArray(res.event.speakers) ? res.event.speakers : [],
           sponsors: Array.isArray(res.event.sponsors) ? res.event.sponsors : [],
-          galleryImages: Array.isArray(res.event.galleryImages)
-            ? res.event.galleryImages
+          // TODO
+          galleryImages: Array.isArray(res.event.materials.galleryImages)
+            ? res.event.materials.galleryImages
             : [],
           formFields: Array.isArray(res.event.formFields)
             ? res.event.formFields

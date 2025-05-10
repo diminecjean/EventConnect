@@ -20,8 +20,7 @@ export interface Event {
   timelineItems: TimelineItem[];
   speakers: Speaker[];
   sponsors: Sponsor[];
-  galleryImages: string[];
-  postMaterials: 
+  materials: Materials;
   createdAt?: string | Date;
   updatedAt?: string | Date;
 
@@ -110,4 +109,11 @@ export interface Sponsor {
   logoUrl?: string;
   description?: string;
   socialLinks?: SocialMediaLink[];
+}
+
+export interface Materials {
+  // These strings should all be URLs, either from internal Supabase or from the uploader themselves.
+  galleryImages: string[];
+  uploads: string[];
+  urls: string[];
 }

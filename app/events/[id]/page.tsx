@@ -273,9 +273,10 @@ const EventTabs = ({
             </h1>
 
             <>
-              {event.galleryImages && event.galleryImages.length > 0 ? (
+              {event.materials.galleryImages &&
+              event.materials.galleryImages.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {event.galleryImages.map((imageUrl, index) => (
+                  {event.materials.galleryImages.map((imageUrl, index) => (
                     <div
                       key={index}
                       className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"

@@ -54,8 +54,12 @@ export const eventFormSchema = z
     // Images can now be File objects, strings, or null
     imageUrl: FileOrString.optional(),
     bannerUrl: FileOrString.optional(),
-    // For arrays of images
-    galleryImages: z.array(FileOrString).optional(),
+    // For materials
+    materials: z.object({
+      galleryImages: z.array(FileOrString).optional(),
+      uploads: z.array(z.string()).optional(),
+      urls: z.array(z.string().url()).optional(),
+    }),
     // Other fields remain the same
     eventMode: z.enum(["physical", "hybrid", "online"]),
     virtualMeetingLink: z.string().url().optional().or(z.literal("")),
