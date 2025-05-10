@@ -4,12 +4,12 @@ import Image from "next/image";
 import { useRouter, notFound } from "next/navigation";
 import type { Event } from "../../typings/events/typings";
 import {
+  ArrowRightFromLineIcon,
   CalendarDays,
   Check,
   Copy,
   LucideGlobe,
   MapPin,
-  Share2,
 } from "lucide-react";
 import {
   Timeline,
@@ -29,7 +29,6 @@ import { formatEventDateTime } from "@/app/utils/formatDate";
 import GoogleMap from "@/components/GoogleMap";
 import { useAuth } from "@/app/context/authContext";
 import { Button } from "@/components/ui/button";
-import MultiStepLoaderDemo from "./loading";
 import { toast } from "sonner";
 import RegisteredParticipantsCount from "./RegisteredParticipantsCount";
 import { SkeletonEvent } from "@/components/ui/skeleton";
@@ -49,7 +48,13 @@ const getSocialIcon = (platform: string) => {
   }
 };
 
-const EventTabs = ({ event }: { event: Event }) => {
+const EventTabs = ({
+  event,
+  isRegistered,
+}: {
+  event: Event;
+  isRegistered: boolean;
+}) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Function to open the lightbox
@@ -263,34 +268,39 @@ const EventTabs = ({ event }: { event: Event }) => {
         </TabsContent>
         <TabsContent value="pictures">
           <div>
-            <h1 className="font-semibold text-xl my-4">Event Gallery</h1>
-            {event.galleryImages && event.galleryImages.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {event.galleryImages.map((imageUrl, index) => (
-                  <div
-                    key={index}
-                    className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => openLightbox(imageUrl)}
-                  >
-                    <Image
-                      src={imageUrl}
-                      alt={`Event image ${index + 1}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
-                  <p className="text-gray-500 italic">
-                    No pictures available for this event yet.
-                  </p>
+            <h1 className="font-semibold text-xl my-4">
+              Event Gallery & Materials
+            </h1>
+
+            <>
+              {event.galleryImages && event.galleryImages.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {event.galleryImages.map((imageUrl, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+                      onClick={() => openLightbox(imageUrl)}
+                    >
+                      <Image
+                        src={imageUrl}
+                        alt={`Event image ${index + 1}`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
+                    <p className="text-gray-500 italic">
+                      No pictures available for this event yet.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
           </div>
         </TabsContent>
       </Tabs>
@@ -339,6 +349,7 @@ export default function EventPage({
   const { id } = use(params);
   const router = useRouter();
   const [event, setEvent] = useState<Event | null>(null);
+  const [orgName, setOrgName] = useState<string | null>(null);
   const { user, organizations } = useAuth();
   const [canEditOrg, setCanEditOrg] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -361,6 +372,16 @@ export default function EventPage({
 
         const res = await response.json();
         setEvent(res.event);
+
+        // get org name
+        const orgResponse = await fetch(
+          `${BASE_URL}/api/organizations/${res.event.organizationId}`,
+        );
+        if (!orgResponse.ok) {
+          throw new Error("Failed to fetch organization data");
+        }
+        const orgData = await orgResponse.json();
+        setOrgName(orgData.organization.name);
 
         if (user && organizations) {
           // Check if this organization ID is in the user's organizations list
@@ -504,6 +525,17 @@ export default function EventPage({
                 </Button>
               )}
             </div>
+            <p className="flex flex-row items-center text-sm font-semibold text-gray-200 mt-2">
+              <ArrowRightFromLineIcon className="pr-2" /> by{" "}
+              <span
+                className="hover:underline hover:text-violet-500 cursor-pointer ml-2"
+                onClick={() => {
+                  router.push(`/profile/organization/${event.organizationId}`);
+                }}
+              >
+                {orgName}
+              </span>
+            </p>
             <p className="mt-4">{event.description}</p>
             {/* Button for registration */}
             <div className="flex w-full justify-center my-4">
@@ -556,7 +588,7 @@ export default function EventPage({
                 </Button>
               )}
             </div>
-            <EventTabs event={event} />
+            <EventTabs event={event} isRegistered={isRegistered} />
           </div>
         </div>
       </div>

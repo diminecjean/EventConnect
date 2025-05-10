@@ -30,9 +30,9 @@ export const PictureTabContent: React.FC<PicturesTabContentProps> = ({
           Event Gallery Images
         </h3>
         <p className="text-xs text-emerald-300 text-muted-foreground">
-          Upload additional images for your event gallery. These will be
-          displayed in a carousel on your event page. You can upload up to 10
-          images.
+          Upload contents for your event. Uploaded images will be visible to
+          anyone, but contents will only be accessible to registered
+          participants.
         </p>
       </div>
 
