@@ -75,10 +75,17 @@ export default function EditEventPage() {
             : [],
           speakers: Array.isArray(res.event.speakers) ? res.event.speakers : [],
           sponsors: Array.isArray(res.event.sponsors) ? res.event.sponsors : [],
-          // TODO
-          galleryImages: Array.isArray(res.event.materials.galleryImages)
-            ? res.event.materials.galleryImages
-            : [],
+          materials: {
+            galleryImages: Array.isArray(res.event.materials?.galleryImages)
+              ? res.event.materials.galleryImages
+              : [],
+            uploads: Array.isArray(res.event.materials?.uploads)
+              ? res.event.materials.uploads
+              : [],
+            urls: Array.isArray(res.event.materials?.urls)
+              ? res.event.materials.urls
+              : [],
+          },
           formFields: Array.isArray(res.event.formFields)
             ? res.event.formFields
             : [],

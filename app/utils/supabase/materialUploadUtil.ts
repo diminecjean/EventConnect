@@ -17,11 +17,21 @@ const ALLOWED_FILE_TYPES = [
   "application/zip", // ZIP
 ];
 
+// Maximum file size in bytes (10MB)
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
 /**
  * Validates if the file type is allowed for event materials
  */
 export function isValidMaterialType(file: File): boolean {
   return ALLOWED_FILE_TYPES.includes(file.type);
+}
+
+/**
+ * Validates if the file size is within limits
+ */
+export function isValidMaterialSize(file: File): boolean {
+  return file.size <= MAX_FILE_SIZE;
 }
 
 /**
@@ -32,18 +42,23 @@ export function isValidMaterialType(file: File): boolean {
  */
 export async function uploadMaterialToSupabase(
   file: File,
-  folder: string = "materials"
+  folder: string = "materials",
 ): Promise<string | null> {
   try {
     // Validate file type
     if (!isValidMaterialType(file)) {
-      console.error("Invalid file type for material upload");
+      console.error("Invalid file type for material upload:", file.type);
       return null;
     }
 
-    // Get file extension
+    // Validate file size
+    if (!isValidMaterialSize(file)) {
+      console.error("File too large for upload:", file.size);
+      return null;
+    }
+
+    // Generate a unique filename that preserves the original extension
     const fileExt = file.name.split(".").pop();
-    // Generate unique file name
     const fileName = `${uuidv4()}.${fileExt}`;
     const filePath = `${folder}/${fileName}`;
 

@@ -960,7 +960,7 @@ export default function EventForm({
                   ? "Update Event"
                   : "Create Event"}
             </Button>
-            {/* <Button
+            <Button
               type="button"
               onClick={() => {
                 console.log("Touched fields:", touchedFields);
@@ -970,8 +970,8 @@ export default function EventForm({
               }}
             >
               Check Validation State
-            </Button> */}
-            {/* <Button
+            </Button>
+            <Button
               type="button"
               onClick={() => {
                 console.log("Form values:", form.getValues());
@@ -987,7 +987,7 @@ export default function EventForm({
               disabled={isSubmitting}
             >
               Debug Submit
-            </Button> */}
+            </Button>
           </div>
         </form>
       </Form>

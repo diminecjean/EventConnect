@@ -192,10 +192,11 @@ export function useEventForm({
     console.log("Submitting form data");
 
     try {
+      // #region File Uploads
       // Upload all images to Supabase
       const uploadTasks = [];
 
-      // Process main images
+      // Process banner images
       if (data.bannerUrl instanceof File) {
         uploadTasks.push(
           uploadImageToSupabase(data.bannerUrl, "banners").then((url) => {
@@ -204,27 +205,13 @@ export function useEventForm({
         );
       }
 
+      // Process poster images
       if (data.imageUrl instanceof File) {
         uploadTasks.push(
           uploadImageToSupabase(data.imageUrl, "posters").then((url) => {
             data.imageUrl = url;
           }),
         );
-      }
-
-      // Process gallery images
-      if (data.materials.galleryImages && data.materials.galleryImages.length) {
-        const galleryImages = data.materials.galleryImages;
-        for (let i = 0; i < galleryImages.length; i++) {
-          const image = galleryImages[i];
-          if (image instanceof File) {
-            uploadTasks.push(
-              uploadImageToSupabase(image, "gallery").then((url) => {
-                galleryImages[i] = url;
-              }),
-            );
-          }
-        }
       }
 
       // Process speaker images
@@ -257,8 +244,45 @@ export function useEventForm({
         }
       }
 
+      // Process gallery images
+      if (
+        data.materials?.galleryImages &&
+        data.materials.galleryImages.length > 0
+      ) {
+        const galleryImages = data.materials.galleryImages;
+        for (let i = 0; i < galleryImages.length; i++) {
+          const galleryImageUrl = galleryImages[i];
+          if (galleryImageUrl instanceof File) {
+            uploadTasks.push(
+              uploadImageToSupabase(galleryImageUrl, "galleryImages").then(
+                (url) => {
+                  if (url) galleryImages[i] = url;
+                },
+              ),
+            );
+          }
+        }
+      }
+
+      // Process material uploads
+      if (data.materials?.uploads && data.materials.uploads.length > 0) {
+        const uploads = data.materials.uploads;
+        for (let i = 0; i < uploads.length; i++) {
+          const uploadUrl = uploads[i];
+          if (uploadUrl instanceof File) {
+            uploadTasks.push(
+              uploadImageToSupabase(uploadUrl, "uploads").then((url) => {
+                if (url) uploads[i] = url;
+              }),
+            );
+          }
+        }
+      }
+
       // Wait for all uploads to complete
       await Promise.all(uploadTasks);
+
+      // #endregion File Uploads
 
       // Continue with existing logic
       // Combine date and time for start and end

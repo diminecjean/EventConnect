@@ -55,11 +55,13 @@ export const eventFormSchema = z
     imageUrl: FileOrString.optional(),
     bannerUrl: FileOrString.optional(),
     // For materials
-    materials: z.object({
-      galleryImages: z.array(FileOrString).optional(),
-      uploads: z.array(z.string()).optional(),
-      urls: z.array(z.string().url()).optional(),
-    }),
+    materials: z
+      .object({
+        galleryImages: z.array(FileOrString).optional(),
+        uploads: z.array(FileOrString).optional(),
+        urls: z.array(z.string().url()).optional(),
+      })
+      .optional(),
     // Other fields remain the same
     eventMode: z.enum(["physical", "hybrid", "online"]),
     virtualMeetingLink: z.string().url().optional().or(z.literal("")),

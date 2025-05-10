@@ -8,6 +8,9 @@ import {
   CalendarDays,
   Check,
   Copy,
+  FileSymlink,
+  FileText,
+  LinkIcon,
   LucideGlobe,
   MapPin,
 } from "lucide-react";
@@ -50,11 +53,14 @@ const getSocialIcon = (platform: string) => {
 
 const EventTabs = ({
   event,
+  isOrganizer,
   isRegistered,
 }: {
   event: Event;
+  isOrganizer: boolean;
   isRegistered: boolean;
 }) => {
+  const router = useRouter();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Function to open the lightbox
@@ -272,8 +278,10 @@ const EventTabs = ({
               Event Gallery & Materials
             </h1>
 
-            <>
-              {event.materials.galleryImages &&
+            {/* Gallery Images - Visible to everyone */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium mb-4">Event Gallery</h2>
+              {event.materials?.galleryImages &&
               event.materials.galleryImages.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {event.materials.galleryImages.map((imageUrl, index) => (
@@ -293,15 +301,268 @@ const EventTabs = ({
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
-                    <p className="text-gray-500 italic">
-                      No materials available for this event yet.
+                <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
+                  <p className="text-gray-500 italic">
+                    No gallery images available for this event yet.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Event Materials - Access controlled */}
+            <div className="mt-8 pt-6 border-t border-gray-700">
+              <h2 className="text-lg font-medium mb-4">Event Materials</h2>
+
+              {isOrganizer || isRegistered ? (
+                <div className="space-y-8">
+                  {/* Downloadable Materials */}
+                  <div className="mb-6">
+                    <h3 className="text-md font-medium text-blue-400 mb-2">
+                      Downloadable Resources
+                    </h3>
+                    {event.materials?.uploads &&
+                    event.materials.uploads.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {event.materials.uploads.map((fileUrl, index) => {
+                          const fileName =
+                            fileUrl.split("/").pop() || `File ${index + 1}`;
+                          const fileExtension = fileName
+                            .split(".")
+                            .pop()
+                            ?.toLowerCase();
+
+                          let fileIcon;
+                          let iconColor;
+
+                          // Set icon based on file extension
+                          switch (fileExtension) {
+                            case "pdf":
+                              fileIcon = (
+                                <svg
+                                  className="h-8 w-8"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                >
+                                  <path d="M7 18H17V16H7V18Z" />
+                                  <path d="M17 14H7V12H17V14Z" />
+                                  <path d="M7 10H11V8H7V10Z" />
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 5.13401 17.866 2 14 2H6ZM6 4H13V9H19V19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V5C5 4.44772 5.44772 4 6 4ZM15 4.10002C16.6113 4.4271 17.9413 5.52906 18.584 7H15V4.10002Z"
+                                  />
+                                </svg>
+                              );
+                              iconColor = "text-red-500";
+                              break;
+                            case "doc":
+                            case "docx":
+                              fileIcon = (
+                                <svg
+                                  className="h-8 w-8"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                >
+                                  <path d="M7 18H17V16H7V18Z" />
+                                  <path d="M17 14H7V12H17V14Z" />
+                                  <path d="M7 10H11V8H7V10Z" />
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 5.13401 17.866 2 14 2H6ZM6 4H13V9H19V19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V5C5 4.44772 5.44772 4 6 4ZM15 4.10002C16.6113 4.4271 17.9413 5.52906 18.584 7H15V4.10002Z"
+                                  />
+                                </svg>
+                              );
+                              iconColor = "text-blue-500";
+                              break;
+                            case "ppt":
+                            case "pptx":
+                              fileIcon = (
+                                <svg
+                                  className="h-8 w-8"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                >
+                                  <path d="M7 18H17V16H7V18Z" />
+                                  <path d="M17 14H7V12H17V14Z" />
+                                  <path d="M7 10H11V8H7V10Z" />
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 5.13401 17.866 2 14 2H6ZM6 4H13V9H19V19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V5C5 4.44772 5.44772 4 6 4ZM15 4.10002C16.6113 4.4271 17.9413 5.52906 18.584 7H15V4.10002Z"
+                                  />
+                                </svg>
+                              );
+                              iconColor = "text-orange-500";
+                              break;
+                            case "xls":
+                            case "xlsx":
+                            case "csv":
+                              fileIcon = (
+                                <svg
+                                  className="h-8 w-8"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                >
+                                  <path d="M7 18H17V16H7V18Z" />
+                                  <path d="M17 14H7V12H17V14Z" />
+                                  <path d="M7 10H11V8H7V10Z" />
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 5.13401 17.866 2 14 2H6ZM6 4H13V9H19V19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V5C5 4.44772 5.44772 4 6 4ZM15 4.10002C16.6113 4.4271 17.9413 5.52906 18.584 7H15V4.10002Z"
+                                  />
+                                </svg>
+                              );
+                              iconColor = "text-green-500";
+                              break;
+                            default:
+                              fileIcon = <FileText className="h-8 w-8" />;
+                              iconColor = "text-gray-400";
+                          }
+
+                          return (
+                            <a
+                              key={index}
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center p-4 bg-gray-800 bg-opacity-40 rounded-lg hover:bg-opacity-60 transition-all"
+                            >
+                              <div
+                                className={`flex-shrink-0 mr-3 ${iconColor}`}
+                              >
+                                {fileIcon}
+                              </div>
+                              <div className="flex-grow">
+                                <p className="font-medium text-sm truncate">
+                                  {fileName}
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                  Click to download
+                                </p>
+                              </div>
+                              <div className="flex-shrink-0 ml-2">
+                                <FileSymlink className="h-5 w-5" />
+                              </div>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-400 italic">
+                        No downloadable materials available yet.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* External Links */}
+                  <div>
+                    <h3 className="text-md font-medium text-violet-400 mb-2">
+                      External Resources
+                    </h3>
+                    {event.materials?.urls &&
+                    event.materials.urls.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {event.materials.urls.map((linkEntry, index) => {
+                          // Extract title and URL if in "title|url" format
+                          let title, url;
+
+                          if (linkEntry.includes("|")) {
+                            [title, url] = linkEntry.split("|");
+                          } else {
+                            url = linkEntry;
+                            try {
+                              title = new URL(url).hostname.replace("www.", "");
+                            } catch (e) {
+                              title = url;
+                            }
+                          }
+
+                          return (
+                            <a
+                              key={index}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center p-4 bg-gray-800 bg-opacity-40 rounded-lg hover:bg-opacity-60 transition-all"
+                            >
+                              <div className="flex-shrink-0 mr-3 text-violet-400">
+                                <LinkIcon className="h-5 w-5" />
+                              </div>
+                              <div className="flex-grow">
+                                <p className="font-medium text-sm truncate">
+                                  {title}
+                                </p>
+                                <p className="text-xs text-gray-400 truncate">
+                                  {url}
+                                </p>
+                              </div>
+                              <div className="flex-shrink-0 ml-2">
+                                <FileSymlink className="h-4 w-4" />
+                              </div>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-400 italic">
+                        No external resources available yet.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="relative overflow-hidden rounded-lg border border-gray-600">
+                  {/* Blurred background with event materials preview */}
+                  <div className="absolute inset-0 bg-gray-800 bg-opacity-20 backdrop-blur-md flex items-center justify-center">
+                    <div className="absolute inset-0 flex">
+                      <div className="h-full w-1/2 border-r border-gray-500 border-dashed flex items-center justify-center opacity-30">
+                        <FileText className="h-12 w-12" />
+                      </div>
+                      <div className="h-full w-1/2 flex items-center justify-center opacity-30">
+                        <LinkIcon className="h-12 w-12" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Registration message */}
+                  <div className="relative py-12 px-6 backdrop-filter backdrop-blur-sm bg-black bg-opacity-60 rounded-lg max-w-lg mx-auto text-center">
+                    <h3 className="text-xl font-semibold mb-2">
+                      Access to Event Materials
+                    </h3>
+                    <p className="mb-6">
+                      Event materials are exclusively available to registered
+                      attendees. Register for future events to access
+                      presentations, resources, and other materials shared by
+                      organizers.
                     </p>
+                    <div className="space-x-4">
+                      <Button
+                        onClick={() =>
+                          router.push(
+                            `/events/${event._id.toString()}/register`,
+                          )
+                        }
+                        className="bg-violet-700 hover:bg-violet-800"
+                      >
+                        Register for this Event
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() =>
+                          router.push(
+                            `/profile/organization/${event.organizationId}`,
+                          )
+                        }
+                      >
+                        Visit Organizer Page
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}
-            </>
+            </div>
           </div>
         </TabsContent>
       </Tabs>
@@ -589,7 +850,11 @@ export default function EventPage({
                 </Button>
               )}
             </div>
-            <EventTabs event={event} isRegistered={isRegistered} />
+            <EventTabs
+              event={event}
+              isRegistered={isRegistered}
+              isOrganizer={canEditOrg}
+            />
           </div>
         </div>
       </div>
