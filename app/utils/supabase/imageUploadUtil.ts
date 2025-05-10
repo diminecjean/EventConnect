@@ -16,7 +16,7 @@ export async function uploadImageToSupabase(
 
     // Upload to Supabase storage
     const { data, error } = await supabase.storage
-      .from("event-images") // Create this bucket in Supabase dashboard
+      .from("event-images")
       .upload(filePath, file, {
         cacheControl: "3600",
         upsert: false,
