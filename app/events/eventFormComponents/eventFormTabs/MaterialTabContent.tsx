@@ -6,7 +6,7 @@ import { Control, UseFormReturn } from "react-hook-form";
 import { EventFormValues } from "../schemas";
 import FormImageUploader from "../../imageUploader";
 
-interface PicturesTabContentProps {
+interface MaterialsTabContentProps {
   form: UseFormReturn<EventFormValues>;
   control: Control<EventFormValues>;
   getValues: any;
@@ -15,7 +15,7 @@ interface PicturesTabContentProps {
   watch: any;
 }
 
-export const PictureTabContent: React.FC<PicturesTabContentProps> = ({
+export const MaterialTabContent: React.FC<MaterialsTabContentProps> = ({
   form,
   control,
   getValues,

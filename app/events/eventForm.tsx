@@ -19,7 +19,7 @@ import { FormTabContent } from "./eventFormComponents/eventFormTabs/FormTabConte
 import { TimelineTabContent } from "./eventFormComponents/eventFormTabs/TimelineTabContent";
 import { SpeakersTabContent } from "./eventFormComponents/eventFormTabs/SpeakersTabContent";
 import { SponsorsTabContent } from "./eventFormComponents/eventFormTabs/SponsorsTabContent";
-import { PictureTabContent } from "./eventFormComponents/eventFormTabs/PicturesTabContent";
+import { MaterialTabContent } from "./eventFormComponents/eventFormTabs/MaterialTabContent";
 import { EventFormProps } from "./eventFormComponents/types";
 import {
   Select,
@@ -876,16 +876,7 @@ export default function EventForm({
                  - Timeline (Agenda)
                  - Speaker lineup
                  - Sponsors lineup
-                 - Pictures 
-              */}
-
-              {/* 
-                Tabs section (optional fields)
-                 - Registration Form
-                 - Timeline (Agenda)
-                 - Speaker lineup
-                 - Sponsors lineup
-                 - Pictures 
+                 - Materials 
               */}
               <Tabs defaultValue="forms" className="my-6 w-full min-w-xl">
                 <TabsList className="grid w-full grid-cols-5">
@@ -893,7 +884,7 @@ export default function EventForm({
                   <TabsTrigger value="timeline">Timeline</TabsTrigger>
                   <TabsTrigger value="speakers">Speakers</TabsTrigger>
                   <TabsTrigger value="sponsors">Sponsors</TabsTrigger>
-                  <TabsTrigger value="pictures">Pictures</TabsTrigger>
+                  <TabsTrigger value="materials">Materials</TabsTrigger>
                 </TabsList>
                 <TabsContent value="forms">
                   <FormTabContent
@@ -935,8 +926,8 @@ export default function EventForm({
                     watch={form.watch}
                   />
                 </TabsContent>
-                <TabsContent value="pictures">
-                  <PictureTabContent
+                <TabsContent value="materials">
+                  <MaterialTabContent
                     form={form}
                     control={form.control}
                     getValues={form.getValues}

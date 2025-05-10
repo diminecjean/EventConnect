@@ -73,7 +73,7 @@ const EventTabs = ({
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="speakers">Speakers</TabsTrigger>
           <TabsTrigger value="sponsors">Sponsors</TabsTrigger>
-          <TabsTrigger value="pictures">Pictures</TabsTrigger>
+          <TabsTrigger value="materials">Materials</TabsTrigger>
         </TabsList>
         <TabsContent value="timeline">
           <div>
@@ -266,7 +266,7 @@ const EventTabs = ({
             )}
           </div>
         </TabsContent>
-        <TabsContent value="pictures">
+        <TabsContent value="materials">
           <div>
             <h1 className="font-semibold text-xl my-4">
               Event Gallery & Materials
@@ -295,7 +295,7 @@ const EventTabs = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
                     <p className="text-gray-500 italic">
-                      No pictures available for this event yet.
+                      No materials available for this event yet.
                     </p>
                   </div>
                 </div>

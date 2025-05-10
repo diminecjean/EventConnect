@@ -4,7 +4,6 @@ export interface EventData {
 
 export interface Event {
   _id: string;
-  id?: string;
   title: string;
   description: string;
   location: string;
@@ -22,10 +21,12 @@ export interface Event {
   speakers: Speaker[];
   sponsors: Sponsor[];
   galleryImages: string[];
+  postMaterials: 
   createdAt?: string | Date;
   updatedAt?: string | Date;
 
   // Keep these for backward compatibility
+  id?: string;
   eventLogo?: EventLogo;
   host?: Host;
   tags?: Tag[];
