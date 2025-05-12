@@ -36,6 +36,7 @@ export interface SpeakerSocialMedia {
 
 export interface EventSpeaker {
   id: string;
+  userId?: string;
   name: string;
   topic: string;
   organization?: string;
