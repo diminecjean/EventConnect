@@ -16,7 +16,6 @@ export async function GET(
         { status: 400 },
       );
     }
-    console.log({ params });
 
     const id = params.id;
 
