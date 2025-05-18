@@ -18,8 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "react-day-picker";
-import { Plus, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { NotificationBell } from "./notifications/NotificationBell";
 
 export default function Navbar() {
@@ -124,12 +123,12 @@ export default function Navbar() {
                       </p>
                     </NavigationMenuLink>
                   </PopoverTrigger>
-                  <PopoverContent>
+                  <PopoverContent className="bg-violet-300/50 border border-violet-400">
                     {normalizedOrganizations.map((org) => (
                       <Link
                         key={org._id}
                         href={`/profile/organization/${org._id}`}
-                        className="block rounded-lg px-4 py-2 text-sm text-gray-300 hover:bg-violet-300 hover:text-black"
+                        className="block rounded-lg px-4 py-2 my-2 text-sm text-gray-300 bg-violet-500/15 hover:bg-violet-300 hover:text-black"
                         title={org.name} // Adds tooltip with full name
                       >
                         {truncateText(org.name, 25)}

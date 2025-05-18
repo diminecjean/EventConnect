@@ -8,7 +8,7 @@
  */
 export type Notification = {
   _id: string;
-  type: "NEW_EVENT" | "UPDATED_EVENT" | "FRIEND_REQUEST" | "JOINED_EVENT";
+  type: "NEW_EVENT" | "UPDATE_EVENT" | "FRIEND_REQUEST" | "JOINED_EVENT";
   title: string;
   content: string;
   recipientId: string;
