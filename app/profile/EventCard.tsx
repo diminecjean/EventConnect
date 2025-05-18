@@ -36,7 +36,7 @@ const EventCard = ({ event }: { event: Event }) => {
       <div className="relative h-40 bg-violet-400">
         {event.imageUrl ? (
           <Image
-            src={event.imageUrl}
+            src={event.bannerUrl}
             alt={event.title}
             fill
             className="object-cover"
