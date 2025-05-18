@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDB } from "@/app/lib/mongodb";
+import { ObjectId } from "mongodb";
 
 export async function GET(
   request: NextRequest,
@@ -50,6 +51,7 @@ export async function GET(
   }
 }
 
+// Register a user for an event
 export async function POST(
   request: NextRequest,
   props: { params: Promise<{ id: string }> },
@@ -110,6 +112,57 @@ export async function POST(
     // 1. Update event attendance count
     // 2. Send confirmation email
     // 3. Create notification
+
+    // After successfully registering for the event
+    // Notify all connected friends
+    const userId = registrationData.userId;
+    const eventId = id;
+    const acceptedConnections = await db
+      .collection("connections")
+      .find({
+        $or: [
+          { requesterId: userId, status: "ACCEPTED" },
+          { recipientId: userId, status: "ACCEPTED" },
+        ],
+      })
+      .toArray();
+
+    if (acceptedConnections.length > 0) {
+      const userData = await db.collection("users").findOne({
+        _id: new ObjectId(userId),
+      });
+
+      const eventData = await db.collection("events").findOne({
+        _id: new ObjectId(eventId),
+      });
+
+      if (userData && eventData) {
+        // Create notifications for all connected friends
+        const notifications = acceptedConnections.map((connection) => {
+          // Determine which user ID is the friend (not the current user)
+          const friendId =
+            connection.requesterId === userId
+              ? connection.recipientId
+              : connection.requesterId;
+
+          return {
+            recipientId: friendId,
+            type: "JOINED_EVENT",
+            title: `${userData.name} Recently joined an event!`,
+            content: `${userData.name} has registered for ${eventData.title}`,
+            senderId: userId,
+            eventId: eventId,
+            isRead: false,
+            createdAt: new Date(),
+          };
+        });
+
+        // Insert notifications
+        if (notifications.length > 0) {
+          await db.collection("notifications").insertMany(notifications);
+        }
+      }
+    }
 
     return NextResponse.json(
       {

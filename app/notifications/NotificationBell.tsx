@@ -35,22 +35,30 @@ export function NotificationBell() {
             </div>
           ) : (
             <div>
-              {notifications.map((notification) => (
-                <Link
-                  key={notification._id}
-                  href={`/events/${notification.eventId}`}
-                  onClick={() => markAsRead(notification._id)}
-                  className={`block p-4 hover:bg-black/80 border-b border-stone-500 ${!notification.isRead ? "bg-black/60" : ""}`}
-                >
-                  <div className="font-medium">{notification.title}</div>
-                  <div className="text-sm text-gray-300">
-                    {notification.content}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {new Date(notification.createdAt).toLocaleString()}
-                  </div>
-                </Link>
-              ))}
+              {notifications.map((notification) => {
+                // Determine the link target based on notification type
+                const linkHref =
+                  notification.type === "FRIEND_REQUEST"
+                    ? `/profile/user/${notification.recipientId}/connections`
+                    : `/events/${notification.eventId}`;
+
+                return (
+                  <Link
+                    key={notification._id}
+                    href={linkHref}
+                    onClick={() => markAsRead(notification._id)}
+                    className={`block p-4 hover:bg-black/80 border-b border-stone-500 ${!notification.isRead ? "bg-black/60" : ""}`}
+                  >
+                    <div className="font-medium">{notification.title}</div>
+                    <div className="text-sm text-gray-300">
+                      {notification.content}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {new Date(notification.createdAt).toLocaleString()}
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

@@ -13,6 +13,9 @@ import { Search, Users } from "lucide-react";
 import { BASE_URL } from "@/app/api/constants";
 import { useRouter } from "next/navigation";
 import { SkeletonUserCardHorziontal } from "@/components/ui/skeleton";
+import { useAuth } from "@/app/context/authContext";
+import ConnectionButton from "@/app/connections/ConnectionButton";
+import { useConnections } from "@/app/connections/useConnections";
 
 interface Attendee {
   _id: string;
@@ -39,6 +42,8 @@ export default function RegisteredAttendeesList({
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const { user: currentUser } = useAuth();
+  const { checkConnectionStatuses } = useConnections();
 
   const fetchAttendees = async () => {
     if (!isOpen) return;
@@ -55,6 +60,15 @@ export default function RegisteredAttendeesList({
 
       const data = await response.json();
       setAttendees(data.attendees || []);
+
+      // If user is logged in, check connection status for each attendee
+      if (currentUser && currentUser._id) {
+        const userIds = data.attendees
+          .filter((a: Attendee) => a.userId._id !== currentUser._id)
+          .map((a: Attendee) => a.userId._id);
+
+        await checkConnectionStatuses(userIds);
+      }
     } catch (error) {
       console.error("Error fetching attendees:", error);
     } finally {
@@ -134,21 +148,34 @@ export default function RegisteredAttendeesList({
                 {filteredAttendees.map((attendee) => (
                   <div
                     key={attendee._id}
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors"
-                    onClick={() => handleViewProfile(attendee.userId._id)}
+                    className="flex items-center justify-between gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   >
-                    <Avatar>
-                      <AvatarImage src={attendee.userId.profileImage} />
-                      <AvatarFallback className="bg-violet-200 text-violet-800">
-                        {getInitials(attendee.userId.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{attendee.userId.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {attendee.userId.email}
-                      </p>
+                    <div
+                      className="flex items-center gap-3 flex-1 cursor-pointer"
+                      onClick={() => handleViewProfile(attendee.userId._id)}
+                    >
+                      <Avatar>
+                        <AvatarImage src={attendee.userId.profileImage} />
+                        <AvatarFallback className="bg-violet-200 text-violet-800">
+                          {getInitials(attendee.userId.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{attendee.userId.name}</p>
+                        <p className="text-sm text-gray-500">
+                          {attendee.userId.email}
+                        </p>
+                      </div>
                     </div>
+
+                    {/* Only show connect button if user is logged in and not viewing their own profile */}
+                    {currentUser && currentUser._id !== attendee.userId._id && (
+                      <ConnectionButton
+                        userId={attendee.userId._id}
+                        size="sm"
+                        className="shrink-0"
+                      />
+                    )}
                   </div>
                 ))}
               </div>
