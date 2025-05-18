@@ -40,7 +40,7 @@ function SkeletonEvent({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className="w-full flex flex-col gap-4" {...props}>
+    <div className="w-full flex flex-col gap-4 mt-20" {...props}>
       {/* Banner skeleton */}
       <Skeleton className="w-full h-64 rounded-lg" />
 
