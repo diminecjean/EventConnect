@@ -31,6 +31,8 @@ export async function GET(request: NextRequest) {
       .limit(10) // Limit results for performance
       .toArray();
 
+    console.log({ users });
+
     return NextResponse.json({ users }, { status: 200 });
   } catch (error) {
     console.error("Error searching users:", error);

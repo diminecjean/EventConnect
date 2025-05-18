@@ -911,7 +911,7 @@ export default function EventPage({
                     </Button>
                   </div>
                 </div>
-              ) : (
+              ) : user ? (
                 <Button
                   onClick={() =>
                     router.push(`/events/${event._id.toString()}/register`)
@@ -919,6 +919,13 @@ export default function EventPage({
                   className="bg-violet-900 w-full text-white rounded-lg"
                 >
                   Register
+                </Button>
+              ) : (
+                <Button
+                  disabled
+                  className="bg-violet-900 w-full text-white rounded-lg"
+                >
+                  Login or Create an Account to Register
                 </Button>
               )}
             </div>

@@ -1,11 +1,14 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useSession } from "next-auth/react";
-import {
-  OrganizationProfile,
-  USER_ROLE,
-  UserProfile,
-} from "../typings/profile/typings";
+import { OrganizationProfile, UserProfile } from "../typings/profile/typings";
 import { BASE_URL } from "../api/constants";
 
 interface AuthContextType {
@@ -16,15 +19,24 @@ interface AuthContextType {
   clearUser: () => void;
 }
 
+const fetchCache = new Map();
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 async function getUserProfile(email: string) {
+  const cacheKey = `user-${email}`;
+
+  // Check cache first
+  if (fetchCache.has(cacheKey)) {
+    return fetchCache.get(cacheKey);
+  }
   try {
     const response = await fetch(`${BASE_URL}/api/users/email/${email}`);
     if (!response.ok) {
       throw new Error("Failed to fetch user data");
     }
     const res = await response.json();
+    fetchCache.set(cacheKey, res.user); // store in cache
     return res.user;
   } catch (error) {
     console.error("Error fetching user ID:", error);
@@ -33,6 +45,12 @@ async function getUserProfile(email: string) {
 }
 
 async function getOrganizationProfile(id: string) {
+  const cacheKey = `org-${id}`;
+
+  if (fetchCache.has(cacheKey)) {
+    return fetchCache.get(cacheKey);
+  }
+
   try {
     console.log("Fetching organization profile for ID:", id);
     const response = await fetch(`${BASE_URL}/api/organizations/${id}`);
@@ -40,6 +58,7 @@ async function getOrganizationProfile(id: string) {
       throw new Error("Failed to fetch organization data");
     }
     const res = await response.json();
+    fetchCache.set(cacheKey, res.organization); // store in cache
     return res.organization;
   } catch (error) {
     console.error("Error fetching organization ID:", error);
@@ -65,14 +84,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   >(null);
 
   // Function to clear user data (used on logout)
-  const clearUser = () => {
+  const clearUser = useCallback(() => {
     setUser(null);
     setIsOrganizer(false);
     setOrganizations(null);
     localStorage.removeItem("userData");
     localStorage.removeItem("userRole");
     localStorage.removeItem("organizationData");
-  };
+  }, []);
 
   useEffect(() => {
     // Skip if we're on the server
@@ -169,12 +188,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [session, status]);
 
+  const contextValue = useMemo(
+    () => ({
+      user,
+      organizations,
+      isOrganizer,
+      isLoading,
+      clearUser,
+    }),
+    [user, organizations, isOrganizer, isLoading, clearUser],
+  );
+
   return (
-    <AuthContext.Provider
-      value={{ user, organizations, isOrganizer, isLoading, clearUser }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
 

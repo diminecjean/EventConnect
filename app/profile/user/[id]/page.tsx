@@ -178,6 +178,16 @@ export default function UserProfilePage() {
               <OrganizationsList organizationIds={user.organizations} />
             </div>
           )}
+
+          {/* Connection Link */}
+          <div className="mt-4 flex justify-center md:justify-start">
+            <Link
+              href={`/profile/user/${id}/connections`}
+              className="text-sm px-4 py-1 bg-violet-700 text-white rounded-md hover:bg-violet-800 transition"
+            >
+              View Connections
+            </Link>
+          </div>
         </div>
       </div>
     </main>

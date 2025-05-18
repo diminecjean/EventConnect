@@ -93,6 +93,7 @@ export const eventFormSchema = z
       .array(
         z.object({
           id: z.string(),
+          userId: z.string().optional(),
           name: z.string().min(1, "Speaker name is required"),
           topic: z.string().min(1, "Speaking topic is required"),
           organization: z.string().optional(),

@@ -1,6 +1,7 @@
 import { connectToDB } from "../../lib/mongodb";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
+import { ObjectId } from "mongodb";
 
 export async function GET(request: NextRequest) {
   try {
@@ -78,6 +79,41 @@ export async function POST(request: NextRequest) {
       ...newEvent,
       _id: result.insertedId,
     };
+
+    if (createdEvent._id) {
+      // When creating a new event, find all subscribers through the subscriptions collection
+      const subscribers = await db
+        .collection("subscriptions")
+        .find({ organizationId: eventData.organizationId })
+        .toArray();
+
+      console.log("Subscribers:", subscribers);
+
+      const orgData = await db.collection("organizations").findOne({
+        _id: new ObjectId(eventData.organizationId),
+      });
+
+      console.log("Organization Data:", orgData);
+
+      if (orgData && subscribers.length > 0) {
+        // Create notifications for all subscribers
+        const notifications = subscribers.map((subscription) => ({
+          recipientId: subscription.userId,
+          type: "NEW_EVENT",
+          title: `New Event by ${orgData.name}`,
+          content: `${orgData.name} posted a new event: ${eventData.title}`,
+          eventId: createdEvent._id,
+          senderId: eventData.organizationId,
+          isRead: false,
+          createdAt: new Date(),
+        }));
+
+        console.log("Notifications to be inserted:", notifications);
+
+        // Insert notifications to database
+        await db.collection("notifications").insertMany(notifications);
+      }
+    }
 
     return NextResponse.json(
       {

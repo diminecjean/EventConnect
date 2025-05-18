@@ -18,8 +18,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "react-day-picker";
-import { Plus, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
+import { NotificationBell } from "./notifications/NotificationBell";
 
 export default function Navbar() {
   const router = useRouter();
@@ -108,6 +108,9 @@ export default function Navbar() {
                 </span>
               </div>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NotificationBell />
+            </NavigationMenuItem>
             {normalizedOrganizations.length > 0 && (
               <NavigationMenuItem>
                 <Popover>
@@ -115,15 +118,17 @@ export default function Navbar() {
                     <NavigationMenuLink
                       className={navigationMenuTriggerStyle()}
                     >
-                      Organizations
+                      <p className="text-violet-400 hover:text-white">
+                        Organizations
+                      </p>
                     </NavigationMenuLink>
                   </PopoverTrigger>
-                  <PopoverContent>
+                  <PopoverContent className="bg-violet-300/50 border border-violet-400">
                     {normalizedOrganizations.map((org) => (
                       <Link
                         key={org._id}
                         href={`/profile/organization/${org._id}`}
-                        className="block rounded-lg px-4 py-2 text-sm text-gray-300 hover:bg-violet-300 hover:text-black"
+                        className="block rounded-lg px-4 py-2 my-2 text-sm text-gray-300 bg-violet-500/15 hover:bg-violet-300 hover:text-black"
                         title={org.name} // Adds tooltip with full name
                       >
                         {truncateText(org.name, 25)}
@@ -138,13 +143,13 @@ export default function Navbar() {
                 className={navigationMenuTriggerStyle()}
                 onClick={handleSignOut}
               >
-                Logout
+                <p className="text-violet-400 hover:text-white">Logout</p>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <Link href={`/profile/user/${user._id}`} passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  <div className="flex justify-center items-center gap-2 rounded-full bg-violet-900 py-2 px-4 cursor-pointer">
+                  <div className="flex justify-center items-center gap-2 rounded-full bg-violet-500/40 py-2 px-4 cursor-pointer">
                     <div className="h-8 w-8 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
                       {user.profilePicture ? (
                         <img

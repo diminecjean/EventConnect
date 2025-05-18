@@ -87,7 +87,6 @@ export async function signUp({
 
   // Hash the password
   const hashedPassword = await hashPassword(password);
-  console.log({ password, hashedPassword });
 
   // Create user
   const user = {
@@ -96,8 +95,6 @@ export async function signUp({
     name: name || "",
     createdAt: new Date(),
   };
-
-  console.log({ user });
 
   // Insert the user document
   const response = await fetch(

@@ -48,10 +48,21 @@ export const SpeakersTabContent: React.FC<SpeakerTabContentProps> = ({
                 index={index}
                 update={(speakerIndex, fieldName, value) => {
                   const updatedSpeakers = [...field.value];
-                  updatedSpeakers[speakerIndex] = {
-                    ...updatedSpeakers[speakerIndex],
-                    [fieldName]: value,
-                  };
+
+                  // If value is an object with multiple fields (for bulk update)
+                  if (typeof fieldName === "object" && fieldName !== null) {
+                    updatedSpeakers[speakerIndex] = {
+                      ...updatedSpeakers[speakerIndex],
+                      ...(fieldName as Record<string, unknown>),
+                    };
+                  } else {
+                    // Regular single field update
+                    updatedSpeakers[speakerIndex] = {
+                      ...updatedSpeakers[speakerIndex],
+                      [fieldName as string]: value,
+                    };
+                  }
+
                   field.onChange(updatedSpeakers);
                 }}
                 remove={(speakerIndex) => {
@@ -61,6 +72,7 @@ export const SpeakersTabContent: React.FC<SpeakerTabContentProps> = ({
                 }}
                 register={form.register}
                 control={form.control}
+                form={form}
               />
             ))}
 
