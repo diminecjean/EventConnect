@@ -16,6 +16,7 @@ import { Event } from "@/app/typings/events/typings";
 import EventCard from "../../EventCard";
 import TeamMemberCard from "./TeamMemberCard";
 import AddTeamMembersModal from "./AddTeamMemberModal";
+import { SubscribeButton } from "./SubscribeButton";
 
 function TeamMembers({ orgId }: { orgId: string }) {
   const [members, setMembers] = useState<UserProfile[]>([]);
@@ -251,22 +252,27 @@ const OrganizationProfile = ({
                   <MapPin size={16} /> {orgData.location}
                 </p>
               </div>
-            </div>
-            <div className="flex flex-col gap-4 align-start h-full">
-              <Button
-                variant="outline_violet"
-                className="rounded-lg text-violet-500 font-semibold"
-                onClick={() => {
-                  if (canEditOrg)
-                    router.push(`/profile/organization/${orgData._id}/edit`);
-                }}
-              >
-                {canEditOrg
-                  ? "Edit Organization"
-                  : isSubscribed
-                    ? "Subscribed"
-                    : "Subscribe"}
-              </Button>
+              <div className="flex flex-col gap-4 align-start h-full">
+                {canEditOrg ? (
+                  <Button
+                    variant="outline_violet"
+                    className="rounded-lg text-violet-500 font-semibold"
+                    onClick={() => {
+                      if (canEditOrg)
+                        router.push(
+                          `/profile/organization/${orgData._id}/edit`,
+                        );
+                    }}
+                  >
+                    Edit Organization
+                  </Button>
+                ) : (
+                  <SubscribeButton
+                    organizationId={orgData._id}
+                    organizationName={orgData.name}
+                  />
+                )}
+              </div>
             </div>
           </div>
           <OrgPageTabs
