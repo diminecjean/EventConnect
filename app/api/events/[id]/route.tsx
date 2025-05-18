@@ -16,7 +16,6 @@ export async function GET(
         { status: 400 },
       );
     }
-    console.log({ params });
 
     const id = params.id;
 
@@ -118,6 +117,35 @@ export async function PUT(
         .findOne({ _id: new ObjectId(id) });
     } else {
       updatedEvent = await db.collection("events").findOne({ id: id });
+    }
+
+    if (updatedEvent) {
+      // When updating an existing event, find all subscribers through the subscriptions collection
+      const subscribers = await db
+        .collection("subscriptions")
+        .find({ organizationId: updateData.organizationId })
+        .toArray();
+
+      const orgData = await db.collection("organizations").findOne({
+        _id: new ObjectId(updateData.organizationId),
+      });
+
+      if (orgData && subscribers.length > 0) {
+        // Create notifications for all subscribers
+        const notifications = subscribers.map((subscription) => ({
+          recipientId: subscription.userId,
+          type: "UPDATE_EVENT",
+          title: `Event Updated by ${orgData.name}`,
+          content: `${orgData.name} updated an event: ${updateData.title}`,
+          eventId: updatedEvent._id,
+          senderId: updateData.organizationId,
+          isRead: false,
+          createdAt: new Date(),
+        }));
+
+        // Insert notifications to database
+        await db.collection("notifications").insertMany(notifications);
+      }
     }
 
     return NextResponse.json(
