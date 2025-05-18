@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { UserPlus, Check } from "lucide-react";
 import { useConnections, ConnectionStatus } from "./useConnections";
+import { useEffect } from "react";
 
 interface ConnectionButtonProps {
   userId: string;
@@ -21,19 +22,46 @@ export default function ConnectionButton({
     sendConnectionRequest,
     shouldDisableConnectButton,
     isConnectionPending,
-    getConnectionButtonText,
+    checkConnectionStatuses,
   } = useConnections();
 
-  // Use passed status if available, otherwise check from hook
-  const status = initialStatus || connectionStatuses[userId];
+  // Use effect to check connection status when component mounts
+  useEffect(() => {
+    if (userId) {
+      checkConnectionStatuses([userId]);
+    }
+  }, [userId, checkConnectionStatuses]);
+
+  // Get the button text directly based on status
+  const buttonText = initialStatus
+    ? getButtonTextFromStatus(initialStatus)
+    : getButtonTextFromStatus(connectionStatuses[userId]);
 
   const handleConnect = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent click from propagating (important in lists)
     sendConnectionRequest(userId);
   };
 
+  // Local helper function to get text based on status
+  function getButtonTextFromStatus(status: ConnectionStatus) {
+    if (!status) return "Connect";
+
+    switch (status) {
+      case "PENDING":
+        return "Request Sent";
+      case "ACCEPTED":
+        return "Connected";
+      case "REJECTED":
+        return "Connect";
+      default:
+        return "Connect";
+    }
+  }
+
   const getConnectionIcon = () => {
-    if (status === "ACCEPTED") {
+    const currentStatus = initialStatus || connectionStatuses[userId];
+
+    if (currentStatus === "ACCEPTED") {
       return <Check size={16} className="mr-1" />;
     }
 
@@ -43,7 +71,11 @@ export default function ConnectionButton({
   return (
     <Button
       size={size}
-      variant={status === "ACCEPTED" ? "default" : "outline"}
+      variant={
+        (initialStatus || connectionStatuses[userId]) === "ACCEPTED"
+          ? "default"
+          : "outline"
+      }
       disabled={shouldDisableConnectButton(userId)}
       onClick={handleConnect}
       className={className}
@@ -53,7 +85,7 @@ export default function ConnectionButton({
       ) : (
         <>
           {getConnectionIcon()}
-          {getConnectionButtonText(userId)}
+          {buttonText}
         </>
       )}
     </Button>

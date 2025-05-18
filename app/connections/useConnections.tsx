@@ -210,6 +210,9 @@ export function useConnections() {
     [currentUser],
   );
 
+  // Might not need this, but keeping for now
+  // Issue: connectionStatuses state might not be populated yet when this is called
+  // Issue happened when using getConnectionButtonText in <ConnectionButton />
   const getConnectionButtonText = useCallback(
     (userId: string) => {
       const status = connectionStatuses[userId];

@@ -22,8 +22,6 @@ export function useNotifications(pollingInterval = 15000) {
         `${BASE_URL}/api/users/${user._id}/notifications`,
       );
 
-      console.log({ response });
-
       if (response.ok) {
         const data = await response.json();
         setNotifications(data.notifications || []);
