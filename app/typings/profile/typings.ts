@@ -24,6 +24,8 @@ export type UserProfile = {
   id?: string;
   name: string;
   email: string;
+  position?: string; // Job title
+  organization?: string; // Working company
   bio?: string;
   profilePicture?: string;
   interests: string[]; // Topics of interest

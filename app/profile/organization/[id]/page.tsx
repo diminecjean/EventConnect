@@ -17,6 +17,9 @@ import EventCard from "../../EventCard";
 import TeamMemberCard from "./TeamMemberCard";
 import AddTeamMembersModal from "./AddTeamMemberModal";
 import { SubscribeButton } from "./SubscribeButton";
+import OrganizationStats from "./OrganizationStats";
+import EventStats from "./EventStats";
+import EventStatCard from "./EventStatCard";
 
 function TeamMembers({ orgId }: { orgId: string }) {
   const [members, setMembers] = useState<UserProfile[]>([]);
@@ -140,7 +143,29 @@ const OrgPageTabs = ({
           <TabsContent value="stats">
             <div>
               <h1 className="font-semibold text-xl my-4">Stats</h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+              <div className="space-y-6">
+                <div className="p-4 border rounded-lg shadow-sm">
+                  <h2 className="text-2xl font-bold mb-4">
+                    Organization Statistics
+                  </h2>
+                  <OrganizationStats organizationId={orgId} />
+                </div>
+
+                <div className="p-4 border rounded-lg shadow-sm">
+                  <h2 className="text-2xl font-bold mb-4">Event Statistics</h2>
+                  {events && events.length > 0 ? (
+                    <div className="space-y-4 flex flex-col">
+                      {events.map((event) => (
+                        <EventStatCard key={event._id} event={event} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No events found for this organization.
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </TabsContent>
         )}
