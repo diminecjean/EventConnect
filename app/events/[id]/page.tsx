@@ -39,6 +39,8 @@ import {
   OrganizationProfile,
   UserProfile,
 } from "@/app/typings/profile/typings";
+import { Badge } from "@/components/badge/typings";
+import BadgeClaimDialog from "@/components/badge/BadgeClaimDialog";
 
 // Note:
 // This hook fetches data in a more efficient way by caching the results,
@@ -60,6 +62,8 @@ function useEventData(
   const [isRegistered, setIsRegistered] = useState(false);
   const [registrationLink, setRegistrationLink] = useState("");
   const [canEditOrg, setCanEditOrg] = useState(false);
+  const [badge, setBadge] = useState<Badge | null>(null);
+  const [showBadgeDialog, setShowBadgeDialog] = useState(false);
 
   // Cache the fetch results in ref to persist between renders
   const dataCache = React.useRef({
@@ -69,6 +73,95 @@ function useEventData(
     isRegistered: false,
     registrationLink: "",
   });
+
+  // Define the badge eligibility function outside the fetchEventData
+  const checkBadgeEligibility = useCallback(async () => {
+    if (!user || !event) return;
+
+    try {
+      // Check if event has ended
+      const eventEnded = new Date(event.endDate) < new Date();
+      console.log("Event ended:", eventEnded);
+      if (!eventEnded) return;
+
+      // Define user role - could be registered participant, organizer, or speaker
+      let userRole = "NONE";
+
+      // Check if user is registered
+      if (isRegistered) {
+        userRole = "PARTICIPANT";
+      }
+
+      // Check if user is an organizer
+      // NOTE: not available yet
+      const isOrganizer = canEditOrg;
+      if (isOrganizer) {
+        userRole = "ORGANIZER";
+      }
+
+      // Check if user is a speaker (if event has speakers array)
+      const isSpeaker =
+        event.speakers &&
+        event.speakers.some((speaker) => speaker.name === user.name);
+      if (isSpeaker) {
+        userRole = "SPEAKER";
+      }
+
+      // If user has no role in this event, they're not eligible
+      if (userRole === "NONE") return;
+
+      // For participants, check if they were checked in
+      let isEligible = false;
+      if (userRole === "participant") {
+        const regCheckResponse = await fetch(
+          `${BASE_URL}/api/events/${id}/attendees/${user._id}/checkin`,
+        );
+
+        console.log("Registration check response:", regCheckResponse);
+
+        if (regCheckResponse.ok) {
+          const checkData = await regCheckResponse.json();
+          console.log("Check data:", checkData);
+          isEligible = checkData.checkedIn;
+        }
+      } else {
+        // Organizers and speakers are automatically eligible
+        isEligible = true;
+      }
+
+      if (!isEligible) return;
+
+      // User is eligible, check if they already claimed the badge
+      const badgeResponse = await fetch(
+        `${BASE_URL}/api/badges?eventId=${id}&userId=${user._id}`,
+      );
+
+      console.log("Badge response:", badgeResponse);
+
+      if (!badgeResponse.ok) return;
+
+      const badgeData = await badgeResponse.json();
+
+      console.log("Badge data:", badgeData);
+
+      // If there's a badge for this event and it's not claimed, show the dialog
+      if (badgeData.badges && badgeData.badges.length > 0) {
+        // Look for the appropriate badge type based on user role
+        const eventBadge = badgeData.badges.find(
+          (b: any) => b.type === userRole,
+        );
+        console.log("Event badge:", { userRole, eventBadge });
+
+        if (eventBadge && !eventBadge.claimed) {
+          console.log("User is eligible for badge:", eventBadge);
+          setBadge(eventBadge);
+          setShowBadgeDialog(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking badge eligibility:", error);
+    }
+  }, [id, user, event, isRegistered, canEditOrg]);
 
   const fetchEventData = useCallback(async () => {
     try {
@@ -142,6 +235,15 @@ function useEventData(
     }
   }, [id, user]);
 
+  // Effect for checking badge eligibility
+  useEffect(() => {
+    console.log({ event, user, isRegistered });
+    if (event && user) {
+      console.log("Checking badge eligibility...");
+      checkBadgeEligibility();
+    }
+  }, [event, user, isRegistered, checkBadgeEligibility]);
+
   // Check if user can edit org
   useEffect(() => {
     if (organizations && event?.organizationId) {
@@ -165,6 +267,10 @@ function useEventData(
     isRegistered,
     registrationLink,
     canEditOrg,
+    badge,
+    showBadgeDialog,
+    setShowBadgeDialog,
+    checkBadgeEligibility,
   };
 }
 
@@ -458,7 +564,6 @@ const EventTabs = ({
                         {event.materials.uploads.map((file, index) => {
                           const fileName = file.name;
                           const fileUrl = file.url.toString();
-                          console.log({ fileUrl });
                           const fileExtension = fileUrl
                             ? fileUrl.split(".").pop()?.toLowerCase()
                             : "";
@@ -752,6 +857,10 @@ export default function EventPage({
     isRegistered,
     registrationLink,
     canEditOrg,
+    badge,
+    showBadgeDialog,
+    setShowBadgeDialog,
+    checkBadgeEligibility,
   } = useEventData(id, user, organizations);
 
   const [isCopied, setIsCopied] = useState(false);
@@ -934,6 +1043,16 @@ export default function EventPage({
               isRegistered={isRegistered}
               isOrganizer={canEditOrg}
             />
+            {badge && (
+              <BadgeClaimDialog
+                open={showBadgeDialog}
+                onOpenChange={setShowBadgeDialog}
+                badge={badge}
+                userId={user?._id || ""}
+                eventId={id}
+                onClaim={checkBadgeEligibility}
+              />
+            )}
           </div>
         </div>
       </div>
