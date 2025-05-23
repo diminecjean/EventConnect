@@ -23,18 +23,22 @@ export function SubscribeButton({
       if (!user || !user._id) return;
 
       try {
-        const response = await fetch(`${BASE_URL}/api/users/${user._id}`);
+        const response = await fetch(
+          `${BASE_URL}/api/organizations/${organizationId}/subscribe`,
+        );
         if (response.ok) {
           const data = await response.json();
-          const subscriptions = data.user.subscriptions || [];
+          const subscriptions = data.subscribers || [];
 
-          // Check if the organizationId is in the user's subscriptions list
-          // Need to convert ObjectId to string for comparison
+          // Check if organization subscription includes the user
           setIsSubscribed(
-            subscriptions.some(
-              (subId: any) =>
-                subId.toString() === organizationId || subId === organizationId,
-            ),
+            subscriptions.some((subscriber: any) => {
+              const subscriberId =
+                typeof subscriber === "object" && subscriber._id
+                  ? subscriber._id.toString()
+                  : subscriber.toString();
+              return subscriberId === user._id.toString();
+            }),
           );
         }
       } catch (error) {
@@ -63,6 +67,7 @@ export function SubscribeButton({
       );
 
       if (response.ok) {
+        console.log({ response });
         setIsSubscribed(!isSubscribed);
       }
     } catch (error) {

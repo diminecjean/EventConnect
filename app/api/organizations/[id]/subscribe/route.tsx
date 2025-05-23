@@ -2,6 +2,7 @@ import { connectToDB } from "@/app/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { SubscriberDetails } from "@/app/typings/subscriptions/typings";
+import { sub } from "date-fns";
 
 // Subscribe to an organization
 export async function POST(
@@ -14,6 +15,8 @@ export async function POST(
     const { userId } = await request.json();
 
     const db = await connectToDB();
+
+    console.log({ organizationId, userId });
 
     // Create subscription in the dedicated subscriptions collection
     // Using upsert to prevent duplicates
@@ -32,6 +35,8 @@ export async function POST(
 
     // Check if a new document was inserted
     const isNewSubscription = result.upsertedCount === 1;
+
+    console.log({ isNewSubscription, result });
 
     return NextResponse.json({
       success: true,
@@ -116,7 +121,7 @@ export async function GET(
     // Otherwise, fetch the subscribers with pagination
     const subscriptions = await db
       .collection("subscriptions")
-      .find({ organizationId: new ObjectId(organizationId) })
+      .find({ organizationId: organizationId })
       .sort({ createdAt: -1 }) // Sort by most recent first
       .skip(skip)
       .limit(limit)
