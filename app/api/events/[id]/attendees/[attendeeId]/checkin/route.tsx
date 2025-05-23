@@ -2,6 +2,43 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDB } from "@/app/lib/mongodb";
 import { ObjectId } from "mongodb";
 
+// Check if user is checked in for an event
+export async function GET(
+  request: NextRequest,
+  props: { params: Promise<{ id: string; attendeeId: string }> },
+) {
+  const params = await props.params;
+  try {
+    if (!params || !params.id) {
+      return NextResponse.json(
+        { error: "Event ID is required" },
+        { status: 400 },
+      );
+    }
+
+    const { id: eventId, attendeeId: userId } = params;
+
+    const db = await connectToDB();
+
+    const registration = await db.collection("registrations").findOne({
+      eventId: eventId,
+      userId: userId,
+    });
+
+    return NextResponse.json({
+      registered: !!registration,
+      checkedIn: registration?.checkedIn || false,
+      checkedInTime: registration?.checkedInTime || null,
+    });
+  } catch (error) {
+    console.error("Error checking attendance:", error);
+    return NextResponse.json(
+      { error: "Failed to check attendance" },
+      { status: 500 },
+    );
+  }
+}
+
 // checkin attendee
 // POST /api/events/:id/attendees/:attendeeId/checkin
 export async function POST(

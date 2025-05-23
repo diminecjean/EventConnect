@@ -5,11 +5,11 @@ import Image from "next/image";
 import type { UserProfile } from "../../../typings/profile/typings";
 import { BASE_URL } from "@/app/api/constants";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import OrganizationsList from "./getOrganizations";
 import { formatSingleDate } from "@/app/utils/formatDate";
 import { Calendar, Mail } from "lucide-react";
 import { useAuth } from "@/app/context/authContext";
+import BadgesList from "./getBadges";
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -89,7 +89,13 @@ export default function UserProfilePage() {
               <div className="flex flex-row items-center justify-between gap-2">
                 <h1 className="text-2xl font-bold py-1">{user.name}</h1>
                 {canEdit && (
-                  <div className="flex justify-center md:justify-start">
+                  <div className="flex flex-row items-center justify-center md:justify-start gap-2">
+                    <Link
+                      href={`/profile/user/${id}/connections`}
+                      className="text-sm px-4 py-1 bg-violet-400 border-2 border-violet-400 text-black rounded-md hover:bg-violet-800 hover:text-white transition"
+                    >
+                      View Connections
+                    </Link>
                     <Link
                       href={`/profile/user/${id}/edit`}
                       className="text-sm px-4 py-1 border-2 border-violet-400 text-white rounded-md hover:bg-violet-700 transition"
@@ -109,7 +115,7 @@ export default function UserProfilePage() {
               </div>
 
               {/* Badges */}
-              {user.badgesEarned && user.badgesEarned.length > 0 && (
+              {/* {user.badgesEarned && user.badgesEarned.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2 justify-center md:justify-start">
                   {user.badgesEarned.map((badge, index) => (
                     <Badge
@@ -121,7 +127,7 @@ export default function UserProfilePage() {
                     </Badge>
                   ))}
                 </div>
-              )}
+              )} */}
             </div>
           </div>
 
@@ -149,6 +155,12 @@ export default function UserProfilePage() {
               </div>
             </div>
           )}
+
+          {/* Badges */}
+          <div className="mt-6">
+            <h2 className="text-lg font-semibold mb-2">Badges</h2>
+            <BadgesList />
+          </div>
 
           {/* Events Attended */}
           {user.eventsAttended && user.eventsAttended.length > 0 && (
@@ -180,14 +192,7 @@ export default function UserProfilePage() {
           )}
 
           {/* Connection Link */}
-          <div className="mt-4 flex justify-center md:justify-start">
-            <Link
-              href={`/profile/user/${id}/connections`}
-              className="text-sm px-4 py-1 bg-violet-700 text-white rounded-md hover:bg-violet-800 transition"
-            >
-              View Connections
-            </Link>
-          </div>
+          <div className="mt-4 flex justify-center md:justify-start"></div>
         </div>
       </div>
     </main>
