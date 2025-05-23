@@ -48,7 +48,7 @@ export default function ConnectionButton({
 
     switch (status) {
       case "PENDING":
-        return "Request Sent";
+        return "Pending";
       case "ACCEPTED":
         return "Connected";
       case "REJECTED":
