@@ -1,0 +1,6 @@
+{
+  "_id": { "$oid": "6829aebf2a85e33ad8524758" },
+  "userId": "67f627afa210361d412acbb1",
+  "organizationId": "67f5e76fb1598ab19bdb503b",
+  "createdAt": { "$date": { "$numberLong": "1747562175447" } }
+}

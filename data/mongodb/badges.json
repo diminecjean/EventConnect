@@ -1,0 +1,10 @@
+{
+    "_id": {
+        "$oid": "682a1113bea0706070c2e3fe"
+    },
+    "name": "Speaker",
+    "eventId": "67f5efecc4087e68e6c2ec56",
+    "type": "SPEAKER",
+    "createdAt": "2025-01-15T08:30:00.000+00:00",
+    "organizationId": "67f5e76fb1598ab19bdb503a"
+}

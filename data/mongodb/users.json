@@ -1,0 +1,31 @@
+[
+  {
+    "_id": { "$oid": "67f4dd5463ad6be7ac80b7fa" },
+    "name": "Wei En Looi",
+    "email": "looi.weien02@student.usm.my",
+    "bio": "Software engineer passionate about event organizing and the tech community. Test update",
+    "profilePicture": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/profilePicture/955a0621-f92c-41bf-9c2f-97d3ed8c7197.jpeg",
+    "organizations": [
+      "67f5e76fb1598ab19bdb503a",
+      "67f5e76fb1598ab19bdb503b",
+      "6804afcf6830d18aee8eb8f8"
+    ],
+    "interests": ["DevOps", "Cloud", "Mobile Development"],
+    "eventsAttended": [],
+    "badgesEarned": ["community_builder", "speaker"],
+    "createdAt": "2023-10-01T12:00:00Z",
+    "updatedAt": { "$date": { "$numberLong": "1744187592899" } }
+  },
+  {
+    "_id": { "$oid": "67f627afa210361d412acbb1" },
+    "email": "diminecjean@gmail.com",
+    "password": "$2b$10$MQzChYm9cWe83WICrQtSNOqwXZEvJlfFsLWKyLcKIVScBbgANtbIe",
+    "name": "Diminecjean",
+    "createdAt": "2025-04-09T07:54:22.486Z",
+    "organizations": ["67f5e76fb1598ab19bdb503a"],
+    "bio": "",
+    "interests": ["Event management"],
+    "profilePicture": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/profilePicture/8a9776da-d31e-476b-b9f3-d83dd9709179.jpeg",
+    "updatedAt": { "$date": { "$numberLong": "1747590059050" } }
+  }
+]

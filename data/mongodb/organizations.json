@@ -1,0 +1,58 @@
+[
+  {
+    "_id": { "$oid": "67f5e76fb1598ab19bdb503b" },
+    "name": "Cloud Native Kuala Lumpur",
+    "description": "A community of enthusiasts consisting of end-users and contributors to Cloud Native projects, meeting monthly to discuss the latest in cloud computing, operations, and architecture. Subscribe to stay updated!",
+    "banner": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/organizationBanner/c97958bb-f74d-45f5-bb5d-43866a84ad3e.avif",
+    "logo": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-cncf/events/Cloud%20Native%20Community%20Group%20Kuala%20Lumpur%20-%20Logo%20-%20Color_OU9b6UW.png",
+    "contactEmail": "cncfkl@gmail.com",
+    "website": "https://community.cncf.io/cloud-native-kuala-lumpur/",
+    "social_links": {
+      "instagram": "https://www.instagram.com/cloudnativecomputingfoundation/"
+    },
+    "location": "Kuala Lumpur, Malaysia",
+    "members_count": { "$numberInt": "253" },
+    "tags": ["Cloud Native", "Kubernetes", "DevOps", "Microservices"],
+    "createdAt": { "$date": { "$numberLong": "1728561600000" } },
+    "updatedAt": { "$date": { "$numberLong": "1744173465429" } },
+    "socialLinks": {}
+  },
+  {
+    "_id": { "$oid": "67f5e76fb1598ab19bdb503a" },
+    "name": "GDG Kuala Lumpur",
+    "description": "An independent developer group that discusses and shares experiences developing applications using Google technologies like Android, Google Maps, and Google App Engine.",
+    "banner": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/organizationBanner/061eaf54-fdf9-4a17-b1df-c9a34d4daf94.jpeg",
+    "logo": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-goog/events/DF24-Bevy-Event-Thumbnail-Editable%20Location_a6rYqRp.png",
+    "contactEmail": "gdgkl@gmail.com",
+    "website": "https://gdg.community.dev/gdg-kuala-lumpur/",
+    "social_links": {
+      "instagram": "https://www.instagram.com/gdg.kl/",
+      "facebook": "https://www.facebook.com/GDGKualaLumpur"
+    },
+    "location": "Kuala Lumpur, Malaysia",
+    "membersCount": { "$numberInt": "886" },
+    "tags": ["Google technologies", "Android", "Cloud", "Web Development"],
+    "createdAt": { "$date": { "$numberLong": "1728561600000" } },
+    "updatedAt": { "$date": { "$numberLong": "1744187792338" } },
+    "socialLinks": {}
+  },
+  {
+    "_id": { "$oid": "6804afcf6830d18aee8eb8f8" },
+    "name": "Test organization",
+    "description": "testsesetste",
+    "location": "Penang, Malaysia",
+    "logo": null,
+    "banner": "",
+    "website": "",
+    "contactEmail": "",
+    "socialLinks": {
+      "facebook": "",
+      "twitter": "",
+      "instagram": "",
+      "linkedin": ""
+    },
+    "ownerId": "67f4dd5463ad6be7ac80b7fa",
+    "createdAt": { "$date": { "$numberLong": "1745137615629" } },
+    "updatedAt": { "$date": { "$numberLong": "1745137725912" } }
+  }
+]

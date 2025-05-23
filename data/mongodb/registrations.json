@@ -1,0 +1,48 @@
+[
+  {
+    "_id": { "$oid": "67f632445467d724ee15da5c" },
+    "eventId": "67f5efecc4087e68e6c2ec58",
+    "registrationFormId": "participant-form",
+    "userId": "67f627afa210361d412acbb1",
+    "formData": {
+      "Full Name": "Diminecjean",
+      "Email": "diminecjean@gmail.com"
+    },
+    "registrationDate": "2025-04-09T08:39:32.221Z",
+    "attendanceStatus": "registered",
+    "createdAt": { "$date": { "$numberLong": "1744187972297" } },
+    "updatedAt": { "$date": { "$numberLong": "1746257892184" } },
+    "checkedIn": true,
+    "checkedInTime": { "$date": { "$numberLong": "1746257892184" } }
+  },
+  {
+    "_id": { "$oid": "6829c71d704febf8ff004435" },
+    "eventId": "6829b215704febf8ff00442f",
+    "registrationFormId": "23950b93-9676-49cc-a14b-e544b0836170",
+    "userId": "67f627afa210361d412acbb1",
+    "formData": {
+      "Full Name": "Diminecjean",
+      "Email": "diminecjean@gmail.com"
+    },
+    "registrationDate": "2025-05-18T11:40:13.164Z",
+    "checkin": false,
+    "attendanceStatus": "registered",
+    "createdAt": { "$date": { "$numberLong": "1747568413227" } },
+    "updatedAt": { "$date": { "$numberLong": "1747568413227" } }
+  },
+  {
+    "_id": { "$oid": "682f35ac34b6b2d7132f9de6" },
+    "eventId": "67f5efecc4087e68e6c2ec57",
+    "registrationFormId": "participant-form",
+    "userId": "67f627afa210361d412acbb1",
+    "formData": {
+      "Full Name": "Diminecjean",
+      "Email": "diminecjean@gmail.com"
+    },
+    "registrationDate": "2025-05-22T14:33:15.783Z",
+    "checkin": false,
+    "attendanceStatus": "registered",
+    "createdAt": { "$date": { "$numberLong": "1747924396212" } },
+    "updatedAt": { "$date": { "$numberLong": "1747924396212" } }
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "_id": { "$oid": "6829c17f704febf8ff004432" },
+  "requesterId": "67f4dd5463ad6be7ac80b7fa",
+  "recipientId": "67f627afa210361d412acbb1",
+  "status": "ACCEPTED",
+  "createdAt": { "$date": { "$numberLong": "1747566975438" } },
+  "updatedAt": { "$date": { "$numberLong": "1747567199246" } }
+}

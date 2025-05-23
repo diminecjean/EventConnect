@@ -1,5 +1,6 @@
 [
   {
+    "_id": { "$oid": "67f5efecc4087e68e6c2ec56" },
     "title": "Flutter Kuala Lumpur Meetup #8",
     "description": "Join us for a vibrant tech meetup focused on mobile development with Flutter! Connect with fellow developers, explore the latest in cross-platform app development, and learn from expert-led talks and live demos. Whether you're a beginner or a seasoned dev, there's something for everyone. Let’s build beautiful apps together!\n",
     "location": "USM",
@@ -7,12 +8,13 @@
     "endDate": "2025-04-06T09:00:00.000Z",
     "tags": [
       { "label": "Flutter", "color": "bg-yellow-100" },
-      { "label": "Mobile Development", "color": "bg-indigo-100" }
+      { "label": "Mobile Development", "color": "bg-indigo-100" },
+      { "label": "GDG", "color": "bg-teal-100" }
     ],
-    "maxAttendees": 80,
+    "maxAttendees": { "$numberInt": "80" },
     "partnerOrganizations": ["67f5e76fb1598ab19bdb503b"],
     "imageUrl": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/posters/b370af0e-70cc-45d8-ad05-55e6b79f56e1.png",
-    "bannerUrl": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/banners/620ed681-3b4f-4fee-b7f1-34f0e12af4df.png",
+    "bannerUrl": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/banners/d5b2fce8-2e55-4165-9f85-8fceaa948931.jpeg",
     "eventMode": "physical",
     "virtualMeetingLink": "",
     "organizationId": "67f5e76fb1598ab19bdb503a",
@@ -67,6 +69,28 @@
           }
         ],
         "isDefault": false
+      },
+      {
+        "id": "be684f27-a38d-48cb-b310-e68edb888a7f",
+        "name": "New Form",
+        "description": "",
+        "formFields": [
+          {
+            "id": "63c11f19-3c93-43b7-889e-4dc12c742d4e",
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "id": "b7d4fff4-0f68-4406-9c8a-98e600a6fe5a",
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "Enter your email address"
+          }
+        ],
+        "isDefault": false
       }
     ],
     "timelineItems": [
@@ -101,22 +125,8 @@
     ],
     "speakers": [
       {
-        "id": "4e69cd02-066a-4d1d-a5f8-d49cd28322ca",
-        "name": "Osama Ghazal",
-        "topic": "Shielding Secrets: Securing App Secrets and Keys for Production",
-        "organization": "Deriv",
-        "position": "Mobile Application Developer (Flutter)",
-        "imageUrl": "https://avatars.githubusercontent.com/u/93825624?v=4",
-        "socialMedia": [
-          {
-            "id": "f31fd128-b5a0-4c3a-a163-58e08f4f68b7",
-            "platform": "instagram",
-            "url": "https://www.instagram.com/diminecjean2002/"
-          }
-        ]
-      },
-      {
         "id": "70bdeb44-c262-4f05-bafa-ca0f8135bfdc",
+        "userId": "",
         "name": "Benjamin Beh",
         "topic": "Building with Flutter to Innovate Career Growth with IMPRESSO",
         "organization": "IMPRESSO",
@@ -129,6 +139,15 @@
             "url": "https://www.instagram.com/vandyck.lai/"
           }
         ]
+      },
+      {
+        "id": "ebd0e585-fc72-4919-8552-aeefdb38c923",
+        "userId": "67f627afa210361d412acbb1",
+        "name": "Diminecjean",
+        "topic": "How To Scam",
+        "organization": "Scam Company",
+        "position": "Scammer",
+        "imageUrl": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-images/profilePicture/8a9776da-d31e-476b-b9f3-d83dd9709179.jpeg"
       }
     ],
     "sponsors": [
@@ -141,105 +160,29 @@
         "socialLinks": []
       }
     ],
-    "galleryImages": [
-      "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png",
-      "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png"
-    ],
-    "createdAt": { "$date": "2025-01-15T08:30:00Z" },
-    "updatedAt": { "$date": "2025-03-22T14:45:00Z" }
+    "createdAt": { "$date": { "$numberLong": "1736929800000" } },
+    "updatedAt": { "$date": { "$numberLong": "1747582701910" } },
+    "materials": {
+      "galleryImages": [
+        "https://cdn.prod.website-files.com/620cd0a0a71b604afcaa3acd/64cbff034001209900e3f1b2_Zapier%20and%20Notion.png"
+      ],
+      "uploads": [
+        {
+          "id": "2423423423",
+          "name": "Something",
+          "url": "https://www.ktmb.com.my/assets/pdf/lptAct-2010.pdf"
+        },
+        {
+          "id": "ef9b929b-904b-4b71-b35c-b0b648c4e25d",
+          "name": "Looi Wei En_Sijil Matrikulasi KPM.pdf",
+          "url": "https://dpxvvqkjcqorqqkkamxa.supabase.co/storage/v1/object/public/event-materials/uploads/0149f156-0e44-4759-9a85-75276d0d414d.pdf"
+        }
+      ],
+      "urls": ["https://www.ktmb.com.my/assets/pdf/lptAct-2010.pdf"]
+    }
   },
   {
-    "title": "CNCF Meetup - April 2025",
-    "description": "Jom Raya @ Cloud Native Kuala Lumpur!Join us for the Jom Raya edition of the Cloud Native Kuala Lumpur Meetup. Network with professionals passionate about cloud-native technologies and celebrate together.",
-    "location": "AWS Malaysia, Level 35, The Gardens North Tower, Kuala Lumpur",
-    "startDate": "2025-04-16T10:00:00.000Z",
-    "endDate": "2025-04-16T13:30:00.000Z",
-    "tags": [
-      { "label": "Cloud Native", "color": "bg-blue-100" },
-      { "label": "Networking", "color": "bg-green-100" }
-    ],
-    "maxAttendees": 100,
-    "partnerOrganizations": ["67f5e76fb1598ab19bdb503a"],
-    "imageUrl": "https://secure.meetupstatic.com/photos/event/3/6/3/0/600_526753872.webp?w=750",
-    "bannerUrl": "https://secure.meetupstatic.com/photos/event/3/6/3/0/600_526753872.webp?w=750",
-    "eventMode": "physical",
-    "virtualMeetingLink": "",
-    "organizationId": "67f5e76fb1598ab19bdb503b",
-    "registrationForms": [
-      {
-        "id": "participant-form",
-        "name": "Participant",
-        "description": "Registration form for participants",
-        "formFields": [
-          {
-            "id": "full-name",
-            "label": "Full Name",
-            "type": "text",
-            "required": true,
-            "placeholder": "Enter your full name"
-          },
-          {
-            "id": "email",
-            "label": "Email",
-            "type": "email",
-            "required": true,
-            "placeholder": "Enter your email address"
-          }
-        ],
-        "isDefault": true
-      }
-    ],
-    "timelineItems": [
-      {
-        "id": "registration",
-        "date": "2025-04-16T10:00:00.000Z",
-        "time": "6:00 PM",
-        "title": "Registration",
-        "description": "Arrival and registration"
-      },
-      {
-        "id": "welcome-note",
-        "date": "2025-04-16T11:30:00.000Z",
-        "time": "7:30 PM",
-        "title": "Welcome Note",
-        "description": "Opening remarks by organizers"
-      }
-    ],
-    "speakers": [
-      {
-        "id": "speaker-1",
-        "name": "Nasir Ahmed",
-        "topic": "Cloud Security Best Practices",
-        "organization": "Crypto.com",
-        "position": "Security Operations Center Analyst",
-        "imageUrl": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_250,h_250,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-cncf/avatars/mohammed_fazalullah_qudrath_kvkCRRY.pngg",
-        "socialMedia": [
-          {
-            "id": "linkedin",
-            "platform": "LinkedIn",
-            "url": "https://www.linkedin.com/in/nasir-ahmed"
-          }
-        ]
-      }
-    ],
-    "sponsors": [
-      {
-        "id": "aws-malaysia",
-        "name": "AWS Malaysia",
-        "sponsorType": "venue",
-        "logoUrl": "https://figmaresource.com/wp-content/uploads/2024/05/AWS-Marketplace-Logo-PNG-to-svg-1.svg",
-        "description": "Amazon Web Services Malaysia",
-        "socialLinks": []
-      }
-    ],
-    "galleryImages": [
-      "https://example.com/gallery/jom-raya-1.png",
-      "https://example.com/gallery/jom-raya-2.png"
-    ],
-    "createdAt": { "$date": "2025-03-01T08:30:00Z" },
-    "updatedAt": { "$date": "2025-03-15T14:45:00Z" }
-  },
-  {
+    "_id": { "$oid": "67f5efecc4087e68e6c2ec58" },
     "title": "Cloud Native AI Day Malaysia",
     "description": "Explore the intersection of cloud-native technologies and artificial intelligence at the Cloud Native AI Day Malaysia. Engage with experts and enhance your understanding of AI in the cloud.",
     "location": "AWS Malaysia, Level 35, The Gardens North Tower, Kuala Lumpur",
@@ -249,7 +192,7 @@
       { "label": "Artificial Intelligence", "color": "bg-purple-100" },
       { "label": "Cloud Native", "color": "bg-blue-100" }
     ],
-    "maxAttendees": 150,
+    "maxAttendees": { "$numberInt": "150" },
     "imageUrl": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/d68e1a97-5629-4a7e-8935-b9f75e722f15.png",
     "bannerUrl": "https://media.licdn.com/dms/image/sync/v2/D5627AQHGGERGp5oNFQ/articleshare-shrink_800/articleshare-shrink_800/0/1739748810712?e=2147483647&v=beta&t=_L2nzJDcDU0bSZ8u3gxMNyUWJBi6BLqPaId8TUXiDvQ",
     "eventMode": "physical",
@@ -326,7 +269,167 @@
       "https://example.com/gallery/ai-day-1.png",
       "https://example.com/gallery/ai-day-2.png"
     ],
-    "createdAt": { "$date": "2025-03-02T10:00:00Z" },
-    "updatedAt": { "$date": "2025-03-20T16:00:00Z" }
+    "createdAt": { "$date": { "$numberLong": "1740909600000" } },
+    "updatedAt": { "$date": { "$numberLong": "1742486400000" } }
+  },
+  {
+    "_id": { "$oid": "67f5efecc4087e68e6c2ec57" },
+    "title": "CNCF Meetup - April 2025",
+    "description": "Jom Raya @ Cloud Native Kuala Lumpur!Join us for the Jom Raya edition of the Cloud Native Kuala Lumpur Meetup. Network with professionals passionate about cloud-native technologies and celebrate together.",
+    "location": "AWS Malaysia, Level 35, The Gardens North Tower, Kuala Lumpur",
+    "startDate": "2025-04-16T10:00:00.000Z",
+    "endDate": "2025-04-16T13:30:00.000Z",
+    "tags": [
+      { "label": "Cloud Native", "color": "bg-blue-100" },
+      { "label": "Networking", "color": "bg-green-100" }
+    ],
+    "maxAttendees": { "$numberInt": "100" },
+    "partnerOrganizations": ["67f5e76fb1598ab19bdb503a"],
+    "imageUrl": "https://secure.meetupstatic.com/photos/event/3/6/3/0/600_526753872.webp?w=750",
+    "bannerUrl": "https://secure.meetupstatic.com/photos/event/3/6/3/0/600_526753872.webp?w=750",
+    "eventMode": "physical",
+    "virtualMeetingLink": "",
+    "organizationId": "67f5e76fb1598ab19bdb503b",
+    "registrationForms": [
+      {
+        "id": "participant-form",
+        "name": "Participant",
+        "description": "Registration form for participants",
+        "formFields": [
+          {
+            "id": "full-name",
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "id": "email",
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "Enter your email address"
+          }
+        ],
+        "isDefault": true
+      },
+      {
+        "id": "d1202c1f-50cb-4e7e-b350-c178147f1716",
+        "name": "Speaker form",
+        "description": "Speaker registration form",
+        "formFields": [
+          {
+            "id": "51e1ac5e-3958-4a45-bb51-f394548d3307",
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "id": "71c80cb9-487d-4cea-affe-9004db492ddb",
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "Enter your email address"
+          }
+        ],
+        "isDefault": false
+      }
+    ],
+    "timelineItems": [
+      {
+        "id": "registration",
+        "date": "2025-04-16T10:00:00.000Z",
+        "time": "6:00 PM",
+        "title": "Registration",
+        "description": "Arrival and registration"
+      },
+      {
+        "id": "welcome-note",
+        "date": "2025-04-16T11:30:00.000Z",
+        "time": "7:30 PM",
+        "title": "Welcome Note",
+        "description": "Opening remarks by organizers"
+      }
+    ],
+    "speakers": [
+      {
+        "id": "speaker-1",
+        "name": "Nasir Ahmed",
+        "topic": "Cloud Security Best Practices",
+        "organization": "Crypto.com",
+        "position": "Security Operations Center Analyst",
+        "imageUrl": "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_250,h_250,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-cncf/avatars/mohammed_fazalullah_qudrath_kvkCRRY.pngg",
+        "socialMedia": [
+          {
+            "id": "linkedin",
+            "platform": "LinkedIn",
+            "url": "https://www.linkedin.com/in/nasir-ahmed"
+          }
+        ]
+      }
+    ],
+    "sponsors": [
+      {
+        "id": "aws-malaysia",
+        "name": "AWS Malaysia",
+        "sponsorType": "venue",
+        "logoUrl": "https://figmaresource.com/wp-content/uploads/2024/05/AWS-Marketplace-Logo-PNG-to-svg-1.svg",
+        "description": "Amazon Web Services Malaysia",
+        "socialLinks": []
+      }
+    ],
+    "galleryImages": [
+      "https://example.com/gallery/jom-raya-1.png",
+      "https://example.com/gallery/jom-raya-2.png"
+    ],
+    "createdAt": { "$date": { "$numberLong": "1740817800000" } },
+    "updatedAt": { "$date": { "$numberLong": "1747920899392" } },
+    "materials": { "galleryImages": [], "uploads": [], "urls": [] }
+  },
+  {
+    "_id": { "$oid": "6829b215704febf8ff00442f" },
+    "title": "Test",
+    "description": "Test event this is",
+    "location": "Penang, Malaysia",
+    "startDate": "2025-05-18T01:00:00.000Z",
+    "endDate": "2025-05-18T09:00:00.000Z",
+    "tags": [{ "label": "test", "color": "bg-orange-100" }],
+    "partnerOrganizations": [],
+    "imageUrl": "",
+    "bannerUrl": "",
+    "eventMode": "physical",
+    "virtualMeetingLink": "",
+    "organizationId": "67f5e76fb1598ab19bdb503b",
+    "registrationForms": [
+      {
+        "id": "23950b93-9676-49cc-a14b-e544b0836170",
+        "name": "Participant",
+        "description": "Registration form for participants",
+        "formFields": [
+          {
+            "id": "3167a802-d548-4323-811a-d042d2f0d194",
+            "label": "Full Name",
+            "type": "text",
+            "required": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "id": "3fb1bec8-7c7a-4168-97bc-3cf4c416dda4",
+            "label": "Email",
+            "type": "email",
+            "required": true,
+            "placeholder": "Enter your email address"
+          }
+        ],
+        "isDefault": true
+      }
+    ],
+    "timelineItems": [],
+    "speakers": [],
+    "sponsors": [],
+    "createdAt": "2025-05-18T10:10:29.344Z",
+    "updatedAt": { "$date": { "$numberLong": "1747563310763" } },
+    "materials": { "galleryImages": [], "uploads": [], "urls": [] }
   }
 ]

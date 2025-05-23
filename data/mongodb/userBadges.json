@@ -1,0 +1,8 @@
+{
+  "_id": { "$oid": "68306b9134b6b2d7132f9de8" },
+  "badgeId": { "$oid": "682a1113bea0706070c2e3fe" },
+  "userId": "67f627afa210361d412acbb1",
+  "eventId": "67f5efecc4087e68e6c2ec56",
+  "badgeType": "speaker",
+  "claimedAt": { "$date": { "$numberLong": "1748003729872" } }
+}

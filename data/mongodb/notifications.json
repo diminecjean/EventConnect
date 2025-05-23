@@ -1,0 +1,78 @@
+[
+  {
+    "_id": { "$oid": "6829a666d5037f9671d19ce3" },
+    "type": "NEW_EVENT",
+    "title": "New Event by GDG Kuala Lumpur",
+    "content": "GDG Kuala Lumpur posted a new event: Flutter Kuala Lumpur Meetup #8",
+    "eventId": "67f5efecc4087e68e6c2ec56",
+    "senderId": "67f5e76fb1598ab19bdb503a",
+    "isRead": true,
+    "createdAt": "2025-05-15T08:30:00.000+00:00",
+    "recipientId": "67f4dd5463ad6be7ac80b7fa"
+  },
+  {
+    "_id": { "$oid": "6829b215704febf8ff004430" },
+    "recipientId": "67f627afa210361d412acbb1",
+    "type": "NEW_EVENT",
+    "title": "New Event by Cloud Native Kuala Lumpur",
+    "content": "Cloud Native Kuala Lumpur posted a new event: Test",
+    "eventId": { "$oid": "6829b215704febf8ff00442f" },
+    "senderId": "67f5e76fb1598ab19bdb503b",
+    "isRead": true,
+    "createdAt": { "$date": { "$numberLong": "1747563029498" } }
+  },
+  {
+    "_id": { "$oid": "6829b32e704febf8ff004431" },
+    "recipientId": "67f627afa210361d412acbb1",
+    "type": "UPDATE_EVENT",
+    "title": "Event Updated by Cloud Native Kuala Lumpur",
+    "content": "Cloud Native Kuala Lumpur updated an event: Test",
+    "eventId": { "$oid": "6829b215704febf8ff00442f" },
+    "senderId": "67f5e76fb1598ab19bdb503b",
+    "isRead": true,
+    "createdAt": { "$date": { "$numberLong": "1747563310850" } }
+  },
+  {
+    "_id": { "$oid": "6829c17f704febf8ff004433" },
+    "recipientId": "67f627afa210361d412acbb1",
+    "type": "FRIEND_REQUEST",
+    "title": "New Friend Request",
+    "content": "Wei En Looi sent you a friend request",
+    "senderId": "67f4dd5463ad6be7ac80b7fa",
+    "isRead": true,
+    "createdAt": { "$date": { "$numberLong": "1747566975499" } }
+  },
+  {
+    "_id": { "$oid": "6829c71d704febf8ff004436" },
+    "recipientId": "67f4dd5463ad6be7ac80b7fa",
+    "type": "JOINED_EVENT",
+    "title": "Diminecjean Recently joined an event!",
+    "content": "Diminecjean has registered for Test",
+    "senderId": "67f627afa210361d412acbb1",
+    "eventId": "6829b215704febf8ff00442f",
+    "isRead": true,
+    "createdAt": { "$date": { "$numberLong": "1747568413397" } }
+  },
+  {
+    "_id": { "$oid": "682f271434b6b2d7132f9de3" },
+    "recipientId": "67f627afa210361d412acbb1",
+    "type": "UPDATE_EVENT",
+    "title": "Event Updated by Cloud Native Kuala Lumpur",
+    "content": "Cloud Native Kuala Lumpur updated an event: CNCF Meetup - April 2025",
+    "eventId": { "$oid": "67f5efecc4087e68e6c2ec57" },
+    "senderId": "67f5e76fb1598ab19bdb503b",
+    "isRead": false,
+    "createdAt": { "$date": { "$numberLong": "1747920660208" } }
+  },
+  {
+    "_id": { "$oid": "682f280334b6b2d7132f9de5" },
+    "recipientId": "67f627afa210361d412acbb1",
+    "type": "UPDATE_EVENT",
+    "title": "Event Updated by Cloud Native Kuala Lumpur",
+    "content": "Cloud Native Kuala Lumpur updated an event: CNCF Meetup - April 2025",
+    "eventId": { "$oid": "67f5efecc4087e68e6c2ec57" },
+    "senderId": "67f5e76fb1598ab19bdb503b",
+    "isRead": false,
+    "createdAt": { "$date": { "$numberLong": "1747920899474" } }
+  }
+]
