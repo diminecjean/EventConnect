@@ -7,7 +7,7 @@ import { BASE_URL } from "@/app/api/constants";
 import Link from "next/link";
 import OrganizationsList from "./getOrganizations";
 import { formatSingleDate } from "@/app/utils/formatDate";
-import { Calendar, Mail } from "lucide-react";
+import { BriefcaseBusiness, Building2, Calendar, Mail } from "lucide-react";
 import { useAuth } from "@/app/context/authContext";
 import BadgesList from "./getBadges";
 
@@ -105,14 +105,26 @@ export default function UserProfilePage() {
                   </div>
                 )}
               </div>
-              <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-400">
-                <Mail size={16} />
+              <div className="flex items-center justify-center md:justify-start gap-2 text-xs text-gray-400">
+                <Mail size={12} />
                 <p>{user.email}</p>
               </div>
-              <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-400 mt-1">
-                <Calendar size={16} />
+              <div className="flex items-center justify-center md:justify-start gap-2 text-xs text-gray-400 mt-1">
+                <Calendar size={12} />
                 <p>Joined in {formattedDateCreatedAt}</p>
               </div>
+              {user.position && (
+                <div className="flex items-center justify-center md:justify-start gap-2 text-xs text-gray-400 mt-1">
+                  <BriefcaseBusiness size={12} />
+                  <p>{user.position}</p>
+                </div>
+              )}
+              {user.organization && (
+                <div className="flex items-center justify-center md:justify-start gap-2 text-xs text-gray-400 mt-1">
+                  <Building2 size={12} />
+                  <p>{user.organization}</p>
+                </div>
+              )}
 
               {/* Badges */}
               {/* {user.badgesEarned && user.badgesEarned.length > 0 && (
