@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import eventsData from "@/data/eventsData.json";
-import orgData from "@/data/organizationData.json";
-import userData from "@/data/userData.json";
-import { signUp } from "@/app/lib/auth";
+import eventsData from "@/data/mongodb/events.json";
+import orgData from "@/data/mongodb/organizations.json";
+import userData from "@/data/mongodb/users.json";
 
 export default function SeedDatabase() {
   const [status, setStatus] = useState<
