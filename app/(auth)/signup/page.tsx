@@ -11,13 +11,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
-  ArrowLeft,
   Building,
   Calendar,
   Eye,
@@ -25,10 +24,28 @@ import {
   UserCircle,
   Users,
 } from "lucide-react";
-import { ACCOUNT_TYPE, SignUpType } from "@/app/typings/profile/typings";
+import { SignUpType } from "@/app/typings/profile/typings";
 import { signUp } from "@/app/lib/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+
+// Function to fetch user ID from JSON data
+// async function getUserId(email: string): Promise<string | null> {
+async function getUserId(email: string) {
+  try {
+    const response = await fetch(`/api/users/email/${email}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
+    }
+
+    const res = await response.json();
+
+    return res.user;
+  } catch (error) {
+    console.error("Error fetching user ID:", error);
+    return null;
+  }
+}
 
 const UserSignUp = () => {
   const [name, setName] = useState("");
@@ -36,7 +53,6 @@ const UserSignUp = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const toastShownRef = useRef(false);
 
   const handleUserSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -54,33 +70,56 @@ const UserSignUp = () => {
         console.log("User sign up successful:", result.message);
 
         // Auto-login after successful signup
-        await signIn("credentials", {
+        const signInResult = await signIn("credentials", {
           email,
           password,
           redirect: false, // Don't redirect automatically
         });
 
-        toast(`Successfully created an account for ${email}`, {
-          action: {
-            label: "Browse events",
-            onClick: () => router.push("/events"),
-          },
-          duration: Infinity,
-          dismissible: true,
+        // Show success toast
+        toast.success(`Successfully created an account for ${email}`, {
+          duration: 2000,
         });
-        toastShownRef.current = true;
 
-        // You could redirect to a success page or dashboard
-        // window.location.href = "/";
+        // Wait briefly for toast to be visible before redirecting
+        setTimeout(async () => {
+          // Get user ID for redirect
+          try {
+            const user = await getUserId(email);
+            if (user?._id) {
+              router.push(`/profile/user/${user._id}`);
+            } else {
+              router.push("/events"); // Fallback route if userId isn't available
+            }
+          } catch (error) {
+            console.error("Error fetching user ID after signup:", error);
+            router.push("/events"); // Fallback route
+          }
+        }, 2000);
       } else {
         // Handle signup failure
         console.error("Sign up failed:", result.error);
-        // Here you would typically display an error message to the user
-        // For example, set an error state and display it in the UI
+        toast.error("Sign up failed", {
+          description: "Please check your information and try again",
+          duration: 2000,
+        });
+
+        // Redirect to home after showing error
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       }
     } catch (error) {
       console.error("Error during sign up:", error);
-      // Handle any exceptions that might occur
+      toast.error("Something went wrong", {
+        description: "Unable to complete registration at this time",
+        duration: 2000,
+      });
+
+      // Redirect to home after showing error
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     }
   };
 
