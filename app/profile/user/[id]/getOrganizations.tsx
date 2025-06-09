@@ -59,7 +59,7 @@ export default function OrganizationsList({
         <Link
           key={org._id}
           href={`/profile/organization/${org._id}`}
-          className="p-3 border border-gray-200 rounded-md hover:bg-stone-700 transition flex items-center gap-3"
+          className="p-3 border border-gray-200 rounded-md hover:bg-violet-400/20 transition flex items-center gap-3"
         >
           {org.logo ? (
             <Image

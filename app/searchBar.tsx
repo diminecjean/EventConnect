@@ -17,40 +17,9 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-export const categories = [
-  { id: "all", label: "All Categories" },
-  { id: "tech", label: "Tech" },
-  { id: "business", label: "Business" },
-  { id: "arts", label: "Arts" },
-  { id: "sports", label: "Sports" },
-  { id: "education", label: "Education" },
-  { id: "social", label: "Social" },
-  { id: "health", label: "Health" },
-  { id: "entertainment", label: "Entertainment" },
-] as const;
-
-export const locations = [
-  { id: "new-york", name: "New York" },
-  { id: "london", name: "London" },
-  { id: "tokyo", name: "Tokyo" },
-  { id: "paris", name: "Paris" },
-  { id: "singapore", name: "Singapore" },
-  { id: "sydney", name: "Sydney" },
-  { id: "berlin", name: "Berlin" },
-  { id: "toronto", name: "Toronto" },
-] as const;
 
 export interface SearchParams {
   query: string;
-  category: string;
   date?: Date | null;
   location: string;
 }
@@ -58,27 +27,59 @@ export interface SearchParams {
 interface EventSearchProps {
   onSearch: (searchParams: SearchParams) => void;
   isSearching?: boolean;
+  initialQuery?: string;
+  initialDate?: Date | null;
+  initialLocation?: string;
 }
+
+export const locations = [
+  { id: "kuala-lumpur", name: "Kuala Lumpur" },
+  { id: "penang", name: "Penang" },
+] as const;
 
 export default function EventSearch({
   onSearch,
   isSearching = false,
+  initialQuery = "",
+  initialDate = undefined,
+  initialLocation = "",
 }: EventSearchProps) {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
+  const [searchQuery, setSearchQuery] = React.useState(initialQuery);
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
-    undefined,
+    initialDate || undefined,
   );
-  const [selectedLocation, setSelectedLocation] = React.useState("");
+  const [selectedLocation, setSelectedLocation] =
+    React.useState(initialLocation);
   const [isLocationOpen, setIsLocationOpen] = React.useState(false);
+  const [isDateOpen, setIsDateOpen] = React.useState(false);
+
+  // Update state when props change
+  React.useEffect(() => {
+    setSearchQuery(initialQuery);
+    setSelectedDate(initialDate || undefined);
+    setSelectedLocation(initialLocation);
+  }, [initialQuery, initialDate, initialLocation]);
 
   // Handle search submission
   const handleSearch = () => {
     onSearch({
       query: searchQuery,
-      category: selectedCategory,
       date: selectedDate,
       location: selectedLocation,
+    });
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedDate(undefined);
+    setSelectedLocation("");
+
+    // Trigger search with cleared filters
+    onSearch({
+      query: "",
+      date: null,
+      location: "",
     });
   };
 
@@ -89,26 +90,54 @@ export default function EventSearch({
     }
   };
 
-  // Clear all filters
-  const clearFilters = () => {
-    setSearchQuery("");
-    setSelectedCategory("all");
+  // Clear date selection
+  const clearDate = () => {
     setSelectedDate(undefined);
+
+    // Trigger search with updated filters
+    onSearch({
+      query: searchQuery,
+      date: null,
+      location: selectedLocation,
+    });
+  };
+
+  // Clear location selection
+  const clearLocation = () => {
     setSelectedLocation("");
 
-    // Trigger search with cleared filters
+    // Trigger search with updated filters
     onSearch({
-      query: "",
-      category: "all",
-      date: null,
+      query: searchQuery,
+      date: selectedDate,
       location: "",
     });
   };
 
-  // Clear date selection
-  const clearDate = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedDate(undefined);
+  // Handle date selection
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    setIsDateOpen(false);
+
+    // Trigger search with updated filters
+    onSearch({
+      query: searchQuery,
+      date,
+      location: selectedLocation,
+    });
+  };
+
+  // Handle location selection
+  const handleLocationSelect = (locationId: string) => {
+    setSelectedLocation(locationId);
+    setIsLocationOpen(false);
+
+    // Trigger search with updated filters
+    onSearch({
+      query: searchQuery,
+      date: selectedDate,
+      location: locationId,
+    });
   };
 
   return (
@@ -127,86 +156,95 @@ export default function EventSearch({
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 text-xs md:text-md">
-          {/* Category Filter */}
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="min-w-[160px] w-full">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
           {/* Date Filter */}
-          <Popover>
-            <PopoverTrigger asChild>
+          <div className="flex min-w-[160px] relative">
+            <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  <span className="flex-1 truncate">
+                    {selectedDate
+                      ? selectedDate.toLocaleDateString()
+                      : "Filter by date"}
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={handleDateSelect}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            {selectedDate && (
               <Button
-                variant="outline"
-                className="min-w-[160px] w-full justify-start text-left font-normal group"
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearDate();
+                }}
               >
-                <Calendar className="mr-2 h-4 w-4" />
-                <span className="flex-1">
-                  {selectedDate
-                    ? selectedDate.toLocaleDateString()
-                    : "Pick a date"}
-                </span>
-                {selectedDate && (
-                  <X
-                    className="h-4 w-4 opacity-70 hover:opacity-100 ml-2"
-                    onClick={clearDate}
-                  />
-                )}
+                <X className="h-4 w-4 opacity-70 hover:opacity-100" />
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <CalendarComponent
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+            )}
+          </div>
 
           {/* Location Filter */}
-          <Popover open={isLocationOpen} onOpenChange={setIsLocationOpen}>
-            <PopoverTrigger asChild>
+          <div className="flex min-w-[160px] relative">
+            <Popover open={isLocationOpen} onOpenChange={setIsLocationOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                >
+                  <MapPin className="mr-2 h-4 w-4" />
+                  <span className="flex-1 truncate">
+                    {locations.find((l) => l.id === selectedLocation)?.name ||
+                      "Filter by location"}
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command>
+                  <CommandInput placeholder="Search location..." />
+                  <CommandList>
+                    <CommandEmpty>No location found.</CommandEmpty>
+                    <CommandGroup heading="Locations">
+                      {locations.map((location) => (
+                        <CommandItem
+                          key={location.id}
+                          value={location.name}
+                          onSelect={() => handleLocationSelect(location.id)}
+                        >
+                          {location.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            {selectedLocation && (
               <Button
-                variant="outline"
-                className="min-w-[160px] w-full justify-start text-left font-normal"
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearLocation();
+                }}
               >
-                <MapPin className="mr-2 h-4 w-4" />
-                {locations.find((l) => l.id === selectedLocation)?.name ||
-                  "Location"}
+                <X className="h-4 w-4 opacity-70 hover:opacity-100" />
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
-              <Command>
-                <CommandInput placeholder="Search location..." />
-                <CommandList>
-                  <CommandEmpty>No location found.</CommandEmpty>
-                  <CommandGroup heading="Locations">
-                    {locations.map((location) => (
-                      <CommandItem
-                        key={location.id}
-                        value={location.name}
-                        onSelect={() => {
-                          setSelectedLocation(location.id);
-                          setIsLocationOpen(false);
-                        }}
-                      >
-                        {location.name}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+            )}
+          </div>
         </div>
 
         {/* Search Button */}
@@ -219,10 +257,7 @@ export default function EventSearch({
             {isSearching ? "Searching..." : "Search"}
           </Button>
 
-          {(searchQuery ||
-            selectedCategory !== "all" ||
-            selectedDate ||
-            selectedLocation) && (
+          {(searchQuery || selectedDate || selectedLocation) && (
             <Button
               onClick={clearFilters}
               variant="outline"
