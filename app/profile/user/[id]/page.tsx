@@ -155,10 +155,8 @@ export default function UserProfilePage() {
           )}
 
           {/* Badges */}
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold mb-2">Badges</h2>
-            <BadgesList />
-          </div>
+
+          <BadgesList canEdit={canEdit} />
 
           {/* Events Attended - now using the new component */}
           <div className="mt-6">

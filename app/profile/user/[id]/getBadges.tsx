@@ -10,7 +10,7 @@ import { UserProfile } from "@/app/typings/profile/typings";
 
 type IBadge = Badge & { claimed?: boolean };
 
-export default function Badges() {
+export default function Badges({ canEdit }: { canEdit?: boolean }) {
   const { user } = useAuth();
   const [badges, setBadges] = useState<IBadge[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,26 +47,33 @@ export default function Badges() {
 
   return (
     <>
-      {badges.length === 0 ? (
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-center text-gray-400">
-              You haven't earned any badges yet. Attend events and check in to
-              earn badges!
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="flex flex-row justify-start gap-4">
-          {badges.map((badge) => (
-            <BadgeDisplay
-              size="md"
-              variant="badge-only"
-              key={badge._id}
-              badge={badge}
-              claimed={true}
-            />
-          ))}
+      {/* Only render the section if there are badges or user can edit their profile */}
+      {(badges.length > 0 || canEdit) && (
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-2">Badges</h2>
+
+          {badges.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-center text-gray-400">
+                  You haven't earned any badges yet. Attend events and check in
+                  to earn badges!
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="flex flex-row justify-start gap-4">
+              {badges.map((badge) => (
+                <BadgeDisplay
+                  size="md"
+                  variant="badge-only"
+                  key={badge._id}
+                  badge={badge}
+                  claimed={true}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </>
