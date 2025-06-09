@@ -991,6 +991,13 @@ export default function EventPage({
                 >
                   View Attendees
                 </Button>
+              ) : new Date(event.endDate) < new Date() ? (
+                <Button
+                  disabled
+                  className="bg-gray-600 w-full text-white rounded-lg cursor-not-allowed"
+                >
+                  Event has passed
+                </Button>
               ) : isRegistered ? (
                 <div className="flex flex-row w-full gap-2">
                   <button
