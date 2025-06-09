@@ -1,105 +1,89 @@
-import { NextRequest, NextResponse } from "next/server";
 import { connectToDB } from "@/app/lib/mongodb";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("q") || "";
-    const category = searchParams.get("category") || "";
-    const date = searchParams.get("date") || "";
-    const location = searchParams.get("location") || "";
 
-    // Build search filter
-    const filter: any = {};
+    // Connect to database
+    const db = await connectToDB();
+    const eventsCollection = db.collection("events"); // Make sure to specify the collection name
 
-    // Text search if query is provided
-    if (query) {
-      filter.$or = [
-        { title: { $regex: query, $options: "i" } },
-        { description: { $regex: query, $options: "i" } },
-        { location: { $regex: query, $options: "i" } },
-        { "tags.label": { $regex: query, $options: "i" } },
-      ];
-    }
+    // Build the search pipeline
+    const pipeline = [];
 
-    // Filter by category
-    if (category && category !== "all") {
-      filter["tags.label"] = { $regex: category, $options: "i" };
-    }
-
-    // Filter by date
-    if (date) {
-      const searchDate = new Date(date);
-      // Find events happening on the selected date
-      filter.$and = filter.$and || [];
-      filter.$and.push({
-        $or: [
-          // Event starts on the selected date
-          {
-            startDate: {
-              $gte: new Date(searchDate.setHours(0, 0, 0, 0)),
-              $lt: new Date(new Date(date).setHours(23, 59, 59, 999)),
-            },
-          },
-          // Event ends on the selected date
-          {
-            endDate: {
-              $gte: new Date(new Date(date).setHours(0, 0, 0, 0)),
-              $lt: new Date(new Date(date).setHours(23, 59, 59, 999)),
-            },
-          },
-          // Event spans over the selected date
-          {
-            $and: [
+    // Text search using Atlas Search if query is provided
+    if (query && query.trim() !== "") {
+      pipeline.push({
+        $search: {
+          index: "default",
+          compound: {
+            should: [
               {
-                startDate: {
-                  $lte: new Date(new Date(date).setHours(23, 59, 59, 999)),
+                text: {
+                  query: query,
+                  path: "title",
+                  score: { boost: { value: 3 } },
                 },
               },
               {
-                endDate: {
-                  $gte: new Date(new Date(date).setHours(0, 0, 0, 0)),
+                text: {
+                  query: query,
+                  path: "description",
+                  score: { boost: { value: 1 } },
+                },
+              },
+              {
+                text: {
+                  query: query,
+                  path: "location",
+                  score: { boost: { value: 2 } },
+                },
+              },
+              {
+                text: {
+                  query: query,
+                  path: "tags.label",
+                  score: { boost: { value: 2 } },
                 },
               },
             ],
           },
-        ],
+        },
       });
+
+      // Add score field for sorting by relevance
+      pipeline.push({
+        $addFields: {
+          score: { $meta: "searchScore" },
+        },
+      });
+
+      // Sort by relevance
+      pipeline.push({ $sort: { score: -1, startDate: 1 } });
+    } else {
+      // If no query, sort by start date
+      pipeline.push({ $sort: { startDate: 1 } });
     }
 
-    // Filter by location
-    if (location) {
-      const locationFilter = { location: { $regex: location, $options: "i" } };
-      if (filter.$and) {
-        filter.$and.push(locationFilter);
-      } else if (filter.$or) {
-        filter.$and = [{ $or: filter.$or }, locationFilter];
-        delete filter.$or;
-      } else {
-        filter.location = locationFilter.location;
-      }
-    }
+    // Limit to 100 results
+    pipeline.push({ $limit: 100 });
 
-    const db = await connectToDB();
+    // Add debugging for transparency
+    console.log("Search query:", query);
+    console.log("Pipeline:", JSON.stringify(pipeline, null, 2));
 
-    // If no filters, return newest events first
-    if (Object.keys(filter).length === 0) {
-      filter.startDate = { $gte: new Date() }; // Only upcoming events
-    }
+    // Execute the aggregation pipeline on the events collection
+    const events = await eventsCollection.aggregate(pipeline).toArray();
 
-    // Fetch events matching the filter
-    const events = await db
-      .collection("events")
-      .find(filter)
-      .sort({ startDate: 1 }) // Sort by date (upcoming first)
-      .limit(20)
-      .toArray();
+    console.log(`Found ${events.length} matching events`);
 
     return NextResponse.json({ events });
   } catch (error) {
-    console.error("Error searching events:", error);
+    console.error("Search error:", error);
     return NextResponse.json(
-      { error: "Failed to search events" },
+      { error: "Failed to search events", details: error },
       { status: 500 },
     );
   }

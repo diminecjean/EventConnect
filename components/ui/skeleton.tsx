@@ -131,9 +131,118 @@ const SkeletonEventCard = ({
   </div>
 );
 
+function SkeletonUserProfile({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className="p-6 max-w-3xl mx-auto mt-20" {...props}>
+      <div className="border-2 border-stone-500 shadow-md rounded-lg overflow-hidden bg-black/60">
+        <div className="p-6">
+          {/* Profile header section */}
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+            {/* Profile Picture Skeleton */}
+            <Skeleton className="w-[120px] h-[120px] rounded-full shrink-0" />
+
+            {/* User Info Skeleton */}
+            <div className="flex-1 text-center md:text-left w-full">
+              <div className="flex flex-row items-center justify-between gap-2">
+                <Skeleton className="h-8 w-40" />
+                <div className="flex flex-row items-center justify-center md:justify-start gap-2">
+                  <Skeleton className="h-8 w-32 rounded-md" />
+                  <Skeleton className="h-8 w-24 rounded-md" />
+                </div>
+              </div>
+              <div className="mt-2 flex items-center justify-center md:justify-start gap-2">
+                <Skeleton className="h-4 w-48" />
+              </div>
+              <div className="mt-1 flex items-center justify-center md:justify-start gap-2">
+                <Skeleton className="h-4 w-36" />
+              </div>
+              <div className="mt-1 flex items-center justify-center md:justify-start gap-2">
+                <Skeleton className="h-4 w-40" />
+              </div>
+              <div className="mt-1 flex items-center justify-center md:justify-start gap-2">
+                <Skeleton className="h-4 w-32" />
+              </div>
+            </div>
+          </div>
+
+          {/* Bio Section Skeleton */}
+          <div className="mt-6">
+            <Skeleton className="h-6 w-24 mb-2" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4 mt-2" />
+          </div>
+
+          {/* Interests Section Skeleton */}
+          <div className="mt-6">
+            <Skeleton className="h-6 w-24 mb-2" />
+            <div className="flex flex-wrap gap-2">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-6 w-24 rounded-full" />
+              ))}
+            </div>
+          </div>
+
+          {/* Badges Section Skeleton */}
+          <div className="mt-6">
+            <Skeleton className="h-6 w-24 mb-2" />
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-32 rounded-lg" />
+              ))}
+            </div>
+          </div>
+
+          {/* Events Attended Section Skeleton */}
+          <div className="mt-6">
+            <Skeleton className="h-6 w-40 mb-2" />
+            <div className="space-y-4">
+              {[1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="flex gap-4 p-3 border border-stone-700 rounded-lg"
+                >
+                  <Skeleton className="w-20 h-20 rounded-md shrink-0" />
+                  <div className="flex flex-col gap-2 w-full">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-36" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Organizations Section Skeleton */}
+          <div className="mt-6">
+            <Skeleton className="h-6 w-48 mb-2" />
+            <div className="space-y-4">
+              {[1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="flex gap-4 p-3 border border-stone-700 rounded-lg"
+                >
+                  <Skeleton className="w-16 h-16 rounded-md shrink-0" />
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-5 w-48" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export {
   Skeleton,
   SkeletonUserCardHorziontal,
   SkeletonEvent,
   SkeletonEventCard,
+  SkeletonUserProfile,
 };

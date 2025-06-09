@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import EventCard from "./events/eventCardComponent";
-import SearchBar, { SearchParams, categories, locations } from "./searchBar";
+import SearchBar, { SearchParams, locations } from "./searchBar";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/app/context/authContext";
@@ -35,7 +35,12 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState<FormattedEvent[] | null>(
     null,
   );
-  const [activeFilters, setActiveFilters] = useState<SearchParams | null>(null);
+  const [filteredResults, setFilteredResults] = useState<
+    FormattedEvent[] | null
+  >(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dateFilter, setDateFilter] = useState<Date | null>(null);
+  const [locationFilter, setLocationFilter] = useState("");
   const { user } = useAuth();
   const router = useRouter();
 
@@ -64,7 +69,7 @@ export default function Home() {
   const formatEvents = (eventsData: any[]): FormattedEvent[] => {
     return eventsData.map((event: any) => ({
       _id: event._id.toString(),
-      id: event._id.toString(), // Add id field which is required by FormattedEvent interface
+      id: event._id.toString(),
       eventLogo: {
         src: event.imageUrl || "/placeholder.svg",
         alt: event.title,
@@ -75,8 +80,8 @@ export default function Home() {
       title: event.title || "",
       tags: Array.isArray(event.tags) ? event.tags : [],
       date: {
-        startDate: event.startDate || "TBA",
-        endDate: event.endDate || "",
+        startDate: new Date(event.startDate) || new Date(),
+        endDate: new Date(event.endDate) || new Date(),
       },
       location: event.location || "TBA",
       description: event.description,
@@ -92,74 +97,143 @@ export default function Home() {
     });
   }, []);
 
-  // Handle search
+  // Apply client-side filters whenever filters change
+  useEffect(() => {
+    if (searchResults === null) {
+      // If no search was performed, filter the default events
+      applyFilters(events);
+    } else {
+      // Filter the search results
+      applyFilters(searchResults);
+    }
+  }, [dateFilter, locationFilter, searchResults, events]);
+
+  // Apply date and location filters to the provided events array
+  const applyFilters = (eventsToFilter: FormattedEvent[]) => {
+    if (!dateFilter && !locationFilter) {
+      // No filters applied
+      setFilteredResults(null);
+      return;
+    }
+
+    let results = [...eventsToFilter];
+
+    // Filter by date
+    if (dateFilter) {
+      const startOfDay = new Date(dateFilter);
+      startOfDay.setHours(0, 0, 0, 0);
+
+      const endOfDay = new Date(dateFilter);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      results = results.filter((event) => {
+        const eventStart = new Date(event.date.startDate);
+        const eventEnd = new Date(event.date.endDate);
+
+        // Event starts on the selected date
+        const startsOnDate = eventStart >= startOfDay && eventStart <= endOfDay;
+
+        // Event ends on the selected date
+        const endsOnDate = eventEnd >= startOfDay && eventEnd <= endOfDay;
+
+        // Event spans over the selected date
+        const spansOverDate = eventStart <= endOfDay && eventEnd >= startOfDay;
+
+        return startsOnDate || endsOnDate || spansOverDate;
+      });
+    }
+
+    // Filter by location
+    if (locationFilter) {
+      const locationName =
+        locations.find((l) => l.id === locationFilter)?.name || "";
+      results = results.filter((event) =>
+        event.location.toLowerCase().includes(locationName.toLowerCase()),
+      );
+    }
+
+    setFilteredResults(results);
+  };
+
+  // Handle search - only text search via API
   const handleSearch = async (searchParams: SearchParams) => {
     setIsSearching(true);
-    setActiveFilters(searchParams);
+    setSearchQuery(searchParams.query);
+    setDateFilter(searchParams.date || null);
+    setLocationFilter(searchParams.location);
 
     try {
-      // If all filters are empty/default, show all events
-      if (
-        !searchParams.query &&
-        (searchParams.category === "all" || !searchParams.category) &&
-        !searchParams.date &&
-        !searchParams.location
-      ) {
+      // If query is empty, reset to all events
+      if (!searchParams.query || searchParams.query.trim() === "") {
         setSearchResults(null);
+        setIsSearching(false);
         return;
       }
 
-      // Build the search URL with filters
+      // Build the search URL with query only
       const params = new URLSearchParams();
-      if (searchParams.query) params.append("q", searchParams.query);
-      if (searchParams.category && searchParams.category !== "all") {
-        params.append("category", searchParams.category);
-      }
-      if (searchParams.date) {
-        params.append("date", searchParams.date.toISOString().split("T")[0]);
-      }
-      if (searchParams.location)
-        params.append("location", searchParams.location);
+      params.append("q", searchParams.query.trim());
 
       // Call the API
       const response = await fetch(`${BASE_URL}/api/events/search?${params}`);
+
+      if (!response.ok) {
+        throw new Error(
+          `Search request failed with status: ${response.status}`,
+        );
+      }
+
       const data = await response.json();
+
+      // Check if data has expected structure
+      if (!data || !Array.isArray(data.events)) {
+        console.error("Unexpected response format:", data);
+        throw new Error("Invalid response format from search API");
+      }
 
       // Format and set results
       const formattedEvents = formatEvents(data.events);
+      console.log(
+        `Search for "${searchParams.query}" returned ${formattedEvents.length} results`,
+      );
       setSearchResults(formattedEvents);
     } catch (error) {
       console.error("Error searching events:", error);
+      // Show the error to the user
+      alert(`Search error: ${error}. Please try again.`);
     } finally {
       setIsSearching(false);
     }
   };
 
-  // Get the list of events to display (search results or all events)
-  const displayedEvents = searchResults !== null ? searchResults : events;
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery("");
+    setDateFilter(null);
+    setLocationFilter("");
+    setSearchResults(null);
+    setFilteredResults(null);
+  };
+
+  // Get the list of events to display (filtered results, search results, or all events)
+  const displayedEvents =
+    filteredResults !== null
+      ? filteredResults
+      : searchResults !== null
+        ? searchResults
+        : events;
 
   // Get active filter summary text
   const getFilterSummary = () => {
-    if (!activeFilters) return null;
-
     const filters = [];
-    if (activeFilters.query) filters.push(`"${activeFilters.query}"`);
+    if (searchQuery) filters.push(`"${searchQuery}"`);
 
-    if (activeFilters.category && activeFilters.category !== "all") {
-      const categoryLabel = categories.find(
-        (c) => c.id === activeFilters.category,
-      )?.label;
-      filters.push(categoryLabel);
+    if (dateFilter) {
+      filters.push(`on ${dateFilter.toLocaleDateString()}`);
     }
 
-    if (activeFilters.date) {
-      filters.push(`on ${activeFilters.date.toLocaleDateString()}`);
-    }
-
-    if (activeFilters.location) {
-      const locationName = locations.find(
-        (l) => l.id === activeFilters.location,
-      )?.name;
+    if (locationFilter) {
+      const locationName = locations.find((l) => l.id === locationFilter)?.name;
       filters.push(`in ${locationName}`);
     }
 
@@ -193,16 +267,47 @@ export default function Home() {
         </div>
         <div className="flex">{/* <SeedDatabase /> */}</div>
       </div>
-      <SearchBar onSearch={handleSearch} isSearching={isSearching} />
+      <SearchBar
+        onSearch={handleSearch}
+        isSearching={isSearching}
+        initialDate={dateFilter}
+        initialLocation={locationFilter}
+        initialQuery={searchQuery}
+      />
 
       <div className="flex flex-col max-w-6xl place-items-center gap-6 w-full">
         <div className="w-full p-2 flex justify-between items-center">
           <h2 className="text-xl font-semibold">
-            {searchResults !== null ? "Search Results" : "Upcoming"}{" "}
+            {searchResults !== null || filteredResults !== null
+              ? "Search Results"
+              : "Upcoming"}{" "}
             <span className="text-violet-400">Events</span>
           </h2>
           {getFilterSummary() && (
-            <div className="text-sm text-gray-400">{getFilterSummary()}</div>
+            <div className="text-sm text-gray-400 flex items-center gap-2">
+              <span>{getFilterSummary()}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={clearFilters}
+              >
+                <span className="sr-only">Clear filters</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+              </Button>
+            </div>
           )}
         </div>
 
@@ -211,7 +316,6 @@ export default function Home() {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
           </div>
         ) : isInitialLoading ? (
-          // Show skeletons when initially loading
           <div className="w-full flex flex-col gap-6">
             <SkeletonEventCard array={[1, 2, 3]} />
           </div>
@@ -232,19 +336,12 @@ export default function Home() {
         ) : (
           <div className="w-full p-12 text-center border border-dashed rounded-lg border-gray-700">
             <p className="text-gray-400">
-              {searchResults !== null
+              {searchResults !== null || filteredResults !== null
                 ? "No events found matching your search criteria"
                 : "No upcoming events found"}
             </p>
-            {searchResults !== null && (
-              <Button
-                variant="link"
-                className="mt-2"
-                onClick={() => {
-                  setSearchResults(null);
-                  setActiveFilters(null);
-                }}
-              >
+            {(searchResults !== null || filteredResults !== null) && (
+              <Button variant="link" className="mt-2" onClick={clearFilters}>
                 View all events instead
               </Button>
             )}

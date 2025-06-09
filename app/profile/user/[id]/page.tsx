@@ -10,6 +10,8 @@ import { formatSingleDate } from "@/app/utils/formatDate";
 import { BriefcaseBusiness, Building2, Calendar, Mail } from "lucide-react";
 import { useAuth } from "@/app/context/authContext";
 import BadgesList from "./getBadges";
+import AttendedEventsList from "./getAttendedEvents";
+import { SkeletonUserProfile } from "@/components/ui/skeleton";
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -47,11 +49,7 @@ export default function UserProfilePage() {
   }, [id, currentUser]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <SkeletonUserProfile />;
   }
 
   if (!user) return notFound();
@@ -62,9 +60,11 @@ export default function UserProfilePage() {
     <main className="p-6 max-w-3xl mx-auto mt-20">
       <div className="border-2 border-stone-500 shadow-md rounded-lg overflow-hidden bg-black/60">
         <div className="p-6">
+          {/* Profile section - keep existing code */}
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
             {/* Profile Picture */}
             <div className="flex shrink-0">
+              {/* Keep existing profile picture code */}
               {user.profilePicture ? (
                 <div className="flex shrink-0 w-[120px] h-[120px] rounded-full overflow-hidden border-stone-500 border-2">
                   <Image
@@ -86,6 +86,7 @@ export default function UserProfilePage() {
 
             {/* User Info */}
             <div className="flex-1 text-center md:text-left">
+              {/* Keep existing user info code */}
               <div className="flex flex-row items-center justify-between gap-2">
                 <h1 className="text-2xl font-bold py-1">{user.name}</h1>
                 {canEdit && (
@@ -125,21 +126,6 @@ export default function UserProfilePage() {
                   <p>{user.organization}</p>
                 </div>
               )}
-
-              {/* Badges */}
-              {/* {user.badgesEarned && user.badgesEarned.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2 justify-center md:justify-start">
-                  {user.badgesEarned.map((badge, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="px-3 py-1 capitalize"
-                    >
-                      {badge.replace(/_/g, " ")}
-                    </Badge>
-                  ))}
-                </div>
-              )} */}
             </div>
           </div>
 
@@ -174,24 +160,11 @@ export default function UserProfilePage() {
             <BadgesList />
           </div>
 
-          {/* Events Attended */}
-          {user.eventsAttended && user.eventsAttended.length > 0 && (
-            <div className="mt-6">
-              <h2 className="text-lg font-semibold mb-2">Events Attended</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {user.eventsAttended.map((eventId, index) => (
-                  <Link
-                    key={index}
-                    href={`/events/${eventId}`}
-                    className="block p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition"
-                  >
-                    Event {index + 1}{" "}
-                    {/* Replace with actual event name when available */}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Events Attended - now using the new component */}
+          <div className="mt-6">
+            <h2 className="text-lg font-semibold mb-2">Events Attended</h2>
+            <AttendedEventsList userId={id} />
+          </div>
 
           {/* Organizations involved */}
           {user.organizations && user.organizations.length > 0 && (
@@ -202,9 +175,6 @@ export default function UserProfilePage() {
               <OrganizationsList organizationIds={user.organizations} />
             </div>
           )}
-
-          {/* Connection Link */}
-          <div className="mt-4 flex justify-center md:justify-start"></div>
         </div>
       </div>
     </main>

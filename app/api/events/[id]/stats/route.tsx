@@ -115,7 +115,7 @@ export async function GET(
         {
           $group: {
             _id: {
-              // Use whatever demographic fields you store
+              // demographic fields
               position: "$userDetails.position",
               organization: "$userDetails.organization",
             },
@@ -125,7 +125,7 @@ export async function GET(
       ])
       .toArray();
 
-    // Get feedback comments (if you store them)
+    // TODO: Get feedback comments
     const feedbackComments = await db
       .collection("eventFeedback")
       .find({
