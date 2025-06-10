@@ -158,6 +158,7 @@ export default function useAttendees(eventId: string) {
       setIsBulkCheckInMode(false);
 
       toast.success(`Successfully checked in ${successCount} attendees`);
+      window.location.reload();
     } catch (error) {
       console.error("Error during bulk check-in:", error);
       toast.error("Failed to complete bulk check-in");

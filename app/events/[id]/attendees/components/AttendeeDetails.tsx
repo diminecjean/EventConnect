@@ -40,7 +40,7 @@ export default function AttendeeDetails({
                 <h3 className="text-lg font-semibold">
                   {selectedAttendee.userId.name}
                 </h3>
-                <p className="text-gray-600 flex items-center gap-1">
+                <p className="text-sm text-gray-500 mt-4 flex items-center gap-1">
                   <Mail className="h-3.5 w-3.5" />
                   {selectedAttendee.userId.email}
                 </p>
@@ -90,9 +90,9 @@ export default function AttendeeDetails({
                   ([key, value]) => (
                     <div
                       key={key}
-                      className="grid grid-cols-3 gap-4 p-2 even:bg-gray-50/30 rounded"
+                      className="grid grid-cols-3 text-sm gap-4 p-2 bg-violet-300/15 rounded"
                     >
-                      <div className="font-medium text-gray-700">{key}</div>
+                      <div className="font-medium text-gray-200">{key}</div>
                       <div className="col-span-2 break-words">
                         {typeof value === "string"
                           ? value

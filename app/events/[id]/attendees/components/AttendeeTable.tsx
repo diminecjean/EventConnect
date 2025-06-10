@@ -45,17 +45,23 @@ export default function AttendeeTable({
                 <span className="sr-only">Select</span>
               </TableHead>
             )}
-            <TableHead className="font-medium">Name</TableHead>
+            <TableHead className="font-medium text-white">Name</TableHead>
             <TableHead className="font-medium">Email</TableHead>
             <TableHead className="font-medium">Registration Date</TableHead>
             <TableHead className="font-medium">Status</TableHead>
-            <TableHead className="font-medium text-right">Actions</TableHead>
+            <TableHead className="font-medium text-right"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredAttendees.length > 0 ? (
             filteredAttendees.map((attendee) => (
-              <TableRow key={attendee._id}>
+              <TableRow
+                key={attendee._id}
+                onClick={() =>
+                  !isBulkCheckInMode && handleViewResponses(attendee)
+                }
+                className="cursor-pointer hover:bg-violet-700/50 transition-colors"
+              >
                 {isBulkCheckInMode && !attendee.checkedIn && (
                   <TableCell>
                     <input
@@ -121,15 +127,6 @@ export default function AttendeeTable({
 
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleViewResponses(attendee)}
-                      className="h-8 px-2 text-violet-300"
-                    >
-                      <Eye className="h-3.5 w-3.5 mr-1" />
-                      View Details
-                    </Button>
                     {!attendee.checkedIn && !isBulkCheckInMode && (
                       <Button
                         size="sm"
