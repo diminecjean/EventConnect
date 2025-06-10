@@ -239,10 +239,105 @@ function SkeletonUserProfile({
   );
 }
 
+function SkeletonOrganizationProfile({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className="w-full mt-20 flex flex-col gap-4" {...props}>
+      {/* Banner skeleton */}
+      <Skeleton className="w-full h-64 rounded-lg" />
+
+      <div className="flex flex-row p-4">
+        <div className="flex flex-col w-full">
+          {/* Organization header with logo and info */}
+          <div className="flex flex-row items-center justify-between rounded-lg bg-black/60 p-4">
+            <div className="grid grid-cols-6 w-full gap-8 justify-start">
+              {/* Organization logo skeleton */}
+              <Skeleton className="w-[150px] h-[150px] rounded-full flex-shrink-0" />
+
+              <div className="col-span-4 h-full gap-3 items-start py-4">
+                <Skeleton className="h-8 w-48 m-2" /> {/* Organization name */}
+                <Skeleton className="h-4 w-full max-w-xl m-2" />{" "}
+                {/* Description line 1 */}
+                <Skeleton className="h-4 w-3/4 max-w-xl m-2" />{" "}
+                {/* Description line 2 */}
+                <div className="flex flex-row w-1/3 gap-2 items-center pt-4">
+                  <Skeleton className="w-4 h-4" /> {/* Location icon */}
+                  <Skeleton className="h-4 w-32" /> {/* Location text */}
+                </div>
+              </div>
+
+              <div className="col-span-1 gap-4 align-start h-full">
+                <Skeleton className="h-9 w-40 rounded-lg" />{" "}
+                {/* Action button */}
+              </div>
+            </div>
+          </div>
+
+          {/* Tabs skeleton */}
+          <div className="my-6 w-full">
+            {/* Tab list */}
+            <Skeleton className="h-10 w-full mb-6 rounded-lg" />
+
+            {/* Tab content - Events section */}
+            <div className="mt-6">
+              <div className="flex flex-row justify-between mb-4">
+                <Skeleton className="h-6 w-24" /> {/* Section title */}
+                <Skeleton className="h-8 w-8 rounded-full" /> {/* Add button */}
+              </div>
+
+              {/* Events grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="border rounded-lg overflow-hidden flex flex-col h-full"
+                  >
+                    <Skeleton className="w-full h-40" /> {/* Event image */}
+                    <div className="p-4">
+                      <Skeleton className="h-6 w-3/4 mb-2" />{" "}
+                      {/* Event title */}
+                      <Skeleton className="h-4 w-full mb-4" />{" "}
+                      {/* Event description */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Skeleton className="w-4 h-4 rounded-full" />{" "}
+                          {/* Icon */}
+                          <Skeleton className="h-4 w-32" /> {/* Date */}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Skeleton className="w-4 h-4 rounded-full" />{" "}
+                          {/* Icon */}
+                          <Skeleton className="h-4 w-24" /> {/* Time */}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Skeleton className="w-4 h-4 rounded-full" />{" "}
+                          {/* Icon */}
+                          <Skeleton className="h-4 w-40" /> {/* Location */}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="px-4 py-3 border-t mt-auto">
+                      <Skeleton className="h-5 w-20 rounded-md" />{" "}
+                      {/* Status */}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export {
   Skeleton,
   SkeletonUserCardHorziontal,
   SkeletonEvent,
   SkeletonEventCard,
   SkeletonUserProfile,
+  SkeletonOrganizationProfile,
 };

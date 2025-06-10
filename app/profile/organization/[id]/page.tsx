@@ -18,8 +18,11 @@ import TeamMemberCard from "./TeamMemberCard";
 import AddTeamMembersModal from "./AddTeamMemberModal";
 import { SubscribeButton } from "./SubscribeButton";
 import OrganizationStats from "./OrganizationStats";
-import EventStats from "./EventStats";
 import EventStatCard from "./EventStatCard";
+import {
+  SkeletonOrganizationProfile,
+  SkeletonUserCardHorziontal,
+} from "@/components/ui/skeleton";
 
 function TeamMembers({ orgId }: { orgId: string }) {
   const [members, setMembers] = useState<UserProfile[]>([]);
@@ -50,11 +53,7 @@ function TeamMembers({ orgId }: { orgId: string }) {
   }, [fetchTeamMembers]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <SkeletonUserCardHorziontal />;
   }
 
   if (members.length === 0) {
@@ -390,14 +389,7 @@ export default function OrganizationPage() {
   }, [id, user, organizations]);
 
   if (isLoading) {
-    return (
-      // <main className="w-full mt-20 flex flex-col gap-4 items-center justify-center">
-      //   <p>Loading organization details...</p>
-      // </main>
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <SkeletonOrganizationProfile />;
   }
 
   if (!org) return notFound();
