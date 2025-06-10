@@ -23,6 +23,8 @@ import {
   SkeletonOrganizationProfile,
   SkeletonUserCardHorziontal,
 } from "@/components/ui/skeleton";
+import PictureGallery from "./PictureGallery";
+import OrganizationPictureUploader from "./OrganizationPictureUploader";
 
 function TeamMembers({ orgId }: { orgId: string }) {
   const [members, setMembers] = useState<UserProfile[]>([]);
@@ -89,6 +91,13 @@ const OrgPageTabs = ({
   const router = useRouter();
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const [teamMembersKey, setTeamMembersKey] = useState(Date.now()); // Key to force re-render
+  const [isPictureModalOpen, setIsPictureModalOpen] = useState(false);
+  const [pictureRefreshTrigger, setPictureRefreshTrigger] = useState(0);
+
+  // Add this function to handle picture upload success
+  const handlePictureUploadSuccess = () => {
+    setPictureRefreshTrigger(Date.now());
+  };
 
   const handleCreateEvent = () => {
     router.push(`/events/new?orgId=${orgId}&&orgName=${orgName}`);
@@ -210,15 +219,23 @@ const OrgPageTabs = ({
         </TabsContent>
         <TabsContent value="pictures">
           <div>
-            <h1 className="font-semibold text-xl my-4">Pictures</h1>
-            {canEditOrg && (
-              <Button
-                variant="outline_violet"
-                className="rounded-lg text-violet-500 font-semibold"
-              >
-                Upload Pictures
-              </Button>
-            )}
+            <div className="flex flex-row justify-between items-center">
+              <h1 className="font-semibold text-xl my-4">Pictures</h1>
+              {canEditOrg && (
+                <Button
+                  variant="outline_violet"
+                  className="rounded-lg text-violet-500 font-semibold"
+                  onClick={() => setIsPictureModalOpen(true)}
+                >
+                  Upload Pictures
+                </Button>
+              )}
+            </div>
+            <PictureGallery
+              organizationId={orgId}
+              canEditOrg={canEditOrg}
+              refreshTrigger={pictureRefreshTrigger}
+            />
           </div>
         </TabsContent>
       </Tabs>
@@ -228,6 +245,12 @@ const OrgPageTabs = ({
         onOpenChange={setIsAddTeamModalOpen}
         orgId={orgId}
         onSuccess={refreshTeamMembers}
+      />
+      <OrganizationPictureUploader
+        isOpen={isPictureModalOpen}
+        onOpenChange={setIsPictureModalOpen}
+        organizationId={orgId}
+        onSuccess={handlePictureUploadSuccess}
       />
     </>
   );
