@@ -122,3 +122,15 @@ export interface Materials {
   uploads: MaterialUploads[];
   urls: string[];
 }
+
+export interface EventFeedback {
+  _id?: string;
+  eventId: string;
+  userId: string;
+  rating: number; // 1-5 star rating
+  comment: string;
+  createdAt: string | Date;
+  userName?: string; // Optional, can be populated from user data
+  userEmail?: string; // Optional, for admin reference
+  anonymous: boolean; // Whether feedback should be displayed anonymously
+}

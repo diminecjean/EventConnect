@@ -41,6 +41,7 @@ import {
 } from "@/app/typings/profile/typings";
 import { Badge } from "@/components/badge/typings";
 import BadgeClaimDialog from "@/components/badge/BadgeClaimDialog";
+import FeedbackTab from "../eventFormComponents/eventFormTabs/FeedbackTabComponent";
 
 // Note:
 // This hook fetches data in a more efficient way by caching the results,
@@ -300,6 +301,7 @@ const EventTabs = ({
 }) => {
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const isPastEvent = new Date(event.endDate) < new Date();
 
   // Function to open the lightbox
   const openLightbox = (imageUrl: string) => {
@@ -313,11 +315,14 @@ const EventTabs = ({
   return (
     <>
       <Tabs defaultValue="timeline" className="my-6 w-full min-w-xl">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList
+          className={`grid w-full ${isPastEvent ? "grid-cols-5" : "grid-cols-4"}`}
+        >
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="speakers">Speakers</TabsTrigger>
           <TabsTrigger value="sponsors">Sponsors</TabsTrigger>
           <TabsTrigger value="materials">Materials</TabsTrigger>
+          {isPastEvent && <TabsTrigger value="feedback">Feedback</TabsTrigger>}
         </TabsList>
         <TabsContent value="timeline">
           <div>
@@ -802,6 +807,16 @@ const EventTabs = ({
             </div>
           </div>
         </TabsContent>
+        {isPastEvent && (
+          <TabsContent value="feedback">
+            <FeedbackTab
+              eventId={event._id.toString()}
+              isRegistered={isRegistered}
+              isOrganizer={isOrganizer}
+              isPastEvent={isPastEvent}
+            />
+          </TabsContent>
+        )}
       </Tabs>
 
       {/* Lightbox Modal */}
