@@ -64,7 +64,7 @@ export default function LoginCard() {
   useEffect(() => {
     if (session?.user && !toastShownRef.current) {
       toast(`Logged in as ${session.user.email}`, {
-        duration: Infinity,
+        duration: 5000,
         dismissible: true,
       });
       toastShownRef.current = true;
