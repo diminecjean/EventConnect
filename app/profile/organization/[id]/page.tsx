@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BASE_URL } from "@/app/api/constants";
 import { useAuth } from "@/app/context/authContext";
 import { Event } from "@/app/typings/events/typings";
-import EventCard from "../../EventCard";
+import OrgEventCard from "./OrgEventCard";
 import TeamMemberCard from "./TeamMemberCard";
 import AddTeamMembersModal from "./AddTeamMemberModal";
 import { SubscribeButton } from "./SubscribeButton";
@@ -129,7 +129,11 @@ const OrgPageTabs = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {events && events.length > 0 ? (
                 events.map((event) => (
-                  <EventCard key={event._id} event={event} />
+                  <OrgEventCard
+                    key={event._id}
+                    event={event}
+                    canEditOrg={canEditOrg}
+                  />
                 ))
               ) : (
                 <div className="col-span-2 text-center py-8 text-gray-500">
@@ -195,7 +199,7 @@ const OrgPageTabs = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {partneredEvents && partneredEvents.length > 0 ? (
                 partneredEvents.map((event) => (
-                  <EventCard key={event._id} event={event} />
+                  <OrgEventCard key={event._id} event={event} />
                 ))
               ) : (
                 <div className="col-span-2 text-center py-8 text-gray-500">
