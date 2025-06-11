@@ -78,7 +78,15 @@ export async function PATCH(
     console.log("Request body:", body);
 
     // Only allow updating of editable fields
-    const { name, bio, profilePicture, interests } = body;
+    const {
+      name,
+      bio,
+      position,
+      organization,
+      profilePicture,
+      interests,
+      socialMedia,
+    } = body;
 
     const db = await connectToDB();
 
@@ -121,8 +129,11 @@ export async function PATCH(
         $set: {
           name,
           bio,
+          organization,
+          position,
           profilePicture,
           interests,
+          socialMedia,
           updatedAt: new Date(),
         },
       },

@@ -12,10 +12,12 @@ import {
   userProfileFormSchema,
   UserProfileFormValues,
 } from "./userFormComponents/schemas";
-import { UserProfileNameField } from "./userFormComponents//UserProfileNameField";
+import { UserProfileNameField } from "./userFormComponents/UserProfileNameField";
 import { UserProfileBioField } from "./userFormComponents/UserProfileBioField";
+import { UserProfilePositionOrgField } from "./userFormComponents/UserProfilePositionOrgField";
 import { UserProfilePictureField } from "./userFormComponents/UserProfilePictureField";
 import { UserProfileInterestsField } from "./userFormComponents/UserProfileInterestsField";
+import { UserProfileSocialMediaField } from "./userFormComponents/UserProfileSocialMediaField";
 import { uploadImageToSupabase } from "@/app/utils/supabase/imageUploadUtil";
 
 interface UserProfileFormProps {
@@ -35,8 +37,18 @@ export default function UserProfileForm({
     defaultValues: {
       name: defaultValues.name || "",
       bio: defaultValues.bio || "",
+      position: defaultValues.position || "",
+      organization: defaultValues.organization || "",
       profilePicture: defaultValues.profilePicture || "",
       interests: defaultValues.interests || [],
+      socialMedia: {
+        linkedin: defaultValues.socialMedia?.linkedin || "",
+        twitter: defaultValues.socialMedia?.twitter || "",
+        instagram: defaultValues.socialMedia?.instagram || "",
+        github: defaultValues.socialMedia?.github || "",
+        facebook: defaultValues.socialMedia?.facebook || "",
+        website: defaultValues.socialMedia?.website || "",
+      },
     },
   });
 
@@ -61,6 +73,19 @@ export default function UserProfileForm({
         }
       }
 
+      console.log(
+        "Submitting profile data:",
+        JSON.stringify({
+          name: data.name,
+          bio: data.bio,
+          position: data.position,
+          organization: data.organization,
+          profilePicture: profilePictureUrl,
+          interests: data.interests,
+          socialMedia: data.socialMedia,
+        }),
+      );
+
       const response = await fetch(`${BASE_URL}/api/users/${userId}`, {
         method: "PATCH",
         headers: {
@@ -69,8 +94,11 @@ export default function UserProfileForm({
         body: JSON.stringify({
           name: data.name,
           bio: data.bio,
+          position: data.position,
+          organization: data.organization,
           profilePicture: profilePictureUrl,
           interests: data.interests,
+          socialMedia: data.socialMedia,
         }),
       });
 
@@ -97,8 +125,10 @@ export default function UserProfileForm({
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <UserProfileNameField control={form.control} />
           <UserProfileBioField control={form.control} />
+          <UserProfilePositionOrgField control={form.control} />
           <UserProfilePictureField control={form.control} />
           <UserProfileInterestsField control={form.control} />
+          <UserProfileSocialMediaField control={form.control} />
 
           <div className="flex gap-4 justify-end">
             <Button
@@ -111,7 +141,7 @@ export default function UserProfileForm({
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Saving..." : "Save Changes"}
             </Button>
-            {/* <Button
+            <Button
               type="button"
               variant="outline"
               onClick={() => {
@@ -120,7 +150,7 @@ export default function UserProfileForm({
               }}
             >
               Debug Form
-            </Button> */}
+            </Button>
           </div>
         </form>
       </Form>

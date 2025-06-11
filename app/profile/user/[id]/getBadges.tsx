@@ -7,6 +7,7 @@ import { BASE_URL } from "@/app/api/constants";
 import { Badge } from "@/components/badge/typings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserProfile } from "@/app/typings/profile/typings";
+import { BadgeCheck } from "lucide-react";
 
 type IBadge = Badge & { claimed?: boolean };
 
@@ -49,8 +50,11 @@ export default function Badges({ canEdit }: { canEdit?: boolean }) {
     <>
       {/* Only render the section if there are badges or user can edit their profile */}
       {(badges.length > 0 || canEdit) && (
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-2">Badges</h2>
+        <div>
+          <h2 className="flex items-center gap-2 text-lg font-semibold mb-2">
+            <BadgeCheck size={18} className="text-violet-400" />
+            Badges
+          </h2>
 
           {badges.length === 0 ? (
             <Card>

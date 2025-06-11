@@ -31,6 +31,9 @@ export default function EditUserProfilePage() {
         const formattedUserData: Partial<UserProfileFormValues> = {
           name: res.user.name,
           bio: res.user.bio || "",
+          organization: res.user.organization || "",
+          position: res.user.position || "",
+          socialMedia: res.user.socialMedia || {},
           profilePicture: res.user.profilePicture || "",
           interests: Array.isArray(res.user.interests)
             ? res.user.interests

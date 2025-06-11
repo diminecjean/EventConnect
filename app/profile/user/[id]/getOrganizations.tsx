@@ -54,7 +54,7 @@ export default function OrganizationsList({
   console.log("Organizations:", { organizations });
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 gap-3">
       {organizations.map((org) => (
         <Link
           key={org._id}
@@ -76,11 +76,11 @@ export default function OrganizationsList({
           )}
           <div>
             <div className="font-semibold text-md">{org.name}</div>
-            {org.description && (
+            {/* {org.description && (
               <p className="text-xs text-gray-300 line-clamp-2">
                 {org.description}
               </p>
-            )}
+            )} */}
           </div>
         </Link>
       ))}
