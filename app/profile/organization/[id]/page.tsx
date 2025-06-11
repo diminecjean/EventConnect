@@ -17,8 +17,8 @@ import OrgEventCard from "./OrgEventCard";
 import TeamMemberCard from "./TeamMemberCard";
 import AddTeamMembersModal from "./AddTeamMemberModal";
 import { SubscribeButton } from "./SubscribeButton";
-import OrganizationStats from "./OrganizationStats";
-import EventStatCard from "./EventStatCard";
+import OrganizationStats from "./StatsComponents/OrganizationStats";
+import EventStatCard from "./StatsComponents/EventStatCard";
 import {
   SkeletonOrganizationProfile,
   SkeletonUserCardHorziontal,
@@ -154,12 +154,11 @@ const OrgPageTabs = ({
         {canEditOrg && (
           <TabsContent value="stats">
             <div>
-              <h1 className="font-semibold text-xl my-4">Stats</h1>
               <div className="space-y-6">
                 <div className="p-4 border rounded-lg shadow-sm">
-                  <h2 className="text-2xl font-bold mb-4">
+                  {/* <h2 className="text-2xl font-bold mb-4">
                     Organization Statistics
-                  </h2>
+                  </h2> */}
                   <OrganizationStats organizationId={orgId} />
                 </div>
 

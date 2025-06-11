@@ -4,6 +4,7 @@ import Image from "next/image";
 import { BASE_URL } from "@/app/api/constants";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface OrganizationPicture {
   _id: string;
@@ -94,10 +95,19 @@ const PictureGallery = ({
         {Array(6)
           .fill(0)
           .map((_, i) => (
-            <div
-              key={i}
-              className="w-full h-60 md:h-72 bg-gray-200 rounded-md animate-pulse"
-            />
+            <div key={i} className="flex flex-col gap-2">
+              {/* Image skeleton with varying heights to create a masonry-like look */}
+              <Skeleton
+                className={`w-full ${i % 3 === 0 ? "h-64" : i % 3 === 1 ? "h-80" : "h-72"} rounded-md`}
+              />
+
+              {/* Add caption skeleton to some items */}
+              {i % 2 === 0 && (
+                <div className="relative">
+                  <Skeleton className="h-8 w-full mt-1 rounded-md" />
+                </div>
+              )}
+            </div>
           ))}
       </div>
     );
