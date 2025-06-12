@@ -108,7 +108,7 @@ export default function UserProfilePage() {
               />
             </div>
           ) : (
-            <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center shadow-lg">
+            <div className="w-40 h-40 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center shadow-lg">
               <User size={48} className="text-gray-500" />
             </div>
           )}
