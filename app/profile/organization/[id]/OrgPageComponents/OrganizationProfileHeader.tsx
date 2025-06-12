@@ -3,8 +3,9 @@ import { useRouter } from "next/navigation";
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OrganizationProfile } from "@/app/typings/profile/typings";
-import { SubscribeButton } from "../OrgPageComponents/SubscribeButton";
+import { SubscribeButton } from "./SubscribeButton";
 import SocialMediaLinks from "@/app/profile/SocialMediaLinks";
+import SubscribersCount from "./SubscriberCount";
 
 interface OrganizationProfileHeaderProps {
   orgData: OrganizationProfile;
@@ -45,10 +46,15 @@ export default function OrganizationProfileHeader({
               </div>
               <div className="flex flex-col h-full gap-3 items-start py-4">
                 <h1 className="font-semibold text-2xl">{orgData.name}</h1>
-                <p className="font-normal text-md">{orgData.description}</p>
-                <p className="font-light text-sm flex flex-row gap-2 items-center text-stone-400 pt-4">
-                  <MapPin size={16} /> {orgData.location}
-                </p>
+                <p className="font-normal text-sm">{orgData.description}</p>
+                <div className="flex flex-col gap-2 pt-4">
+                  <p className="font-light text-sm flex flex-row gap-2 items-center text-stone-400">
+                    <MapPin size={16} /> {orgData.location}
+                  </p>
+                  <div className="font-light text-sm text-stone-400">
+                    <SubscribersCount organizationId={orgData._id} />
+                  </div>
+                </div>
                 <SocialMediaLinks socialMedia={orgData.socialLinks} />
               </div>
 

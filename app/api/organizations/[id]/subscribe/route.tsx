@@ -106,11 +106,21 @@ export async function GET(
     const skip = (page - 1) * limit;
     const countOnly = url.searchParams.get("countOnly") === "true";
 
+    console.log({ organizationId, limit, page, skip, countOnly });
+
     // If only count is needed, return just the count
     if (countOnly) {
-      const count = await db.collection("subscriptions").countDocuments({
-        organizationId: new ObjectId(organizationId),
-      });
+      const count = await db
+        .collection("subscriptions")
+        .aggregate([
+          { $match: { organizationId: organizationId } },
+          { $group: { _id: "$userId" } },
+          { $count: "uniqueSubscribers" },
+        ])
+        .toArray()
+        .then((result) => result[0]?.uniqueSubscribers || 0);
+
+      console.log("Subscriber count:", count);
 
       return NextResponse.json({
         success: true,
@@ -131,7 +141,7 @@ export async function GET(
     const totalSubscribers = await db
       .collection("subscriptions")
       .countDocuments({
-        organizationId: new ObjectId(organizationId),
+        organizationId: organizationId,
       });
 
     // Fetch user details for each subscriber
