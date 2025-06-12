@@ -20,7 +20,7 @@ import {
   OrganizationBannerField,
   OrganizationWebsiteField,
   OrganizationContactEmailField,
-  OrganizationSocialLinksField,
+  OrganizationSocialMediaField,
 } from "./OrganizationFormComponents";
 import { uploadImageToSupabase } from "@/app/utils/supabase/imageUploadUtil";
 
@@ -54,6 +54,8 @@ export default function OrganizationProfileForm({
         twitter: "",
         instagram: "",
         linkedin: "",
+        github: "",
+        website: "",
       },
     },
   });
@@ -166,7 +168,7 @@ export default function OrganizationProfileForm({
           <OrganizationBannerField control={form.control} />
           <OrganizationWebsiteField control={form.control} />
           <OrganizationContactEmailField control={form.control} />
-          <OrganizationSocialLinksField control={form.control} />
+          <OrganizationSocialMediaField control={form.control} />
 
           <div className="flex gap-4 justify-end">
             <Button

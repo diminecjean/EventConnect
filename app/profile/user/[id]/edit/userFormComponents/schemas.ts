@@ -13,7 +13,6 @@ export const userProfileFormSchema = z.object({
   organization: z.string().optional(),
   profilePicture: z.any().optional(),
   interests: z.array(z.string()).optional(),
-  // Add this new section for social media
   socialMedia: z
     .object({
       linkedin: urlOrEmpty.optional(),
@@ -24,7 +23,6 @@ export const userProfileFormSchema = z.object({
       website: urlOrEmpty.optional(),
     })
     .optional(),
-  // Keep other fields as they are
 });
 
 export type UserProfileFormValues = z.infer<typeof userProfileFormSchema>;
