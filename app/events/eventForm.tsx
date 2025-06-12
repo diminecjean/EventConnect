@@ -90,66 +90,92 @@ export default function EventForm({
     type: string,
     value: string,
   ) => {
+    // Create a copy of the current date to avoid mutation
     const currentDate = field.value || new Date();
     let newDate = new Date(currentDate);
 
+    // Apply the time change
     if (type === "hour") {
       const hour = parseInt(value, 10);
-      newDate.setHours(newDate.getHours() >= 12 ? hour + 12 : hour);
+      const isPM = newDate.getHours() >= 12;
+      newDate.setHours(isPM ? hour + 12 : hour);
     } else if (type === "minute") {
       newDate.setMinutes(parseInt(value, 10));
     } else if (type === "ampm") {
       const hours = newDate.getHours();
+      const hour = hours % 12;
       if (value === "AM" && hours >= 12) {
-        newDate.setHours(hours - 12);
+        newDate.setHours(hour);
       } else if (value === "PM" && hours < 12) {
-        newDate.setHours(hours + 12);
+        newDate.setHours(hour + 12);
       }
     }
 
-    // Update the field WITHOUT triggering validation on the rest of the form
+    // Update the field without triggering validation
     field.onChange(newDate);
 
-    // Handle specific fields - similar pattern to what's already in your date selection
+    // Update date fields with explicit validation=false options
     if (field.name === "startTime") {
-      // Update the startDate field in the background without triggering validation
-      form.setValue("startDate", new Date(newDate), { shouldValidate: false });
-    } else if (field.name === "endTime") {
-      // Update the endDate field in the background without triggering validation
-      form.setValue("endDate", new Date(newDate), { shouldValidate: false });
+      form.setValue("startDate", new Date(newDate), {
+        shouldValidate: false,
+        shouldDirty: true,
+        shouldTouch: false,
+      });
 
-      // Only validate the specific time relationship if needed
-      if (form.getValues("startDate")) {
-        // Modify validateEndTime to only set error on endTime, not validate entire form
-        const startTime = form.getValues("startTime");
-        const startDate = form.getValues("startDate");
+      // Only validate time relationship in specific cases
+      if (form.getValues("endTime")) {
+        // Check time relationship only, without full form validation
+        const endTime = form.getValues("endTime");
+        const startDate = newDate;
+        const endDate = form.getValues("endDate");
 
-        if (startDate && startTime && newDate) {
-          // Check if same day
-          const sameDay =
-            startDate.getFullYear() === newDate.getFullYear() &&
-            startDate.getMonth() === newDate.getMonth() &&
-            startDate.getDate() === newDate.getDate();
-
-          if (sameDay) {
-            const startHours = startTime.getHours();
-            const startMinutes = startTime.getMinutes();
-            const endHours = newDate.getHours();
-            const endMinutes = newDate.getMinutes();
-
-            if (
-              endHours < startHours ||
-              (endHours === startHours && endMinutes <= startMinutes)
-            ) {
-              form.setError("endTime", {
-                type: "manual",
-                message: "End time must be after start time on the same day",
-              });
-            } else {
-              form.clearErrors("endTime");
-            }
-          }
+        // Only if on same day
+        if (endDate && endTime && isSameDay(startDate, endDate)) {
+          validateTimeRelationship(startDate, endTime);
         }
+      }
+    } else if (field.name === "endTime") {
+      form.setValue("endDate", new Date(newDate), {
+        shouldValidate: false,
+        shouldDirty: true,
+        shouldTouch: false,
+      });
+
+      // Validate the time relationship without triggering full validation
+      if (form.getValues("startTime")) {
+        const startTime = form.getValues("startTime");
+        validateTimeRelationship(startTime, newDate);
+      }
+    }
+  };
+
+  // Helper function to check if dates are the same day
+  const isSameDay = (date1: Date, date2: Date): boolean => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  };
+
+  // Helper to validate time relationship without triggering full validation
+  const validateTimeRelationship = (startTime: Date, endTime: Date) => {
+    if (isSameDay(startTime, endTime)) {
+      const startHours = startTime.getHours();
+      const startMinutes = startTime.getMinutes();
+      const endHours = endTime.getHours();
+      const endMinutes = endTime.getMinutes();
+
+      if (
+        endHours < startHours ||
+        (endHours === startHours && endMinutes <= startMinutes)
+      ) {
+        form.setError("endTime", {
+          type: "manual",
+          message: "End time must be after start time on the same day",
+        });
+      } else {
+        form.clearErrors("endTime");
       }
     }
   };
@@ -201,7 +227,27 @@ export default function EventForm({
       </h1>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+          onKeyDown={(e) => {
+            // Existing code for Enter key handling
+            if (
+              e.key === "Enter" &&
+              e.target instanceof HTMLInputElement &&
+              e.target.type !== "textarea" &&
+              !e.target.classList.contains("tag-input")
+            ) {
+              e.preventDefault();
+            }
+          }}
+          onClick={(e) => {
+            // Prevent accidental form submission from double-clicks inside popover
+            if ((e.target as HTMLElement).closest('[role="dialog"]')) {
+              e.stopPropagation();
+            }
+          }}
+        >
           <FormField
             control={form.control}
             name="bannerUrl"
@@ -280,7 +326,10 @@ export default function EventForm({
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
+                      <PopoverContent
+                        className="w-auto p-0"
+                        onPointerDownOutside={(e) => e.preventDefault()}
+                      >
                         <div className="sm:flex bg-black">
                           <Calendar
                             mode="single"
@@ -320,13 +369,15 @@ export default function EventForm({
                                           : "ghost"
                                       }
                                       className="sm:w-full shrink-0 aspect-square"
-                                      onClick={() =>
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
                                         handleTimeChange(
                                           field,
                                           "hour",
                                           hour.toString(),
-                                        )
-                                      }
+                                        );
+                                      }}
                                     >
                                       {hour}
                                     </Button>
@@ -353,13 +404,15 @@ export default function EventForm({
                                         : "ghost"
                                     }
                                     className="sm:w-full shrink-0 aspect-square"
-                                    onClick={() =>
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
                                       handleTimeChange(
                                         field,
                                         "minute",
                                         minute.toString(),
-                                      )
-                                    }
+                                      );
+                                    }}
                                   >
                                     {minute.toString().padStart(2, "0")}
                                   </Button>
@@ -386,9 +439,11 @@ export default function EventForm({
                                         : "ghost"
                                     }
                                     className="sm:w-full shrink-0 aspect-square"
-                                    onClick={() =>
-                                      handleTimeChange(field, "ampm", ampm)
-                                    }
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      handleTimeChange(field, "ampm", ampm);
+                                    }}
                                   >
                                     {ampm}
                                   </Button>
@@ -430,7 +485,10 @@ export default function EventForm({
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
+                      <PopoverContent
+                        className="w-auto p-0"
+                        onPointerDownOutside={(e) => e.preventDefault()}
+                      >
                         <div className="sm:flex bg-black">
                           <Calendar
                             mode="single"
@@ -482,7 +540,9 @@ export default function EventForm({
                                           : "ghost"
                                       }
                                       className="sm:w-full shrink-0 aspect-square"
-                                      onClick={() => {
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
                                         handleTimeChange(
                                           field,
                                           "hour",
@@ -521,7 +581,9 @@ export default function EventForm({
                                         : "ghost"
                                     }
                                     className="sm:w-full shrink-0 aspect-square"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
                                       handleTimeChange(
                                         field,
                                         "minute",
@@ -560,7 +622,9 @@ export default function EventForm({
                                         : "ghost"
                                     }
                                     className="sm:w-full shrink-0 aspect-square"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
                                       handleTimeChange(field, "ampm", ampm);
                                       // Validate time if same day
                                       validateEndTime(
@@ -953,7 +1017,14 @@ export default function EventForm({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={
+                isSubmitting ||
+                !form.formState.isValid ||
+                Object.keys(form.formState.errors).length > 0
+              }
+            >
               {isSubmitting
                 ? "Saving..."
                 : isEditMode

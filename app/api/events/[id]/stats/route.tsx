@@ -75,21 +75,6 @@ export async function GET(
       ])
       .toArray();
 
-    // TODO: Get attendee ratings
-    const attendeeRatings = await db
-      .collection("eventFeedback")
-      .aggregate([
-        { $match: { eventId: eventId } },
-        {
-          $group: {
-            _id: "$rating", // Assuming ratings are 1-5
-            count: { $sum: 1 },
-          },
-        },
-        { $sort: { _id: 1 } },
-      ])
-      .toArray();
-
     // Get attendee demographics
     const attendeeDemographics = await db
       .collection("registrations")
@@ -125,15 +110,28 @@ export async function GET(
       ])
       .toArray();
 
-    // TODO: Get feedback comments
     const feedbackComments = await db
-      .collection("eventFeedback")
+      .collection("feedback")
       .find({
         eventId: eventId,
         comment: { $exists: true, $ne: "" },
       })
       .sort({ createdAt: -1 })
       .limit(10)
+      .toArray();
+
+    const attendeeRatings = await db
+      .collection("feedback")
+      .aggregate([
+        { $match: { eventId: eventId } },
+        {
+          $group: {
+            _id: "$rating",
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ])
       .toArray();
 
     return NextResponse.json({

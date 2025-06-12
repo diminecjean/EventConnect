@@ -28,6 +28,14 @@ export type UserProfile = {
   organization?: string; // Working company
   bio?: string;
   profilePicture?: string;
+  socialMedia?: {
+    twitter?: string;
+    linkedin?: string;
+    github?: string;
+    instagram?: string;
+    facebook?: string;
+    website?: string;
+  };
   interests: string[]; // Topics of interest
   eventsAttended: string[]; // Array of event IDs
   badgesEarned?: string[]; // Earned badges

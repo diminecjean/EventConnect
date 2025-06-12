@@ -164,3 +164,101 @@ export async function PUT(
     );
   }
 }
+
+// DELETE - Delete an event by ID
+export async function DELETE(
+  request: NextRequest,
+  props: { params: Promise<{ id: string }> },
+) {
+  const params = await props.params;
+  try {
+    // Verify we have an ID
+    if (!params || !params.id) {
+      return NextResponse.json(
+        { error: "Event ID is required" },
+        { status: 400 },
+      );
+    }
+
+    const id = params.id;
+    const db = await connectToDB();
+
+    // Get the event first (to use for notifications)
+    let eventToDelete = null;
+
+    if (ObjectId.isValid(id)) {
+      eventToDelete = await db.collection("events").findOne({
+        _id: new ObjectId(id),
+      });
+    } else {
+      eventToDelete = await db.collection("events").findOne({ id: id });
+    }
+
+    if (!eventToDelete) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    // Get organization data for notifications
+    const orgData = await db.collection("organizations").findOne({
+      _id: new ObjectId(eventToDelete.organizationId),
+    });
+
+    // Try to delete by MongoDB ObjectId first, then by custom ID field
+    let result = null;
+
+    if (ObjectId.isValid(id)) {
+      result = await db.collection("events").deleteOne({
+        _id: new ObjectId(id),
+      });
+    } else {
+      result = await db.collection("events").deleteOne({ id: id });
+    }
+
+    // Return 404 if event not found (shouldn't happen since we already checked)
+    if (!result?.deletedCount) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    // Clean up related data - delete registrations, feedback, etc.
+    await db.collection("registrations").deleteMany({ eventId: id });
+    await db.collection("feedback").deleteMany({ eventId: id });
+
+    // Create notifications for subscribers
+    if (orgData) {
+      const subscribers = await db
+        .collection("subscriptions")
+        .find({ organizationId: eventToDelete.organizationId })
+        .toArray();
+
+      if (subscribers.length > 0) {
+        // Create notifications for all subscribers
+        const notifications = subscribers.map((subscription) => ({
+          recipientId: subscription.userId,
+          type: "DELETE_EVENT",
+          title: `Event Cancelled by ${orgData.name}`,
+          content: `${orgData.name} cancelled an event: ${eventToDelete.title}`,
+          senderId: eventToDelete.organizationId,
+          isRead: false,
+          createdAt: new Date(),
+        }));
+
+        // Insert notifications to database
+        await db.collection("notifications").insertMany(notifications);
+      }
+    }
+
+    return NextResponse.json(
+      {
+        status: "success",
+        message: "Event deleted successfully",
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    return NextResponse.json(
+      { error: "Failed to delete event" },
+      { status: 500 },
+    );
+  }
+}

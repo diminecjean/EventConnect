@@ -97,6 +97,15 @@ export default function Home() {
     });
   }, []);
 
+  // Sort events by date (most recent first)
+  const sortEventsByDate = (events: FormattedEvent[]): FormattedEvent[] => {
+    return [...events].sort(
+      (a, b) =>
+        new Date(b.date.startDate).getTime() -
+        new Date(a.date.startDate).getTime(),
+    );
+  };
+
   // Apply client-side filters whenever filters change
   useEffect(() => {
     if (searchResults === null) {
@@ -216,12 +225,13 @@ export default function Home() {
   };
 
   // Get the list of events to display (filtered results, search results, or all events)
-  const displayedEvents =
+  const displayedEvents = sortEventsByDate(
     filteredResults !== null
       ? filteredResults
       : searchResults !== null
         ? searchResults
-        : events;
+        : events,
+  );
 
   // Get active filter summary text
   const getFilterSummary = () => {
@@ -311,11 +321,7 @@ export default function Home() {
           )}
         </div>
 
-        {isSearching ? (
-          <div className="w-full py-12 flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
-          </div>
-        ) : isInitialLoading ? (
+        {isSearching || isInitialLoading ? (
           <div className="w-full flex flex-col gap-6">
             <SkeletonEventCard array={[1, 2, 3]} />
           </div>

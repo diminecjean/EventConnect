@@ -76,8 +76,10 @@ export default function EventCard({
               className="object-cover dark:drop-shadow-[0_0_0.3rem_#ffffff70] saturate-0 brightness-0 dark:saturate-100 dark:brightness-100"
               src={eventLogo.src}
               alt={eventLogo.alt}
-              fill
-              sizes="(max-width: 768px) 100vw, 200px"
+              // fill
+              width={200}
+              height={200}
+              // sizes="(max-width: 768px) 100vw, 200px"
               priority
             />
           </div>

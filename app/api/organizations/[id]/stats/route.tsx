@@ -139,12 +139,27 @@ export async function GET(
       ])
       .toArray();
 
+    const attendeeRatings = await db
+      .collection("feedback")
+      .aggregate([
+        { $match: { eventId: { $in: eventIds } } },
+        {
+          $group: {
+            _id: "$rating",
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ])
+      .toArray();
+
     return NextResponse.json({
       subscriptionStats,
       registrationStats,
       attendeeDemographics,
       totalEvents: events.length,
       eventIds,
+      attendeeRatings,
     });
   } catch (error) {
     console.error("Error fetching organization stats:", error);

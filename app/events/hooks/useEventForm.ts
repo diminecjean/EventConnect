@@ -72,8 +72,9 @@ export function useEventForm({
       timelineItems: [],
       ...defaultValues,
     },
-    mode: "onSubmit",
-    reValidateMode: "onSubmit",
+    mode: "onTouched",
+    reValidateMode: "onChange",
+    shouldFocusError: true,
   });
 
   // #region isEditMode

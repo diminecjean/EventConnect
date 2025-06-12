@@ -13,13 +13,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BASE_URL } from "@/app/api/constants";
 import { useAuth } from "@/app/context/authContext";
 import { Event } from "@/app/typings/events/typings";
-import EventCard from "../../EventCard";
+import OrgEventCard from "./OrgEventCard";
 import TeamMemberCard from "./TeamMemberCard";
 import AddTeamMembersModal from "./AddTeamMemberModal";
 import { SubscribeButton } from "./SubscribeButton";
-import OrganizationStats from "./OrganizationStats";
-import EventStats from "./EventStats";
-import EventStatCard from "./EventStatCard";
+import OrganizationStats from "./StatsComponents/OrganizationStats";
+import EventStatCard from "./StatsComponents/EventStatCard";
+import {
+  SkeletonOrganizationProfile,
+  SkeletonUserCardHorziontal,
+} from "@/components/ui/skeleton";
+import PictureGallery from "./PictureGallery";
+import OrganizationPictureUploader from "./OrganizationPictureUploader";
 
 function TeamMembers({ orgId }: { orgId: string }) {
   const [members, setMembers] = useState<UserProfile[]>([]);
@@ -50,11 +55,7 @@ function TeamMembers({ orgId }: { orgId: string }) {
   }, [fetchTeamMembers]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <SkeletonUserCardHorziontal />;
   }
 
   if (members.length === 0) {
@@ -90,6 +91,13 @@ const OrgPageTabs = ({
   const router = useRouter();
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const [teamMembersKey, setTeamMembersKey] = useState(Date.now()); // Key to force re-render
+  const [isPictureModalOpen, setIsPictureModalOpen] = useState(false);
+  const [pictureRefreshTrigger, setPictureRefreshTrigger] = useState(0);
+
+  // Add this function to handle picture upload success
+  const handlePictureUploadSuccess = () => {
+    setPictureRefreshTrigger(Date.now());
+  };
 
   const handleCreateEvent = () => {
     router.push(`/events/new?orgId=${orgId}&&orgName=${orgName}`);
@@ -129,7 +137,11 @@ const OrgPageTabs = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {events && events.length > 0 ? (
                 events.map((event) => (
-                  <EventCard key={event._id} event={event} />
+                  <OrgEventCard
+                    key={event._id}
+                    event={event}
+                    canEditOrg={canEditOrg}
+                  />
                 ))
               ) : (
                 <div className="col-span-2 text-center py-8 text-gray-500">
@@ -142,12 +154,11 @@ const OrgPageTabs = ({
         {canEditOrg && (
           <TabsContent value="stats">
             <div>
-              <h1 className="font-semibold text-xl my-4">Stats</h1>
               <div className="space-y-6">
                 <div className="p-4 border rounded-lg shadow-sm">
-                  <h2 className="text-2xl font-bold mb-4">
+                  {/* <h2 className="text-2xl font-bold mb-4">
                     Organization Statistics
-                  </h2>
+                  </h2> */}
                   <OrganizationStats organizationId={orgId} />
                 </div>
 
@@ -195,7 +206,7 @@ const OrgPageTabs = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {partneredEvents && partneredEvents.length > 0 ? (
                 partneredEvents.map((event) => (
-                  <EventCard key={event._id} event={event} />
+                  <OrgEventCard key={event._id} event={event} />
                 ))
               ) : (
                 <div className="col-span-2 text-center py-8 text-gray-500">
@@ -207,15 +218,23 @@ const OrgPageTabs = ({
         </TabsContent>
         <TabsContent value="pictures">
           <div>
-            <h1 className="font-semibold text-xl my-4">Pictures</h1>
-            {canEditOrg && (
-              <Button
-                variant="outline_violet"
-                className="rounded-lg text-violet-500 font-semibold"
-              >
-                Upload Pictures
-              </Button>
-            )}
+            <div className="flex flex-row justify-between items-center">
+              <h1 className="font-semibold text-xl my-4">Pictures</h1>
+              {canEditOrg && (
+                <Button
+                  variant="outline_violet"
+                  className="rounded-lg text-violet-500 font-semibold"
+                  onClick={() => setIsPictureModalOpen(true)}
+                >
+                  Upload Pictures
+                </Button>
+              )}
+            </div>
+            <PictureGallery
+              organizationId={orgId}
+              canEditOrg={canEditOrg}
+              refreshTrigger={pictureRefreshTrigger}
+            />
           </div>
         </TabsContent>
       </Tabs>
@@ -225,6 +244,12 @@ const OrgPageTabs = ({
         onOpenChange={setIsAddTeamModalOpen}
         orgId={orgId}
         onSuccess={refreshTeamMembers}
+      />
+      <OrganizationPictureUploader
+        isOpen={isPictureModalOpen}
+        onOpenChange={setIsPictureModalOpen}
+        organizationId={orgId}
+        onSuccess={handlePictureUploadSuccess}
       />
     </>
   );
@@ -386,14 +411,7 @@ export default function OrganizationPage() {
   }, [id, user, organizations]);
 
   if (isLoading) {
-    return (
-      // <main className="w-full mt-20 flex flex-col gap-4 items-center justify-center">
-      //   <p>Loading organization details...</p>
-      // </main>
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <SkeletonOrganizationProfile />;
   }
 
   if (!org) return notFound();

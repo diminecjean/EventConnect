@@ -184,7 +184,7 @@ export function useRegistrationForm(eventId: string) {
           userId: user._id,
           formData: data,
           registrationDate: new Date(),
-          checkin: false,
+          checkedIn: false,
           attendanceStatus: "registered",
         }),
       });

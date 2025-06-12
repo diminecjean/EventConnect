@@ -1,12 +1,30 @@
-import { z } from "zod";
+import * as z from "zod";
 
-const FileOrString = z.union([z.instanceof(File), z.string(), z.null()]);
+// Add this validation function
+const urlOrEmpty = z.union([
+  z.string().url("Please enter a valid URL").or(z.literal("")),
+  z.literal(""),
+]);
 
 export const userProfileFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   bio: z.string().optional(),
-  profilePicture: FileOrString.optional(),
+  position: z.string().optional(),
+  organization: z.string().optional(),
+  profilePicture: z.any().optional(),
   interests: z.array(z.string()).optional(),
+  // Add this new section for social media
+  socialMedia: z
+    .object({
+      linkedin: urlOrEmpty.optional(),
+      twitter: urlOrEmpty.optional(),
+      instagram: urlOrEmpty.optional(),
+      github: urlOrEmpty.optional(),
+      facebook: urlOrEmpty.optional(),
+      website: urlOrEmpty.optional(),
+    })
+    .optional(),
+  // Keep other fields as they are
 });
 
 export type UserProfileFormValues = z.infer<typeof userProfileFormSchema>;
