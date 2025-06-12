@@ -16,8 +16,6 @@ export async function POST(
 
     const db = await connectToDB();
 
-    console.log({ organizationId, userId });
-
     // Create subscription in the dedicated subscriptions collection
     // Using upsert to prevent duplicates
     const result = await db.collection("subscriptions").updateOne(
@@ -35,8 +33,6 @@ export async function POST(
 
     // Check if a new document was inserted
     const isNewSubscription = result.upsertedCount === 1;
-
-    console.log({ isNewSubscription, result });
 
     return NextResponse.json({
       success: true,
@@ -106,8 +102,6 @@ export async function GET(
     const skip = (page - 1) * limit;
     const countOnly = url.searchParams.get("countOnly") === "true";
 
-    console.log({ organizationId, limit, page, skip, countOnly });
-
     // If only count is needed, return just the count
     if (countOnly) {
       const count = await db
@@ -119,8 +113,6 @@ export async function GET(
         ])
         .toArray()
         .then((result) => result[0]?.uniqueSubscribers || 0);
-
-      console.log("Subscriber count:", count);
 
       return NextResponse.json({
         success: true,
