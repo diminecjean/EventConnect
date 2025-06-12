@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { notFound, useParams } from "next/navigation";
-import { OrganizationProfile as OrgProfileType } from "../../../typings/profile/typings";
+import { OrganizationProfile } from "../../../typings/profile/typings";
 import { Event } from "@/app/typings/events/typings";
 import { BASE_URL } from "@/app/api/constants";
 import { useAuth } from "@/app/context/authContext";
@@ -12,7 +12,7 @@ import OrganizationTabs from "./OrgPageComponents/OrganizationTabs";
 export default function OrganizationPage() {
   const params = useParams();
   const id = params.id as string;
-  const [org, setOrg] = useState<OrgProfileType | null>(null);
+  const [org, setOrg] = useState<OrganizationProfile | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [partneredEvents, setPartneredEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);

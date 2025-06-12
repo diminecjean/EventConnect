@@ -20,7 +20,7 @@ import { useAuth } from "@/app/context/authContext";
 import BadgesList from "./getBadges";
 import AttendedEventsList from "./getAttendedEvents";
 import { SkeletonUserProfile } from "@/components/ui/skeleton";
-import SocialMediaLinks from "./SocialMediaLinks";
+import SocialMediaLinks from "../../SocialMediaLinks";
 
 export default function UserProfilePage() {
   const params = useParams();

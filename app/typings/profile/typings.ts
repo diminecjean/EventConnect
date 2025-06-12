@@ -5,7 +5,7 @@ export type OrganizationProfile = {
   logo: string;
   banner?: string;
   website?: string;
-  social_links?: {
+  socialLinks?: {
     twitter?: string;
     linkedin?: string;
     github?: string;
