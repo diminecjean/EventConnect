@@ -14,7 +14,13 @@ type AttendedEvent = {
   eventImage?: string;
 };
 
-export default function AttendedEventsList({ userId }: { userId: string }) {
+export default function AttendedEventsList({
+  userId,
+  canEdit,
+}: {
+  userId: string;
+  canEdit: boolean;
+}) {
   const [attendedEvents, setAttendedEvents] = useState<AttendedEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -60,7 +66,7 @@ export default function AttendedEventsList({ userId }: { userId: string }) {
   }
 
   if (attendedEvents.length === 0) {
-    return (
+    return canEdit ? (
       <p className="text-sm text-gray-400 italic">
         No events attended yet. Browse events now{" "}
         <Link href="/" className="text-violet-400">
@@ -68,6 +74,8 @@ export default function AttendedEventsList({ userId }: { userId: string }) {
         </Link>
         .
       </p>
+    ) : (
+      <p className="text-sm text-gray-400 italic">No events attended yet.</p>
     );
   }
 

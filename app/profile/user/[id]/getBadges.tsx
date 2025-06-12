@@ -48,8 +48,7 @@ export default function Badges({ canEdit }: { canEdit?: boolean }) {
 
   return (
     <>
-      {/* Only render the section if there are badges or user can edit their profile */}
-      {(badges.length > 0 || canEdit) && (
+      {
         <div>
           <h2 className="flex items-center gap-2 text-lg font-semibold mb-2">
             <BadgeCheck size={18} className="text-violet-400" />
@@ -57,10 +56,16 @@ export default function Badges({ canEdit }: { canEdit?: boolean }) {
           </h2>
 
           {badges.length === 0 ? (
-            <p className="text-sm italic text-gray-400">
-              You haven't earned any badges yet. Attend events and check in to
-              earn badges!
-            </p>
+            canEdit ? (
+              <p className="text-sm italic text-gray-400">
+                You haven't earned any badges yet. Attend events and check in to
+                earn badges!
+              </p>
+            ) : (
+              <p className="text-sm text-gray-400 italic">
+                No badges available.
+              </p>
+            )
           ) : (
             <div className="flex flex-row justify-start gap-4">
               {badges.map((badge) => (
@@ -75,7 +80,7 @@ export default function Badges({ canEdit }: { canEdit?: boolean }) {
             </div>
           )}
         </div>
-      )}
+      }
     </>
   );
 }

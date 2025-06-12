@@ -173,9 +173,13 @@ export default function UserProfilePage() {
                   <p className="text-sm text-gray-300 leading-relaxed">
                     {user.bio}
                   </p>
-                ) : (
+                ) : canEdit ? (
                   <p className="text-sm text-gray-400 italic">
                     No bio available. Add one to let others know more about you!
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-400 italic">
+                    No bio available.
                   </p>
                 )}
               </div>
@@ -197,10 +201,14 @@ export default function UserProfilePage() {
                       </span>
                     ))}
                   </div>
-                ) : (
+                ) : canEdit ? (
                   <p className="text-sm text-gray-400 italic">
                     No interests listed. Add some to let others know what you
                     enjoy!
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-400 italic">
+                    No interests listed.
                   </p>
                 )}
               </div>
@@ -230,7 +238,7 @@ export default function UserProfilePage() {
                   <Calendar size={18} className="text-violet-400" />
                   Events Attended
                 </h2>
-                <AttendedEventsList userId={id} />
+                <AttendedEventsList userId={id} canEdit={canEdit} />
               </div>
             </div>
           </div>
