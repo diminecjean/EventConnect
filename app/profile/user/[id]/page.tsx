@@ -164,28 +164,29 @@ export default function UserProfilePage() {
             {/* Left column - About and Interests */}
             <div className="md:col-span-1">
               {/* Bio */}
-              {user.bio && (
-                <div className="mb-8 bg-stone-900/50 p-4 rounded-lg shadow-inner border border-stone-800">
-                  <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <User size={18} className="text-violet-400" />
-                    About
-                  </h2>
+              <div className="mb-8 bg-stone-900/50 p-4 rounded-lg shadow-inner border border-stone-800">
+                <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <User size={18} className="text-violet-400" />
+                  About
+                </h2>
+                {user.bio ? (
                   <p className="text-sm text-gray-300 leading-relaxed">
                     {user.bio}
                   </p>
-                </div>
-              )}
+                ) : (
+                  <p className="text-sm text-gray-400 italic">
+                    No bio available. Add one to let others know more about you!
+                  </p>
+                )}
+              </div>
 
               {/* Interests */}
-              {user.interests && user.interests.length > 0 && (
-                <div className="mb-8 bg-stone-900/50 p-4 rounded-lg shadow-inner border border-stone-800">
-                  <h2 className="flex items-center gap-2 text-lg font-semibold mb-3">
-                    <LucideHeartHandshake
-                      size={18}
-                      className="text-violet-400"
-                    />
-                    Interests
-                  </h2>
+              <div className="mb-8 bg-stone-900/50 p-4 rounded-lg shadow-inner border border-stone-800">
+                <h2 className="flex items-center gap-2 text-lg font-semibold mb-3">
+                  <LucideHeartHandshake size={18} className="text-violet-400" />
+                  Interests
+                </h2>
+                {user.interests && user.interests.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {user.interests.map((interest, index) => (
                       <span
@@ -196,8 +197,13 @@ export default function UserProfilePage() {
                       </span>
                     ))}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <p className="text-sm text-gray-400 italic">
+                    No interests listed. Add some to let others know what you
+                    enjoy!
+                  </p>
+                )}
+              </div>
 
               {/* Organizations involved */}
               {user.organizations && user.organizations.length > 0 && (

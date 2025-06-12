@@ -12,6 +12,7 @@ const nextConfig = {
       "example.com",
       "secure.meetupstatic.com",
       "media.licdn.com",
+      "randomuser.me",
     ],
   },
 };

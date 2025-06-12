@@ -57,14 +57,10 @@ export default function Badges({ canEdit }: { canEdit?: boolean }) {
           </h2>
 
           {badges.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-center text-gray-400">
-                  You haven't earned any badges yet. Attend events and check in
-                  to earn badges!
-                </p>
-              </CardContent>
-            </Card>
+            <p className="text-sm italic text-gray-400">
+              You haven't earned any badges yet. Attend events and check in to
+              earn badges!
+            </p>
           ) : (
             <div className="flex flex-row justify-start gap-4">
               {badges.map((badge) => (

@@ -60,7 +60,15 @@ export default function AttendedEventsList({ userId }: { userId: string }) {
   }
 
   if (attendedEvents.length === 0) {
-    return <p className="text-sm text-gray-400">No events attended yet.</p>;
+    return (
+      <p className="text-sm text-gray-400 italic">
+        No events attended yet. Browse events now{" "}
+        <Link href="/" className="text-violet-400">
+          here
+        </Link>
+        .
+      </p>
+    );
   }
 
   return (
