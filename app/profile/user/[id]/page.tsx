@@ -228,7 +228,7 @@ export default function UserProfilePage() {
             {/* Right column - Badges and Events */}
             <div className="md:col-span-2">
               {/* Badges with visual distinction */}
-              <div className="mb-8 bg-gradient-to-br from-stone-900/70 to-stone-900/30 p-6 rounded-lg shadow-md border border-stone-700">
+              <div className="mb-8 bg-stone-900/50 p-6 rounded-lg shadow-inner border border-stone-800">
                 <BadgesList canEdit={canEdit} />
               </div>
 
