@@ -41,7 +41,7 @@ export async function GET(
       console.log("User not found:", id);
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    console.log("User found:", { user });
+
     return NextResponse.json(
       {
         status: "success",
