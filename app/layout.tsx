@@ -32,7 +32,7 @@ export default function RootLayout({
             </div>
             <div className="mx-6 md:mx-16 lg:mx-auto max-w-5xl">{children}</div>
             <div className="fixed inset-0 -z-10">
-              <div className="absolute inset-0 bg-black/60 z-10" />
+              <div className="absolute inset-0 bg-black/70 z-10" />
               <Image
                 src="/landingbg.png"
                 fill

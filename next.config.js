@@ -13,6 +13,7 @@ const nextConfig = {
       "secure.meetupstatic.com",
       "media.licdn.com",
       "randomuser.me",
+      "placeimg.com", //this actually doesnt exist
     ],
   },
 };
