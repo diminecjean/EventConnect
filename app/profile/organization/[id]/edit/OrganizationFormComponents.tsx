@@ -107,8 +107,8 @@ export function OrganizationLogoField({ control }: FormFieldProps) {
                 onChange={onChange}
                 value={value}
                 maxSizeMB={5}
-                width={150}
-                height={150}
+                width={180}
+                height={180}
                 scaleDesc="Recommended size: 150x150 pixels"
                 previewUrl={previewUrl}
               />

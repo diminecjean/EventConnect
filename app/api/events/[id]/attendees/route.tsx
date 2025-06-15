@@ -98,6 +98,8 @@ export async function GET(
             },
             registrationDate: { $ifNull: ["$registrationDate", "$createdAt"] },
             formResponses: { $ifNull: ["$formData", {}] },
+            registrationFormId: "$registrationFormId",
+            registrationFormName: "$registrationFormName",
             checkedIn: { $ifNull: ["$checkedIn", false] },
             checkedInTime: "$checkedInTime",
           },
@@ -141,6 +143,8 @@ export async function GET(
               },
               registrationDate: reg.registrationDate || reg.createdAt,
               formResponses: reg.formData || {},
+              registrationFormId: reg.registrationFormId,
+              registrationFormName: reg.registrationFormName,
               checkedIn: reg.checkedIn || false,
               checkedInTime: reg.checkinTime,
             });

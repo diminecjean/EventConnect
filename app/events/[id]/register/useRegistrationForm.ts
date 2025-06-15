@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Event } from "@/app/typings/events/typings";
 import { useAuth } from "@/app/context/authContext";
+import { toast } from "sonner";
 
 export function useRegistrationForm(eventId: string) {
   const { user } = useAuth();
@@ -171,6 +172,10 @@ export function useRegistrationForm(eventId: string) {
       return;
     }
 
+    const selectedForm = event?.registrationForms.find(
+      (form: any) => form.id === selectedFormType,
+    );
+
     try {
       // Submit registration
       const response = await fetch(`/api/events/${eventId}/register`, {
@@ -181,6 +186,7 @@ export function useRegistrationForm(eventId: string) {
         body: JSON.stringify({
           eventId,
           registrationFormId: selectedFormType,
+          registrationFormName: selectedForm?.name || "Default Registration",
           userId: user._id,
           formData: data,
           registrationDate: new Date(),
@@ -193,11 +199,11 @@ export function useRegistrationForm(eventId: string) {
         throw new Error("Failed to register");
       }
 
-      alert("Registration successful!");
+      toast.success("Registration successful!");
       router.push(`/events/${eventId}`);
     } catch (error) {
       console.error("Registration error:", error);
-      alert("Registration failed. Please try again." + error);
+      toast.error("Registration failed. Please try again." + error);
     }
   };
 
