@@ -1020,9 +1020,10 @@ export default function EventForm({
             <Button
               type="submit"
               disabled={
-                isSubmitting ||
-                !form.formState.isValid ||
-                Object.keys(form.formState.errors).length > 0
+                isSubmitting
+                // The checks below prevents valid forms from submitting
+                //  || !form.formState.isValid ||
+                // Object.keys(form.formState.errors).length > 0
               }
             >
               {isSubmitting

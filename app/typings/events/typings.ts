@@ -87,6 +87,7 @@ export interface TimelineItem {
 
 export interface Speaker {
   id: string;
+  userId?: string;
   name: string;
   topic: string;
   introduction?: string;

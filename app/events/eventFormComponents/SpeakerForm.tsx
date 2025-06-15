@@ -120,7 +120,19 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
   ) => {
     const updatedSocialMedia = [...(speaker.socialMedia || [])];
     updatedSocialMedia[socialIndex] = newValue;
+
+    // Update parent component state
     update(index, "socialMedia", updatedSocialMedia);
+
+    // Update React Hook Form state
+    form.setValue(
+      `speakers.${index}.socialMedia.${socialIndex}.platform`,
+      newValue.platform,
+    );
+    form.setValue(
+      `speakers.${index}.socialMedia.${socialIndex}.url`,
+      newValue.url,
+    );
   };
 
   // Helper function to remove social media
@@ -137,10 +149,32 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
       platform: "twitter",
       url: "",
     };
+
+    // First update the parent component's state
     update(index, "socialMedia", [
       ...(speaker.socialMedia || []),
       newSocialMedia,
     ]);
+
+    // Then also update React Hook Form's state
+    const newIndex = (speaker.socialMedia || []).length;
+
+    // Use setTimeout to ensure this runs after the state update
+    setTimeout(() => {
+      // Register the new fields with React Hook Form
+      form.setValue(
+        `speakers.${index}.socialMedia.${newIndex}.id`,
+        newSocialMedia.id,
+      );
+      form.setValue(
+        `speakers.${index}.socialMedia.${newIndex}.platform`,
+        newSocialMedia.platform,
+      );
+      form.setValue(
+        `speakers.${index}.socialMedia.${newIndex}.url`,
+        newSocialMedia.url,
+      );
+    }, 0);
   };
 
   // Helper function to select a user
@@ -287,6 +321,12 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
               id={`speaker-name-${index}`}
               {...register(`speakers.${index}.name`)}
               placeholder="Speaker name"
+              onChange={(e) => {
+                // Let register handle the event first
+                register(`speakers.${index}.name`).onChange(e);
+                // Then update the parent component state
+                update(index, "name", e.target.value);
+              }}
             />
           </div>
 
@@ -298,6 +338,12 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
               id={`speaker-topic-${index}`}
               {...register(`speakers.${index}.topic`)}
               placeholder="Topic or session title"
+              onChange={(e) => {
+                // Let register handle the event first
+                register(`speakers.${index}.name`).onChange(e);
+                // Then update the parent component state
+                update(index, "topic", e.target.value);
+              }}
             />
           </div>
 
@@ -307,6 +353,12 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
               id={`speaker-org-${index}`}
               {...register(`speakers.${index}.organization`)}
               placeholder="Company or organization"
+              onChange={(e) => {
+                // Let register handle the event first
+                register(`speakers.${index}.name`).onChange(e);
+                // Then update the parent component state
+                update(index, "organization", e.target.value);
+              }}
             />
           </div>
 
@@ -318,6 +370,12 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
               id={`speaker-position-${index}`}
               {...register(`speakers.${index}.position`)}
               placeholder="Job title or role"
+              onChange={(e) => {
+                // Let register handle the event first
+                register(`speakers.${index}.name`).onChange(e);
+                // Then update the parent component state
+                update(index, "position", e.target.value);
+              }}
             />
           </div>
         </div>
@@ -336,8 +394,8 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
                     field.onChange(file);
                   }}
                   value={field.value}
-                  width={120}
-                  height={120}
+                  width={180}
+                  height={180}
                   scaleDesc="Square image recommended"
                   maxSizeMB={1}
                 />

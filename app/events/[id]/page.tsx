@@ -342,6 +342,11 @@ const EventTabs = ({
                           {item.time} - {item.title}
                         </TimelineTitle>
                         <TimelineDescription>
+                          {item.speaker && (
+                            <span className="text-sm italic text-violet-300">
+                              by {item.speaker}
+                            </span>
+                          )}
                           {item.description}
                         </TimelineDescription>
                       </TimelineContent>
@@ -361,15 +366,16 @@ const EventTabs = ({
         <TabsContent value="speakers">
           <div>
             <h1 className="font-semibold text-xl my-4">Speakers</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-6">
               {event.speakers && event.speakers.length > 0 ? (
                 event.speakers?.map((speaker, index) => (
                   <div
                     key={index}
-                    className="flex flex-col items-center text-clip max-w-xl p-4 hover:bg-white hover:bg-opacity-10 border rounded-lg shadow-sm hover:shadow-md transition-shadow h-full"
+                    className="flex flex-row bg-black/30 items-center p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow h-full"
                   >
-                    <div className="flex flex-col items-center flex-grow">
-                      <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-3">
+                    {/* Speaker image */}
+                    <div className="flex-shrink-0 mr-4">
+                      <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden">
                         {speaker.imageUrl ? (
                           <img
                             src={speaker.imageUrl}
@@ -385,38 +391,59 @@ const EventTabs = ({
                           </div>
                         )}
                       </div>
-                      <h3 className="font-semibold text-lg">{speaker.name}</h3>
-                      <p className="text-sm text-violet-600 mb-2">
+                    </div>
+
+                    {/* Speaker info */}
+                    <div className="flex flex-col flex-grow">
+                      <h3 className="font-semibold text-lg text-gray-200">
+                        {speaker.userId ? (
+                          <a
+                            href={`/profile/user/${speaker.userId}`}
+                            className="cursor-pointer hover:text-violet-400 transition-colors"
+                          >
+                            {speaker.name}
+                          </a>
+                        ) : (
+                          speaker.name
+                        )}
+                      </h3>
+                      <p className="text-xs text-violet-300 mb-2">
                         {speaker.position}
                         {speaker.organization
-                          ? ` in ${speaker.organization}`
+                          ? ` at ${speaker.organization}`
                           : ""}
                       </p>
-                      {speaker.introduction ?? (
-                        <p className="text-sm text-center text-gray-600">
-                          {speaker.introduction}
+
+                      {speaker.topic && (
+                        <p className="text-sm text-gray-300 mb-3">
+                          <span className="italic">
+                            &ldquo;{speaker.topic}&rdquo;
+                          </span>
                         </p>
                       )}
+
+                      {/* Social media links */}
+                      {speaker.socialMedia &&
+                        speaker.socialMedia.length > 0 && (
+                          <div className="flex gap-3 mt-auto">
+                            {speaker.socialMedia.map((link, id) => (
+                              <a
+                                key={id}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-gray-500 hover:text-violet-500 transition-colors"
+                              >
+                                {getSocialIcon(link.platform)}
+                              </a>
+                            ))}
+                          </div>
+                        )}
                     </div>
-                    {speaker.socialMedia && (
-                      <div className="flex gap-3 mt-3">
-                        {speaker.socialMedia.map((link, id) => (
-                          <a
-                            key={id}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gray-500 hover:text-violet-700"
-                          >
-                            {getSocialIcon(link.platform)}
-                          </a>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 ))
               ) : (
-                <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
+                <div className="col-span-2 text-center p-8 border border-dashed border-gray-300 rounded-lg col-span-2">
                   <p className="text-gray-500 italic">
                     No speakers available for this event yet.
                   </p>
@@ -506,7 +533,7 @@ const EventTabs = ({
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
+                <div className="col-span-2 text-center p-8 border border-dashed border-gray-300 rounded-lg">
                   <p className="text-gray-500 italic">
                     No sponsors available for this event yet.
                   </p>
@@ -994,7 +1021,7 @@ export default function EventPage({
                 {orgName}
               </span>
             </p>
-            <p className="mt-4">{event.description}</p>
+            <p className="mt-4 whitespace-pre-wrap">{event.description}</p>
             {/* Button for registration */}
             <div className="flex w-full justify-center my-4">
               {canEditOrg ? (
