@@ -57,7 +57,7 @@ export function NotificationBell() {
           </button>
         </PopoverTrigger>
         <PopoverContent className="bg-violet-300/50 border border-violet-400 max-h-[400px] flex flex-col">
-          <h3 className="text-md font-semibold px-4 py-2 sticky top-0 bg-violet-300/50 z-10">
+          <h3 className="text-md font-semibold px-4 py-2 sticky top-0 z-10">
             Notifications
           </h3>
 
