@@ -108,7 +108,7 @@ async function createEventBadge(db: Db, eventData: any, eventId: string) {
 
     const badgeData = {
       name: `${eventData.title} Participant`,
-      description: `Participated in ${eventData.title}, which took place on ${formattedStartDate} at ${eventData.location}.}`,
+      description: `Participated in ${eventData.title}, which took place on ${formattedStartDate} at ${eventData.location}.`,
       type: "PARTICIPANT",
       imageUrl: eventData.coverImageUrl || null,
       organizationId: eventData.organizationId,
