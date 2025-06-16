@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
 import { BASE_URL } from "@/app/api/constants";
 import { useAuth } from "@/app/context/authContext";
 import { Button } from "@/components/ui/button";
@@ -407,7 +406,7 @@ function FriendCard({
       <div className="shrink-0">
         {friend.profilePicture ? (
           <div className="w-16 h-16 rounded-full overflow-hidden">
-            <Image
+            <img
               src={friend.profilePicture}
               alt={`${friend.name}'s profile picture`}
               width={64}
@@ -456,7 +455,7 @@ function FriendRequestCard({
       <div className="shrink-0">
         {request.profilePicture ? (
           <div className="w-16 h-16 rounded-full overflow-hidden">
-            <Image
+            <img
               src={request.profilePicture}
               alt={`${request.name}'s profile picture`}
               width={64}
@@ -511,7 +510,7 @@ function SentRequestCard({
       <div className="shrink-0">
         {request.profilePicture ? (
           <div className="w-16 h-16 rounded-full overflow-hidden">
-            <Image
+            <img
               src={request.profilePicture}
               alt={`${request.name}'s profile picture`}
               width={64}
