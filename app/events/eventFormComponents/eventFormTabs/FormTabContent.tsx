@@ -1,4 +1,3 @@
-// FormTabContent.tsx
 import React from "react";
 import {
   FormField,
@@ -6,6 +5,7 @@ import {
   FormControl,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,13 @@ import { FormFieldConfig } from "../FormFieldConfig";
 import { FormFieldType } from "../types";
 import { Control, UseFormReturn } from "react-hook-form";
 import { EventFormValues } from "../schemas";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface FormTabContentProps {
   form: UseFormReturn<EventFormValues>;
@@ -31,6 +38,12 @@ interface FormTabContentProps {
   watch: any;
 }
 
+const FORM_TYPES = [
+  { id: "Participant", label: "Participant" },
+  { id: "Speaker", label: "Speaker" },
+  { id: "Sponsor", label: "Sponsor" },
+] as const;
+
 export const FormTabContent: React.FC<FormTabContentProps> = ({
   form,
   control,
@@ -39,6 +52,17 @@ export const FormTabContent: React.FC<FormTabContentProps> = ({
   register,
   watch,
 }) => {
+  // Function to check if a form name already exists
+  const formNameExists = (name: string) => {
+    const forms = form.getValues("registrationForms");
+    return forms.some((form) => form.name === name);
+  };
+
+  // Get available form types (exclude ones already added)
+  const getAvailableFormTypes = () => {
+    return FORM_TYPES.filter((type) => !formNameExists(type.id));
+  };
+
   return (
     <div className="w-full mt-2">
       <div className="bg-violet-500 bg-opacity-30 py-4 px-6 rounded-xl border-2 border-violet-700">
@@ -110,13 +134,34 @@ export const FormTabContent: React.FC<FormTabContentProps> = ({
                           name={`registrationForms.${formIndex}.name`}
                           render={({ field: nameField }) => (
                             <FormItem>
-                              <FormLabel>Form Name</FormLabel>
+                              <FormLabel>Form Type</FormLabel>
                               <FormControl>
-                                <Input
-                                  {...nameField}
-                                  placeholder="e.g. Participant, Speaker, Volunteer"
-                                  disabled={registrationForm.isDefault}
-                                />
+                                {registrationForm.isDefault ? (
+                                  <Input
+                                    value={nameField.value}
+                                    disabled={true}
+                                  />
+                                ) : (
+                                  <Select
+                                    onValueChange={nameField.onChange}
+                                    defaultValue={nameField.value}
+                                    disabled={registrationForm.isDefault}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select form type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {FORM_TYPES.map((type) => (
+                                        <SelectItem
+                                          key={type.id}
+                                          value={type.id}
+                                        >
+                                          {type.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                )}
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -216,40 +261,62 @@ export const FormTabContent: React.FC<FormTabContentProps> = ({
               ))}
             </Accordion>
 
-            {/* Add new registration form button */}
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full mt-4"
-              onClick={() => {
-                const newForm = {
-                  id: crypto.randomUUID(),
-                  name: "New Form",
-                  description: "",
-                  formFields: [
-                    {
-                      id: crypto.randomUUID(),
-                      label: "Full Name",
-                      type: "text",
-                      required: true,
-                      placeholder: "Enter your full name",
-                    },
-                    {
-                      id: crypto.randomUUID(),
-                      label: "Email",
-                      type: "email",
-                      required: true,
-                      placeholder: "Enter your email address",
-                    },
-                  ],
-                  isDefault: false,
-                };
-                field.onChange([...field.value, newForm]);
-              }}
-            >
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Add Registration Form
-            </Button>
+            {getAvailableFormTypes().length > 0 ? (
+              <div className="mt-4 space-y-2">
+                <FormDescription>
+                  Add another registration form:
+                </FormDescription>
+                <div className="flex gap-2">
+                  <Select
+                    onValueChange={(value) => {
+                      const selectedType = FORM_TYPES.find(
+                        (t) => t.id === value,
+                      );
+                      if (selectedType) {
+                        const newForm = {
+                          id: crypto.randomUUID(),
+                          name: selectedType.id, // Use the form type as the name
+                          description: `Registration form for ${selectedType.label.toLowerCase()}s`,
+                          formFields: [
+                            {
+                              id: crypto.randomUUID(),
+                              label: "Full Name",
+                              type: "text",
+                              required: true,
+                              placeholder: "Enter your full name",
+                            },
+                            {
+                              id: crypto.randomUUID(),
+                              label: "Email",
+                              type: "email",
+                              required: true,
+                              placeholder: "Enter your email address",
+                            },
+                          ],
+                          isDefault: false,
+                        };
+                        field.onChange([...field.value, newForm]);
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select form type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getAvailableFormTypes().map((type) => (
+                        <SelectItem key={type.id} value={type.id}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            ) : (
+              <FormDescription className="mt-4 text-center text-muted-foreground">
+                All form types have been added
+              </FormDescription>
+            )}
             <FormMessage />
           </FormItem>
         )}

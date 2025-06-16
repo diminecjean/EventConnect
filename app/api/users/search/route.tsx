@@ -27,6 +27,8 @@ export async function GET(request: NextRequest) {
         email: 1,
         profilePicture: 1,
         organizations: 1,
+        organization: 1,
+        position: 1,
       })
       .limit(10) // Limit results for performance
       .toArray();

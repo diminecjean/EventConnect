@@ -105,8 +105,10 @@ export async function POST(request: NextRequest) {
 async function createEventBadge(db: Db, eventData: any, eventId: string) {
   try {
     const formattedStartDate = formatSingleDate(eventData.startDate);
+    const badges = [];
 
-    const badgeData = {
+    // Always create a participant badge
+    const participantBadge = {
       name: `${eventData.title} Participant`,
       description: `Participated in ${eventData.title}, which took place on ${formattedStartDate} at ${eventData.location}.`,
       type: "PARTICIPANT",
@@ -115,11 +117,50 @@ async function createEventBadge(db: Db, eventData: any, eventId: string) {
       eventId: eventId,
       createdAt: new Date(),
     };
+    badges.push(participantBadge);
 
-    await db.collection("badges").insertOne(badgeData);
+    const speakerBadge = {
+      name: `${eventData.title} Speaker`,
+      description: `Spoke at ${eventData.title}, which took place on ${formattedStartDate} at ${eventData.location}.`,
+      type: "SPEAKER",
+      imageUrl: eventData.coverImageUrl || null,
+      organizationId: eventData.organizationId,
+      eventId: eventId,
+      createdAt: new Date(),
+    };
+    badges.push(speakerBadge);
+
+    if (
+      eventData.registrationForms &&
+      Array.isArray(eventData.registrationForms)
+    ) {
+      // Check for Sponsor form
+      if (
+        eventData.registrationForms.some(
+          (form: { name: string }) => form.name === "Sponsor",
+        )
+      ) {
+        const sponsorBadge = {
+          name: `${eventData.title} Sponsor`,
+          description: `Sponsored ${eventData.title}, which took place on ${formattedStartDate} at ${eventData.location}.`,
+          type: "SPONSOR",
+          imageUrl: eventData.coverImageUrl || null,
+          organizationId: eventData.organizationId,
+          eventId: eventId,
+          createdAt: new Date(),
+        };
+        badges.push(sponsorBadge);
+      }
+    }
+
+    // Insert all badges at once for better performance
+    if (badges.length > 0) {
+      await db.collection("badges").insertMany(badges);
+    }
+
     return true;
   } catch (error) {
-    console.error("Failed to create default badge:", error);
+    console.error("Failed to create event badges:", error);
     return false;
   }
 }

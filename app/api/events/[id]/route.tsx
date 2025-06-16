@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDB } from "@/app/lib/mongodb";
-import { ObjectId } from "mongodb";
+import { ObjectId, Db } from "mongodb";
+import { formatSingleDate } from "@/app/utils/formatDate";
 
 // GET single event by ID
 export async function GET(
@@ -57,6 +58,42 @@ export async function GET(
   }
 }
 
+// Helper function to create badges
+async function createBadgeForFormType(
+  db: Db,
+  eventData: any,
+  eventId: string,
+  formType: string,
+) {
+  try {
+    const formattedStartDate = formatSingleDate(eventData.startDate);
+    const badgeType = formType.toUpperCase();
+
+    let badgeDescription = "";
+    if (badgeType === "SPEAKER") {
+      badgeDescription = `Spoke at ${eventData.title}, which took place on ${formattedStartDate} at ${eventData.location}.`;
+    } else if (badgeType === "SPONSOR") {
+      badgeDescription = `Sponsored ${eventData.title}, which took place on ${formattedStartDate} at ${eventData.location}.`;
+    }
+
+    const badge = {
+      name: `${eventData.title} ${formType}`,
+      description: badgeDescription,
+      type: badgeType,
+      imageUrl: eventData.coverImageUrl || null,
+      organizationId: eventData.organizationId,
+      eventId: eventId,
+      createdAt: new Date(),
+    };
+
+    await db.collection("badges").insertOne(badge);
+    return true;
+  } catch (error) {
+    console.error(`Failed to create ${formType} badge:`, error);
+    return false;
+  }
+}
+
 // PUT - Update an event by ID
 export async function PUT(
   request: NextRequest,
@@ -81,6 +118,16 @@ export async function PUT(
     delete updateData.createdAt;
 
     const db = await connectToDB();
+
+    // Get the original event to check for form changes
+    let originalEvent = null;
+    if (ObjectId.isValid(id)) {
+      originalEvent = await db
+        .collection("events")
+        .findOne({ _id: new ObjectId(id) });
+    } else {
+      originalEvent = await db.collection("events").findOne({ id: id });
+    }
 
     // Try to update by MongoDB ObjectId first, then by custom ID field
     let result = null;
@@ -119,8 +166,37 @@ export async function PUT(
       updatedEvent = await db.collection("events").findOne({ id: id });
     }
 
+    // Create notifications and handle badge creation
     if (updatedEvent) {
-      // When updating an existing event, find all subscribers through the subscriptions collection
+      // Check for form changes and create badges as needed
+      const originalForms = originalEvent?.registrationForms || [];
+      const updatedForms = updateData.registrationForms || [];
+
+      // Find form types that exist in updated forms but not in original forms
+      const originalFormTypes = new Set(
+        originalForms.map((form: any) => form.name),
+      );
+      const eventIdToUse = updatedEvent._id.toString();
+
+      // Check for Speaker form
+      if (
+        updatedForms.some((form: any) => form.name === "Speaker") &&
+        !originalFormTypes.has("Speaker")
+      ) {
+        // Speaker form is new - create a speaker badge
+        await createBadgeForFormType(db, updatedEvent, eventIdToUse, "Speaker");
+      }
+
+      // Check for Sponsor form
+      if (
+        updatedForms.some((form: any) => form.name === "Sponsor") &&
+        !originalFormTypes.has("Sponsor")
+      ) {
+        // Sponsor form is new - create a sponsor badge
+        await createBadgeForFormType(db, updatedEvent, eventIdToUse, "Sponsor");
+      }
+
+      // Create update notifications for subscribers
       const subscribers = await db
         .collection("subscriptions")
         .find({ organizationId: updateData.organizationId })

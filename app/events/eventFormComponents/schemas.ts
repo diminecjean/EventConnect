@@ -11,7 +11,7 @@ export const formFieldSchema = z.object({
 
 export const registrationFormSchema = z.object({
   id: z.string(),
-  name: z.string().min(1, "Form name is required"),
+  name: z.enum(["Participant", "Speaker", "Sponsor"]),
   description: z.string().optional(),
   formFields: z.array(formFieldSchema),
   isDefault: z.boolean().default(false),
