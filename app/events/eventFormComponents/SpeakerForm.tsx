@@ -301,14 +301,14 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
         </div>
 
         {isLinkedToUser && (
-          <div className="mb-4 p-2 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-700">
+          <div className="mb-4 p-4 bg-blue-900/20 border border-blue-400 rounded-md text-xs text-blue-200">
             This speaker is linked to a user account. Changes you make here will
-            not affect their profile.
+            not affect their profile.{"  "}
             <Button
               type="button"
               variant="link"
               size="sm"
-              className="p-0 h-auto text-blue-700"
+              className="p-0 h-auto text-blue-500 text-xs bold"
               onClick={() => update(index, "userId", undefined)}
             >
               Unlink

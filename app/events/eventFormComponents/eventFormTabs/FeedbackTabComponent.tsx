@@ -87,7 +87,7 @@ export default function FeedbackTab({
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Event Feedback</h2>
+          <h2 className="text-xl font-semibold my-4">Event Feedback</h2>
           {feedback.length > 0 && (
             <div className="flex items-center mt-2">
               <div className="flex items-center">
@@ -193,9 +193,11 @@ export default function FeedbackTab({
           ))}
         </div>
       ) : (
-        <p className="text-gray-200 italic">
-          No feedback has been submitted yet.
-        </p>
+        <div className="flex flex-col gap-4">
+          <p className="text-gray-500 italic">
+            No feedback has been submitted yet.
+          </p>
+        </div>
       )}
     </div>
   );

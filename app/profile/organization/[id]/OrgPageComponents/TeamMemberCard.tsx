@@ -1,8 +1,6 @@
-import Image from "next/image";
 import { UserProfile } from "@/app/typings/profile/typings";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
-import { User } from "next-auth";
+
 import { useRouter } from "next/navigation";
 
 interface TeamMemberCardProps {
@@ -23,10 +21,9 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
       <CardContent className="p-4">
         <div className="flex items-center space-x-4">
           <div className="relative w-16 h-16 rounded-full overflow-hidden">
-            <Image
+            <img
               src={member.profilePicture || "/default-avatar.png"}
               alt={member.name || "Team member"}
-              fill
               className="object-cover"
             />
           </div>

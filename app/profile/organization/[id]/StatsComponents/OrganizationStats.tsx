@@ -56,7 +56,7 @@ const COLORS = [
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-slate-800 text-white p-3 rounded-md shadow-lg border border-slate-700">
+      <div className="z-20 bg-slate-800 text-white p-3 rounded-md shadow-lg border border-slate-700">
         <p className="font-medium text-sm mb-1">
           {payload[0]?.payload.eventName || label}
         </p>
@@ -195,13 +195,32 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
 
   useEffect(() => {
     if (checkInData && checkInData.length > 0) {
-      setDisplayedCheckInData(
-        showAllEvents
-          ? checkInData
-          : checkInData.slice(0, DEFAULT_DISPLAYED_EVENTS),
+      // Calculate aggregate data across all events
+      const totalRegs = checkInData.reduce(
+        (sum, event) => sum + event.totalRegistrations,
+        0,
       );
+      const totalCheckins = checkInData.reduce(
+        (sum, event) => sum + event.checkedIn,
+        0,
+      );
+
+      // Create aggregate data point
+      const aggregateData = [
+        {
+          eventId: "all",
+          eventName: "All Events",
+          totalRegistrations: totalRegs,
+          checkedIn: totalCheckins,
+          checkInRate:
+            totalRegs > 0 ? Math.round((totalCheckins / totalRegs) * 100) : 0,
+        },
+      ];
+
+      // Set default to show aggregate data instead of per-event data
+      setDisplayedCheckInData(aggregateData);
     }
-  }, [checkInData, showAllEvents, DEFAULT_DISPLAYED_EVENTS]);
+  }, [checkInData]);
 
   if (loading) {
     return (
@@ -621,15 +640,23 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                       <Button
                         variant="outline"
                         className="flex items-center gap-2"
+                        title={
+                          displayedCheckInData.length === 1 &&
+                          displayedCheckInData[0].eventId !== "all"
+                            ? displayedCheckInData[0].eventName
+                            : null
+                        }
                       >
                         <FilterIcon className="h-4 w-4" />
-                        {displayedCheckInData.length === 1 &&
-                        displayedCheckInData[0].eventId === "all"
-                          ? "All Events Combined"
-                          : displayedCheckInData.length === 1
-                            ? `Event: ${displayedCheckInData[0].eventName}`
-                            : "Filter Events"}
-                        <ChevronDown className="h-4 w-4" />
+                        <span className="truncate max-w-[150px]">
+                          {displayedCheckInData.length === 1 &&
+                          displayedCheckInData[0].eventId === "all"
+                            ? "All Events Combined"
+                            : displayedCheckInData.length === 1
+                              ? `Event: ${displayedCheckInData[0].eventName}`
+                              : "Filter Events"}
+                        </span>
+                        <ChevronDown className="h-4 w-4 flex-shrink-0" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-64 p-2">
@@ -670,10 +697,12 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                               setDisplayedCheckInData(aggregateData);
                             }}
                           >
-                            All Events Combined
+                            <span className="truncate flex-1">
+                              All Events Combined
+                            </span>
                             {displayedCheckInData.length === 1 &&
                               displayedCheckInData[0].eventId === "all" && (
-                                <CheckIcon className="h-4 w-4 text-primary" />
+                                <CheckIcon className="h-4 w-4 text-primary flex-shrink-0 ml-2" />
                               )}
                           </button>
                           <div className="my-2 border-t border-gray-100"></div>
@@ -690,13 +719,16 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                                 );
                               }}
                             >
-                              <span className="truncate">
+                              <span
+                                className="truncate flex-1"
+                                title={event.eventName}
+                              >
                                 {event.eventName}
                               </span>
                               {displayedCheckInData.length === 1 &&
                                 displayedCheckInData[0].eventId ===
                                   event.eventId && (
-                                  <CheckIcon className="h-4 w-4 text-primary" />
+                                  <CheckIcon className="h-4 w-4 text-primary flex-shrink-0 ml-2" />
                                 )}
                             </button>
                           ))}
@@ -711,7 +743,7 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                     <BarChart
                       data={displayedCheckInData}
                       layout="vertical"
-                      margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+                      margin={{ top: 5, right: 30, left: 30, bottom: 5 }}
                     >
                       <CartesianGrid
                         strokeDasharray="3 3"
@@ -723,8 +755,8 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                       <YAxis
                         type="category"
                         dataKey="eventName"
-                        tick={{ fontSize: 12 }}
-                        width={80}
+                        hide={true}
+                        width={30}
                       />
                       <Tooltip
                         content={<CustomTooltip />}

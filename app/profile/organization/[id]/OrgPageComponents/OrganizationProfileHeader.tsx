@@ -19,8 +19,8 @@ export default function OrganizationProfileHeader({
   const router = useRouter();
 
   return (
-    <>
-      <div className="relative w-full h-64 overflow-hidden rounded-lg bg-violet-800">
+    <div className="flex flex-col w-full p-4">
+      <div className="relative w-full h-64 overflow-hidden rounded-lg ">
         <Image
           className="object-cover"
           src={orgData.banner || "/default-banner.jpg"}
@@ -30,16 +30,16 @@ export default function OrganizationProfileHeader({
           priority
         />
       </div>
-      <div className="flex flex-row p-4">
+      <div className="flex flex-row p-4 bg-black/30">
         <div className="flex flex-col w-full">
-          <div className="flex flex-row items-center justify-between rounded-lg bg-black/60">
+          <div className="flex flex-row items-center justify-between rounded-lg">
             <div className="flex flex-row gap-8 justify-start">
-              <div className="w-[150px] h-[150px] relative overflow-hidden rounded-full border-2 border-stone-500 flex-shrink-0">
+              <div className="w-[200px] h-[200px] relative overflow-hidden rounded-full border-2 border-stone-500 flex-shrink-0 mt-4">
                 <Image
                   src={orgData.logo || "/default-logo.jpg"}
                   alt={"orgLogo"}
                   fill
-                  sizes="150px"
+                  sizes="200px"
                   className="object-cover"
                   priority
                 />
@@ -80,6 +80,6 @@ export default function OrganizationProfileHeader({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

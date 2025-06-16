@@ -314,7 +314,7 @@ const EventTabs = ({
   };
   return (
     <>
-      <Tabs defaultValue="timeline" className="my-6 w-full min-w-xl">
+      <Tabs defaultValue="timeline" className="my-6 w-full">
         <TabsList
           className={`grid w-full ${isPastEvent ? "grid-cols-5" : "grid-cols-4"}`}
         >
@@ -355,7 +355,7 @@ const EventTabs = ({
                 })}
               </Timeline>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-4">
                 <p className="text-gray-500 italic">
                   No schedule information available at the moment.
                 </p>
@@ -366,7 +366,7 @@ const EventTabs = ({
         <TabsContent value="speakers">
           <div>
             <h1 className="font-semibold text-xl my-4">Speakers</h1>
-            <div className="grid grid-cols-1 gap-6">
+            <div>
               {event.speakers && event.speakers.length > 0 ? (
                 event.speakers?.map((speaker, index) => (
                   <div
@@ -443,9 +443,9 @@ const EventTabs = ({
                   </div>
                 ))
               ) : (
-                <div className="col-span-2 text-center p-8 border border-dashed border-gray-300 rounded-lg col-span-2">
+                <div className="flex flex-col gap-4">
                   <p className="text-gray-500 italic">
-                    No speakers available for this event yet.
+                    No speaker information available at the moment.
                   </p>
                 </div>
               )}
@@ -532,12 +532,10 @@ const EventTabs = ({
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="col-span-2 text-center p-8 border border-dashed border-gray-300 rounded-lg">
-                  <p className="text-gray-500 italic">
-                    No sponsors available for this event yet.
-                  </p>
-                </div>
+              <div className="flex flex-col gap-4">
+                <p className="text-gray-500 italic">
+                  No sponsor available for this event at the moment.
+                </p>
               </div>
             )}
           </div>
@@ -571,9 +569,9 @@ const EventTabs = ({
                   ))}
                 </div>
               ) : (
-                <div className="text-center p-8 border border-dashed border-gray-300 rounded-lg">
+                <div className="flex flex-col gap-4">
                   <p className="text-gray-500 italic">
-                    No gallery images available for this event yet.
+                    No gallery images available at the moment.
                   </p>
                 </div>
               )}
@@ -997,7 +995,7 @@ export default function EventPage({
         </div>
         {/* Event details right col*/}
         <div className="flex flex-row gap-4 w-full">
-          <div className="flex flex-col items-start p-4">
+          <div className="flex flex-col items-start p-4 w-full">
             <div className="flex flex-row justify-between gap-4 w-full">
               <h1 className="text-4xl font-semibold">{event.title}</h1>
               {canEditOrg && (
