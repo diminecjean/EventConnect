@@ -260,20 +260,32 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
     [],
   );
 
-  // Format demographics for pie chart
-  const demographicsPositionData = stats.attendeeDemographics
-    .filter((item: DemographicStat) => item._id.position)
-    .map((item: DemographicStat) => ({
-      name: item._id.position || "Unknown",
-      value: item.count,
-    }));
+  // Format demographics for pie chart with proper aggregation
+  const aggregateByField = (data: any[], field: string) => {
+    const aggregated: Record<string, number> = {};
 
-  const demographicsOrganizationData = stats.attendeeDemographics
-    .filter((item: DemographicStat) => item._id.organization)
-    .map((item: DemographicStat) => ({
-      name: item._id.organization || "Unknown",
-      value: item.count,
-    }));
+    data
+      .filter((item) => item._id[field])
+      .forEach((item) => {
+        const key = item._id[field] || "Unknown";
+        if (aggregated[key]) {
+          aggregated[key] += item.count;
+        } else {
+          aggregated[key] = item.count;
+        }
+      });
+
+    return Object.entries(aggregated).map(([name, value]) => ({ name, value }));
+  };
+
+  const demographicsPositionData = aggregateByField(
+    stats.attendeeDemographics,
+    "position",
+  );
+  const demographicsOrganizationData = aggregateByField(
+    stats.attendeeDemographics,
+    "organization",
+  );
 
   // Calculate total subscribers as the sum of all subscription counts
   // or just use the final cumulative number
@@ -463,9 +475,12 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                             fill="#8884d8"
                             paddingAngle={2}
                             dataKey="value"
-                            label={({ name, percent }) =>
-                              `${name}: ${(percent * 100).toFixed(0)}%`
-                            }
+                            label={({ name, percent }) => {
+                              // Only show labels for entries with sufficient percentage
+                              return percent >= 0.05
+                                ? `${(percent * 100).toFixed(0)}%`
+                                : "";
+                            }}
                             labelLine={{
                               stroke: "#555",
                               strokeWidth: 0.5,
@@ -487,6 +502,23 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                             align="right"
                             verticalAlign="middle"
                             iconType="circle"
+                            wrapperStyle={{
+                              maxHeight: "250px",
+                              overflowY: "auto",
+                              fontSize: "12px",
+                            }}
+                            formatter={(value, entry) => {
+                              // Truncate long names
+                              const displayName =
+                                value.length > 20
+                                  ? value.substring(0, 18) + "..."
+                                  : value;
+                              return (
+                                <span title={value} className="text-sm">
+                                  {displayName}
+                                </span>
+                              );
+                            }}
                           />
                         </PieChart>
                       </ResponsiveContainer>
@@ -505,9 +537,12 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                             fill="#8884d8"
                             paddingAngle={2}
                             dataKey="value"
-                            label={({ name, percent }) =>
-                              `${name}: ${(percent * 100).toFixed(0)}%`
-                            }
+                            label={({ name, percent }) => {
+                              // Only show labels for entries with sufficient percentage
+                              return percent >= 0.05
+                                ? `${(percent * 100).toFixed(0)}%`
+                                : "";
+                            }}
                             labelLine={{
                               stroke: "#555",
                               strokeWidth: 0.5,
@@ -529,6 +564,23 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                             align="right"
                             verticalAlign="middle"
                             iconType="circle"
+                            wrapperStyle={{
+                              maxHeight: "250px",
+                              overflowY: "auto",
+                              fontSize: "12px",
+                            }}
+                            formatter={(value, entry) => {
+                              // Truncate long names
+                              const displayName =
+                                value.length > 20
+                                  ? value.substring(0, 18) + "..."
+                                  : value;
+                              return (
+                                <span title={value} className="text-sm">
+                                  {displayName}
+                                </span>
+                              );
+                            }}
                           />
                         </PieChart>
                       </ResponsiveContainer>
@@ -560,7 +612,7 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {hasRegistrationData && displayedCheckInData.length > 0 ? (
+            {hasRegistrationData && checkInData.length > 0 ? (
               <>
                 {/* Add filter popover */}
                 <div className="mb-4 flex justify-start">
@@ -572,9 +624,11 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                       >
                         <FilterIcon className="h-4 w-4" />
                         {displayedCheckInData.length === 1 &&
-                        displayedCheckInData[0].eventId !== "all"
-                          ? `Event: ${displayedCheckInData[0].eventName}`
-                          : "Filter Events"}
+                        displayedCheckInData[0].eventId === "all"
+                          ? "All Events Combined"
+                          : displayedCheckInData.length === 1
+                            ? `Event: ${displayedCheckInData[0].eventName}`
+                            : "Filter Events"}
                         <ChevronDown className="h-4 w-4" />
                       </Button>
                     </PopoverTrigger>
@@ -587,17 +641,42 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                           <button
                             className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between"
                             onClick={() => {
-                              setShowAllEvents(false);
-                              setDisplayedCheckInData(
-                                checkInData.slice(0, DEFAULT_DISPLAYED_EVENTS),
+                              // Calculate aggregate data across all events
+                              const totalRegs = checkInData.reduce(
+                                (sum, event) => sum + event.totalRegistrations,
+                                0,
                               );
+                              const totalCheckins = checkInData.reduce(
+                                (sum, event) => sum + event.checkedIn,
+                                0,
+                              );
+
+                              // Create aggregate data point
+                              const aggregateData = [
+                                {
+                                  eventId: "all",
+                                  eventName: "All Events",
+                                  totalRegistrations: totalRegs,
+                                  checkedIn: totalCheckins,
+                                  checkInRate:
+                                    totalRegs > 0
+                                      ? Math.round(
+                                          (totalCheckins / totalRegs) * 100,
+                                        )
+                                      : 0,
+                                },
+                              ];
+
+                              setDisplayedCheckInData(aggregateData);
                             }}
                           >
-                            All Events
-                            {displayedCheckInData.length > 1 && (
-                              <CheckIcon className="h-4 w-4 text-primary" />
-                            )}
+                            All Events Combined
+                            {displayedCheckInData.length === 1 &&
+                              displayedCheckInData[0].eventId === "all" && (
+                                <CheckIcon className="h-4 w-4 text-primary" />
+                              )}
                           </button>
+                          <div className="my-2 border-t border-gray-100"></div>
                           {checkInData.map((event) => (
                             <button
                               key={event.eventId}
@@ -669,31 +748,6 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-
-                {/* Show more events button - Only show when "all" is selected and there are more events than default */}
-                {checkInData.length > DEFAULT_DISPLAYED_EVENTS &&
-                  displayedCheckInData.length !== 1 && (
-                    <div className="flex justify-center mt-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowAllEvents(!showAllEvents)}
-                        className="flex items-center gap-1"
-                      >
-                        {showAllEvents ? (
-                          <>
-                            <ChevronUp size={16} />
-                            Show Top {DEFAULT_DISPLAYED_EVENTS} Events
-                          </>
-                        ) : (
-                          <>
-                            <ChevronDown size={16} />
-                            Show All {checkInData.length} Events
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  )}
               </>
             ) : (
               <div className="text-center py-16 text-muted-foreground h-[300px] flex flex-col items-center justify-center">

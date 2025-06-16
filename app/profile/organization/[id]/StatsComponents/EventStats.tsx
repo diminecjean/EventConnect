@@ -172,20 +172,35 @@ const EventStats: React.FC<EventStatsProps> = ({ eventId }) => {
   const averageRating =
     totalRatings > 0 ? (weightedSum / totalRatings).toFixed(1) : "N/A";
 
-  // Format demographics for pie chart - prepare different demographic categories
-  const positionDemographics = stats.attendeeDemographics
-    .filter((item: any) => item._id.position || item._id.role)
-    .map((item: any) => ({
-      name: item._id.position || item._id.role || "Unknown",
-      value: item.count,
-    }));
+  // Format demographics for pie chart with proper aggregation
+  const aggregateByField = (data: any[], field: string) => {
+    const aggregated: Record<string, number> = {};
 
-  const organizationDemographics = stats.attendeeDemographics
-    .filter((item: any) => item._id.organization)
-    .map((item: any) => ({
-      name: item._id.organization || "Unknown",
-      value: item.count,
-    }));
+    data
+      .filter((item) => item._id[field])
+      .forEach((item) => {
+        const key = item._id[field] || "Unknown";
+        if (aggregated[key]) {
+          aggregated[key] += item.count;
+        } else {
+          aggregated[key] = item.count;
+        }
+      });
+
+    return Object.entries(aggregated)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value); // Sort by value in descending order
+  };
+
+  // Replace existing position and organization demographics with:
+  const positionDemographics = aggregateByField(
+    stats.attendeeDemographics,
+    "position",
+  );
+  const organizationDemographics = aggregateByField(
+    stats.attendeeDemographics,
+    "organization",
+  );
 
   const totalRegistrations = checkInData.total;
   const totalFeedback = stats.feedbackComments?.length || 0;
@@ -355,7 +370,12 @@ const EventStats: React.FC<EventStatsProps> = ({ eventId }) => {
                           <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                           <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                           <YAxis tick={{ fontSize: 12 }} />
-                          <Tooltip content={<CustomTooltip />} />
+                          <Tooltip
+                            content={<CustomTooltip />}
+                            cursor={{
+                              fill: "rgba(180, 180, 180, 0.1)",
+                            }}
+                          />
                           <Legend />
                           <Bar
                             dataKey="registrations"
@@ -417,13 +437,23 @@ const EventStats: React.FC<EventStatsProps> = ({ eventId }) => {
                             fill="#8884d8"
                             paddingAngle={2}
                             dataKey="value"
-                            label={({ name, percent }) =>
-                              `${name}: ${(percent * 100).toFixed(0)}%`
-                            }
+                            label={(entry) => {
+                              // Only show labels for entries with sufficient percentage
+                              const percent = Math.round(
+                                (entry.value /
+                                  positionDemographics.reduce(
+                                    (sum: any, e: { value: any }) =>
+                                      sum + e.value,
+                                    0,
+                                  )) *
+                                  100,
+                              );
+                              return percent >= 5 ? `${percent}%` : "";
+                            }}
                             labelLine={{
                               stroke: "#555",
                               strokeWidth: 0.5,
-                              strokeDasharray: "2 2",
+                              strokeOpacity: 0.5,
                             }}
                           >
                             {positionDemographics.map(
@@ -435,11 +465,32 @@ const EventStats: React.FC<EventStatsProps> = ({ eventId }) => {
                               ),
                             )}
                           </Pie>
-                          <Tooltip content={<CustomTooltip />} />
+                          <Tooltip
+                            content={<CustomTooltip />}
+                            cursor={{
+                              fill: "rgba(180, 180, 180, 0.1)",
+                            }}
+                          />
                           <Legend
                             layout="vertical"
                             align="right"
                             verticalAlign="middle"
+                            wrapperStyle={{
+                              paddingLeft: "20px",
+                              fontSize: "12px",
+                              maxHeight: "300px",
+                              overflowY: "auto",
+                            }}
+                            formatter={(value, entry) => (
+                              <span
+                                className="text-sm font-medium"
+                                title={value}
+                              >
+                                {value.length > 25
+                                  ? `${value.substring(0, 22)}...`
+                                  : value}
+                              </span>
+                            )}
                           />
                         </PieChart>
                       </ResponsiveContainer>
@@ -459,13 +510,23 @@ const EventStats: React.FC<EventStatsProps> = ({ eventId }) => {
                             fill="#8884d8"
                             paddingAngle={2}
                             dataKey="value"
-                            label={({ name, percent }) =>
-                              `${name}: ${(percent * 100).toFixed(0)}%`
-                            }
+                            label={(entry) => {
+                              // Only show labels for entries with sufficient percentage
+                              const percent = Math.round(
+                                (entry.value /
+                                  organizationDemographics.reduce(
+                                    (sum: any, e: { value: any }) =>
+                                      sum + e.value,
+                                    0,
+                                  )) *
+                                  100,
+                              );
+                              return percent >= 5 ? `${percent}%` : "";
+                            }}
                             labelLine={{
                               stroke: "#555",
                               strokeWidth: 0.5,
-                              strokeDasharray: "2 2",
+                              strokeOpacity: 0.5,
                             }}
                           >
                             {organizationDemographics.map(
@@ -477,11 +538,32 @@ const EventStats: React.FC<EventStatsProps> = ({ eventId }) => {
                               ),
                             )}
                           </Pie>
-                          <Tooltip content={<CustomTooltip />} />
+                          <Tooltip
+                            content={<CustomTooltip />}
+                            cursor={{
+                              fill: "rgba(180, 180, 180, 0.1)",
+                            }}
+                          />
                           <Legend
                             layout="vertical"
                             align="right"
                             verticalAlign="middle"
+                            wrapperStyle={{
+                              paddingLeft: "20px",
+                              fontSize: "12px",
+                              maxHeight: "300px",
+                              overflowY: "auto",
+                            }}
+                            formatter={(value, entry) => (
+                              <span
+                                className="text-sm font-medium"
+                                title={value}
+                              >
+                                {value.length > 25
+                                  ? `${value.substring(0, 22)}...`
+                                  : value}
+                              </span>
+                            )}
                           />
                         </PieChart>
                       </ResponsiveContainer>
@@ -500,67 +582,6 @@ const EventStats: React.FC<EventStatsProps> = ({ eventId }) => {
 
         <TabsContent value="ratings">
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle className="text-xl">
-                  Attendee Rating Distribution
-                </CardTitle>
-                <CardDescription>
-                  Average Rating: {averageRating} ({totalAttendeeRatings}{" "}
-                  ratings)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {hasRatingsData ? (
-                  <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={formattedRatings}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                        <XAxis dataKey="rating" />
-                        <YAxis
-                          label={{
-                            value: "Number of Ratings",
-                            angle: -90,
-                            position: "insideLeft",
-                          }}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend />
-                        <Bar
-                          dataKey="count"
-                          fill="#8884d8"
-                          radius={[4, 4, 0, 0]}
-                          name="Number of Ratings"
-                        >
-                          {formattedRatings.map((entry: any, index: number) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
-                            />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                ) : (
-                  <Card>
-                    <CardContent className="text-center py-16">
-                      <Star className="h-10 w-10 mx-auto mb-2 opacity-20" />
-                      <p className="text-muted-foreground">
-                        No rating data available yet
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Ratings will appear here once attendees provide feedback
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </CardContent>
-            </Card>
-
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl">Rating Radar</CardTitle>
@@ -583,7 +604,12 @@ const EventStats: React.FC<EventStatsProps> = ({ eventId }) => {
                           fill="#8884d8"
                           fillOpacity={0.6}
                         />
-                        <Tooltip content={<CustomTooltip />} />
+                        <Tooltip
+                          content={<CustomTooltip />}
+                          cursor={{
+                            fill: "rgba(180, 180, 180, 0.1)",
+                          }}
+                        />
                         <Legend />
                       </RadarChart>
                     </ResponsiveContainer>
