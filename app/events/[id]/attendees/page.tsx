@@ -13,6 +13,7 @@ import SearchFilters from "./components/SearchFilters";
 import AttendeeTable from "./components/AttendeeTable";
 import AttendeeGrid from "./components/AttendeeGrid";
 import AttendeeDetails from "./components/AttendeeDetails";
+import RegistrationTypeFilter from "./components/RegistrationTypeFilter";
 
 export default function AttendeesPage() {
   const params = useParams();
@@ -26,6 +27,9 @@ export default function AttendeesPage() {
     setSearchQuery,
     statusFilter,
     setStatusFilter,
+    formTypeFilter,
+    setFormTypeFilter,
+    registrationTypes,
     isBulkCheckInMode,
     setIsBulkCheckInMode,
     selectedAttendees,
@@ -93,6 +97,11 @@ export default function AttendeesPage() {
                 setSearchQuery={setSearchQuery}
                 statusFilter={statusFilter}
                 setStatusFilter={setStatusFilter}
+              />
+              <RegistrationTypeFilter
+                formTypeFilter={formTypeFilter}
+                setFormTypeFilter={setFormTypeFilter}
+                registrationTypes={registrationTypes}
               />
             </div>
           </div>

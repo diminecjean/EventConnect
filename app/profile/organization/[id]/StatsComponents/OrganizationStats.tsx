@@ -34,8 +34,15 @@ import {
   LineChartIcon,
   BarChartIcon,
   Star,
+  CheckIcon,
+  FilterIcon,
 } from "lucide-react";
 import { MetricCard } from "./KeyMetricCards";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const COLORS = [
   "#0088FE",
@@ -118,6 +125,8 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<OrganizationStatsData | null>(null);
   const [showAllEvents, setShowAllEvents] = useState(false);
+  const [displayedCheckInData, setDisplayedCheckInData] = useState<any[]>([]);
+  const [checkInData, setCheckInData] = useState<any[]>([]);
 
   const hasSubscriptionData =
     Array.isArray(stats?.subscriptionStats) &&
@@ -149,6 +158,28 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
 
         const data = await response.json();
         setStats(data);
+
+        // Calculate check-in rate from registration stats
+        if (data.registrationStats && data.registrationStats.length > 0) {
+          const formattedData = data.registrationStats.map(
+            (item: RegistrationStat) => {
+              const checkInRate =
+                item.totalRegistrations > 0
+                  ? (item.checkedIn / item.totalRegistrations) * 100
+                  : 0;
+
+              return {
+                eventId: item._id,
+                eventName:
+                  item.eventName || `Event ${item._id.substring(0, 6)}...`,
+                totalRegistrations: item.totalRegistrations,
+                checkedIn: item.checkedIn,
+                checkInRate: Math.round(checkInRate),
+              };
+            },
+          );
+          setCheckInData(formattedData);
+        }
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred",
@@ -161,6 +192,24 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
 
     fetchStats();
   }, [organizationId]);
+
+  useEffect(() => {
+    if (checkInData && checkInData.length > 0) {
+      setDisplayedCheckInData(
+        showAllEvents
+          ? checkInData
+          : checkInData.slice(0, DEFAULT_DISPLAYED_EVENTS),
+      );
+    }
+  }, [checkInData, showAllEvents, DEFAULT_DISPLAYED_EVENTS]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center my-8 h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -210,27 +259,6 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
     },
     [],
   );
-
-  // Calculate check-in rate from registration stats
-  let checkInData = stats.registrationStats.map((item: RegistrationStat) => {
-    const checkInRate =
-      item.totalRegistrations > 0
-        ? (item.checkedIn / item.totalRegistrations) * 100
-        : 0;
-
-    return {
-      eventId: item._id,
-      eventName: item.eventName || `Event ${item._id.substring(0, 6)}...`,
-      totalRegistrations: item.totalRegistrations,
-      checkedIn: item.checkedIn,
-      checkInRate: Math.round(checkInRate),
-    };
-  });
-
-  // Get initial events to display
-  const displayedCheckInData = showAllEvents
-    ? checkInData
-    : checkInData.slice(0, DEFAULT_DISPLAYED_EVENTS);
 
   // Format demographics for pie chart
   const demographicsPositionData = stats.attendeeDemographics
@@ -534,6 +562,71 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
           <CardContent>
             {hasRegistrationData && displayedCheckInData.length > 0 ? (
               <>
+                {/* Add filter popover */}
+                <div className="mb-4 flex justify-start">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="flex items-center gap-2"
+                      >
+                        <FilterIcon className="h-4 w-4" />
+                        {displayedCheckInData.length === 1 &&
+                        displayedCheckInData[0].eventId !== "all"
+                          ? `Event: ${displayedCheckInData[0].eventName}`
+                          : "Filter Events"}
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-2">
+                      <div className="space-y-2">
+                        <div className="font-medium text-sm mb-2">
+                          Select Event
+                        </div>
+                        <div className="max-h-60 overflow-y-auto space-y-1">
+                          <button
+                            className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between"
+                            onClick={() => {
+                              setShowAllEvents(false);
+                              setDisplayedCheckInData(
+                                checkInData.slice(0, DEFAULT_DISPLAYED_EVENTS),
+                              );
+                            }}
+                          >
+                            All Events
+                            {displayedCheckInData.length > 1 && (
+                              <CheckIcon className="h-4 w-4 text-primary" />
+                            )}
+                          </button>
+                          {checkInData.map((event) => (
+                            <button
+                              key={event.eventId}
+                              className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between"
+                              onClick={() => {
+                                const selectedEvent = checkInData.find(
+                                  (e) => e.eventId === event.eventId,
+                                );
+                                setDisplayedCheckInData(
+                                  selectedEvent ? [selectedEvent] : [],
+                                );
+                              }}
+                            >
+                              <span className="truncate">
+                                {event.eventName}
+                              </span>
+                              {displayedCheckInData.length === 1 &&
+                                displayedCheckInData[0].eventId ===
+                                  event.eventId && (
+                                  <CheckIcon className="h-4 w-4 text-primary" />
+                                )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -576,29 +669,31 @@ const OrganizationStats: React.FC<OrganizationStatsProps> = ({
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                {/* Show more events button */}
-                {checkInData.length > DEFAULT_DISPLAYED_EVENTS && (
-                  <div className="flex justify-center mt-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowAllEvents(!showAllEvents)}
-                      className="flex items-center gap-1"
-                    >
-                      {showAllEvents ? (
-                        <>
-                          <ChevronUp size={16} />
-                          Show Top {DEFAULT_DISPLAYED_EVENTS} Events
-                        </>
-                      ) : (
-                        <>
-                          <ChevronDown size={16} />
-                          Show All {checkInData.length} Events
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
+
+                {/* Show more events button - Only show when "all" is selected and there are more events than default */}
+                {checkInData.length > DEFAULT_DISPLAYED_EVENTS &&
+                  displayedCheckInData.length !== 1 && (
+                    <div className="flex justify-center mt-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowAllEvents(!showAllEvents)}
+                        className="flex items-center gap-1"
+                      >
+                        {showAllEvents ? (
+                          <>
+                            <ChevronUp size={16} />
+                            Show Top {DEFAULT_DISPLAYED_EVENTS} Events
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown size={16} />
+                            Show All {checkInData.length} Events
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
               </>
             ) : (
               <div className="text-center py-16 text-muted-foreground h-[300px] flex flex-col items-center justify-center">

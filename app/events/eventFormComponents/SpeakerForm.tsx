@@ -93,6 +93,7 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
           throw new Error("Failed to search users");
         }
         const data = await response.json();
+        console.log("Search results:", data.users);
         setSearchResults(Array.isArray(data.users) ? data.users : []);
       } catch (error) {
         console.error("Error searching users:", error);
@@ -179,6 +180,7 @@ export const SpeakerForm: React.FC<SpeakerFormProps> = ({
 
   // Helper function to select a user
   const selectUser = (user: ExistingUser) => {
+    console.log("Selected user:", user);
     // Update all fields at once with a bulk update
     update(index, {
       userId: user._id,

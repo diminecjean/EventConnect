@@ -13,6 +13,8 @@ export type Registration = {
   formResponses: Record<string, any>;
   checkedIn: boolean;
   checkedInTime?: string;
+  registrationFormId?: string;
+  registrationFormName?: string;
 };
 
 export type AttendeeStats = {
@@ -33,6 +35,8 @@ export default function useAttendees(eventId: string) {
     "all" | "checked-in" | "registered"
   >("all");
   const [isBulkCheckInMode, setIsBulkCheckInMode] = useState(false);
+  const [formTypeFilter, setFormTypeFilter] = useState<string>("all");
+  const [registrationTypes, setRegistrationTypes] = useState<string[]>([]);
   const [selectedAttendees, setSelectedAttendees] = useState<Set<string>>(
     new Set(),
   );
@@ -40,6 +44,20 @@ export default function useAttendees(eventId: string) {
   useEffect(() => {
     fetchAttendees();
   }, [eventId]);
+
+  useEffect(() => {
+    if (attendees.length > 0) {
+      // Extract unique registration form names
+      const uniqueFormTypes = Array.from(
+        new Set(
+          attendees
+            .map((a) => a.registrationFormName || "Default Registration")
+            .filter(Boolean),
+        ),
+      );
+      setRegistrationTypes(uniqueFormTypes);
+    }
+  }, [attendees]);
 
   async function fetchAttendees() {
     try {
@@ -182,12 +200,18 @@ export default function useAttendees(eventId: string) {
       attendee.userId.name.toLowerCase().includes(searchLower) ||
       attendee.userId.email.toLowerCase().includes(searchLower);
 
-    if (statusFilter === "all") return matchesSearch;
-    if (statusFilter === "checked-in")
-      return matchesSearch && attendee.checkedIn;
-    if (statusFilter === "registered")
-      return matchesSearch && !attendee.checkedIn;
-    return matchesSearch;
+    // Status filtering
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "checked-in" && attendee.checkedIn) ||
+      (statusFilter === "registered" && !attendee.checkedIn);
+
+    // Registration type filtering
+    const matchesFormType =
+      formTypeFilter === "all" ||
+      attendee.registrationFormName === formTypeFilter;
+
+    return matchesSearch && matchesStatus && matchesFormType;
   });
 
   const exportAttendeesToCsv = () => {
@@ -195,6 +219,7 @@ export default function useAttendees(eventId: string) {
     const headers = [
       "Name",
       "Email",
+      "Registration Type",
       "Registration Date",
       "Status",
       "Check-in Time",
@@ -202,6 +227,7 @@ export default function useAttendees(eventId: string) {
     const rows = filteredAttendees.map((attendee) => [
       attendee.userId.name,
       attendee.userId.email,
+      attendee.registrationFormName || "Default Registration",
       new Date(attendee.registrationDate).toLocaleDateString(),
       attendee.checkedIn ? "Checked In" : "Registered",
       attendee.checkedInTime
@@ -250,6 +276,9 @@ export default function useAttendees(eventId: string) {
     setSearchQuery,
     statusFilter,
     setStatusFilter,
+    formTypeFilter,
+    setFormTypeFilter,
+    registrationTypes,
     isBulkCheckInMode,
     setIsBulkCheckInMode,
     selectedAttendees,

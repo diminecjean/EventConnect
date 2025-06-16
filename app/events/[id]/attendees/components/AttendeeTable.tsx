@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -45,6 +44,7 @@ export default function AttendeeTable({
                 <span className="sr-only">Select</span>
               </TableHead>
             )}
+            <TableHead className="font-medium">Registration Type</TableHead>
             <TableHead className="font-medium text-white">Name</TableHead>
             <TableHead className="font-medium">Email</TableHead>
             <TableHead className="font-medium">Registration Date</TableHead>
@@ -77,6 +77,12 @@ export default function AttendeeTable({
                 {isBulkCheckInMode && attendee.checkedIn && (
                   <TableCell></TableCell>
                 )}
+
+                <TableCell>
+                  <span className="text-sm">
+                    {attendee.registrationFormName || "Default Registration"}
+                  </span>
+                </TableCell>
 
                 <TableCell className="font-medium">
                   {attendee.userId.name}

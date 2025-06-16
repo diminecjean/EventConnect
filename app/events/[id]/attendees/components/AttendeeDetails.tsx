@@ -8,7 +8,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { CheckCircle, UserCheck, Calendar, Mail } from "lucide-react";
+import {
+  CheckCircle,
+  UserCheck,
+  Calendar,
+  Mail,
+  CheckCircle2Icon,
+} from "lucide-react";
 import type { Registration } from "../hooks/useAttendees";
 
 interface AttendeeDetailsProps {
@@ -50,6 +56,14 @@ export default function AttendeeDetails({
                   {new Date(
                     selectedAttendee.registrationDate,
                   ).toLocaleDateString()}
+                </p>
+                <p className="text-sm text-gray-500 mt-2 flex items-center gap-1">
+                  <CheckCircle2Icon className="h-3.5 w-3.5" />
+                  Registration Type:{" "}
+                  <span className="font-medium">
+                    {selectedAttendee.registrationFormName ||
+                      "Default Registration"}
+                  </span>
                 </p>
               </div>
               {selectedAttendee.checkedIn ? (
