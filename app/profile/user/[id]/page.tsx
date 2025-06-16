@@ -99,7 +99,7 @@ export default function UserProfilePage() {
         <div className="absolute top-16 left-8 z-20">
           {user.profilePicture ? (
             <div className="w-40 h-40 rounded-full border-4 border-white shadow-lg overflow-hidden">
-              <Image
+              <img
                 src={user.profilePicture}
                 alt={`${user.name}'s profile picture`}
                 width={128}
